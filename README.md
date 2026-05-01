@@ -59,7 +59,7 @@ cd sadaya-polban-odoo
 The project contains the following structure:
 
 ```
-sadaya-polban-docker/
+sadaya-polban-odoo/
 ├── docker-compose.yml       # Docker Compose configuration file
 ├── custom_addons/           # Custom Odoo modules and addons
 └── README.md
