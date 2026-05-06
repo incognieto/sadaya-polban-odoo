@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_si_plang_si_plang,access_si_plang_si_plang,si_plang.model_si_plang_si_plang,base.group_user,1,0,0,0
+access_si_plang_paket,access_si_plang_paket,si_plang.model_si_plang_paket,base.group_user,1,1,1,0
+access_si_plang_kontrak,access_si_plang_kontrak,si_plang.model_si_plang_kontrak,base.group_user,1,1,1,0
