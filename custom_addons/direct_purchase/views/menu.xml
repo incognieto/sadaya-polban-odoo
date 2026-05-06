@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- Action must be defined before it's referenced by menuitems -->
+  <record id="action_direct_purchase_dashboard_placeholder" model="ir.actions.act_window">
+    <field name="name">Dashboard</field>
+    <field name="res_model">direct_purchase.procurement_package</field>
+    <field name="view_mode">kanban,list,form</field>
+    <field name="view_id" ref="direct_purchase.view_procurement_package_kanban"/>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">Belum ada data paket.</p>
+      <p>Ini adalah placeholder dashboard (rancangan awal). Nanti bisa diganti dengan view dashboard khusus.</p>
+    </field>
+  </record>
+
+  <menuitem id="menu_direct_purchase_root" name="Pembelian Langsung" sequence="50"/>
+
+  <menuitem
+    id="menu_direct_purchase_dashboard"
+    name="Dashboard"
+    parent="menu_direct_purchase_root"
+    action="direct_purchase.action_direct_purchase_dashboard_placeholder"
+    sequence="10"/>
+
+  <menuitem
+    id="menu_direct_purchase_packages"
+    name="Paket"
+    parent="menu_direct_purchase_root"
+    action="direct_purchase.action_direct_purchase_packages"
+    sequence="20"/>
+
+  <menuitem
+    id="menu_direct_purchase_contracts"
+    name="Kontrak"
+    parent="menu_direct_purchase_root"
+    action="direct_purchase.action_direct_purchase_contracts"
+    sequence="30"/>
+</odoo>
