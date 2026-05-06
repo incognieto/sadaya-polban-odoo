@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_contract_tree" model="ir.ui.view">
+    <field name="name">direct_purchase.contract.tree</field>
+    <field name="model">direct_purchase.contract</field>
+    <field name="arch" type="xml">
+      <list>
+        <field name="package_id"/>
+        <field name="officer_name"/>
+        <field name="vendor_name"/>
+        <field name="procurement_type"/>
+        <field name="hps_value"/>
+        <field name="status"/>
+        <field name="start_date"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="view_contract_form" model="ir.ui.view">
+    <field name="name">direct_purchase.contract.form</field>
+    <field name="model">direct_purchase.contract</field>
+    <field name="arch" type="xml">
+      <form string="Kontrak">
+        <sheet>
+          <div class="oe_title">
+            <h1><field name="name" placeholder="Nama kontrak..."/></h1>
+          </div>
+
+          <group>
+            <group>
+              <field name="package_id"/>
+              <field name="procurement_type"/>
+            </group>
+            <group>
+              <field name="status"/>
+              <field name="hps_value"/>
+            </group>
+          </group>
+
+          <group>
+            <group>
+              <field name="officer_name"/>
+              <field name="vendor_name"/>
+            </group>
+            <group>
+              <field name="start_date"/>
+              <field name="end_date"/>
+            </group>
+          </group>
+
+          <notebook>
+            <page string="Chatter">
+              <field name="message_follower_ids" widget="mail_followers"/>
+              <field name="activity_ids" widget="mail_activity"/>
+              <field name="message_ids" widget="mail_thread"/>
+            </page>
+          </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_contract_search" model="ir.ui.view">
+    <field name="name">direct_purchase.contract.search</field>
+    <field name="model">direct_purchase.contract</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="package_id" string="Nama Paket"/>
+        <field name="procurement_type" string="Jenis Pengadaan"/>
+        <field name="status" string="Status Kontrak"/>
+        <field name="start_date" string="Tanggal Mulai"/>
+        <field name="end_date" string="Tanggal Selesai"/>
+        <field name="officer_name" string="Pejabat Pembuat"/>
+        <field name="vendor_name" string="Penyedia"/>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_direct_purchase_contracts" model="ir.actions.act_window">
+    <field name="name">Kontrak</field>
+    <field name="res_model">direct_purchase.contract</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_contract_search"/>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">Tidak ada data</p>
+      <p>Buat kontrak dulu untuk mulai.</p>
+    </field>
+  </record>
+</odoo>
