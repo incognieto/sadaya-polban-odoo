@@ -5,7 +5,9 @@ class sadaya_tender(models.Model):
     _name = 'sadaya_tender.sadaya_tender'
     _description = 'sadaya_tender.sadaya_tender'
 
-    name = fields.Char()
+    kode = fields.Char(string="Kode Tender")
+    nama = fields.Char(string="Nama Tender")
+    tahap = fields.Char(string="Tahap Tender")
     value = fields.Integer()
     value2 = fields.Float(compute="_value_pc", store=True)
     description = fields.Text()
