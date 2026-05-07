@@ -4,7 +4,7 @@ services:
     depends_on:
       - db
     ports:
-      - "8069:8069"
+      - "8070:8069"
     volumes:
       - odoo-web-data:/var/lib/odoo
       - ./custom_addons:/mnt/extra-addons
@@ -15,6 +15,8 @@ services:
 
   db:
     image: postgres:15
+    ports:
+      - "5432:5432"
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_PASSWORD=odoo
