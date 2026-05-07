@@ -1,27 +1,36 @@
+# -*- coding: utf-8 -*-
 {
-    "name": "SiPlang",
-    "summary": "Short (1 phrase/line) summary of the module's purpose",
+    "name": "Si-PLang",
+    "summary": "Sistem Informasi Pengadaan Langsung",
     "description": """
-Long description of module's purpose
+        Modul pengadaan langsung untuk menangani paket pengadaan
+        barang dan jasa dengan nilai di bawah Rp200 juta melalui
+        prosedur non-tender yang lebih sederhana.
     """,
-    "author": "Sadaya",
-    "website": "https://www.yourcompany.com",
-    # Categories can be used to filter modules in modules listing
-    # Check https://github.com/odoo/odoo/blob/15.0/odoo/addons/base/data/ir_module_category_data.xml
-    # for the full list
-    "category": "Uncategorized",
-    "version": "0.1",
-    # any module necessary for this one to work correctly
-    "depends": ["base"],
-    # always loaded
+    "version": "19.0.1.0.0",
+    "category": "Operations/Procurement",
+    "license": "LGPL-3",
+    "author": "Sadaya Polban",
+    "website": "",
+    "depends": [
+        "base",
+        "mail",
+    ],
     "data": [
         "security/ir.model.access.csv",
-        "views/views.xml",
-        "views/templates.xml",
+        "views/paket_views.xml",
+        "views/kontrak_views.xml",
+        "views/dashboard_action.xml",
+        "views/menu.xml",
     ],
-    # only loaded in demonstration mode
-    "demo": [
-        "demo/demo.xml",
-    ],
+    "assets": {
+        "web.assets_backend": [
+            "si_plang/static/src/css/dashboard.css",
+            "si_plang/static/src/js/dashboard.js",
+            "si_plang/static/src/xml/dashboard.xml",
+        ],
+    },
+    "demo": [],
     "application": True,
+    "installable": True,
 }
