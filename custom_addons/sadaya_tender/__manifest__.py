@@ -1,26 +1,38 @@
+# -*- coding: utf-8 -*-
 {
     'name': "Sadaya Tender",
 
-    'summary': "Modul manajemen pengadaan tender",
+    'summary': """
+        Sistem Pengadaan dan Tendering (SPSE Style)""",
 
     'description': """
-    Modul manajemen pengadaan tender
+        Modul kustom Odoo untuk mengelola proses pengadaan/tender, 
+        termasuk pendaftaran vendor (Penyedia), paket pengadaan, jadwal, 
+        dan evaluasi (Pokja/PPK).
     """,
 
-    'author': "Rafif, Zaki",
-    'website': "https://www.google.com",
+    'author': "Politeknik Negeri Bandung",
+    'website': "https://www.polban.ac.id",
 
-    'category': 'Tools',
-    'version': '0.1',
+    'category': 'Operations/Purchase',
+    'version': '1.0',
 
-    'depends': ['base'],
+    # any module necessary for this one to work correctly
+    'depends': ['base', 'mail', 'website', 'portal'],
 
+    # always loaded
     'data': [
+        'security/tender_groups.xml',
         'security/ir.model.access.csv',
-        'views/views.xml',
-        'views/templates.xml',
+        'views/tender_paket_views.xml',
+        'views/res_partner_views.xml',
+        'views/tender_menus.xml',
+        'views/portal_templates.xml',
     ],
-
-    'installable': True,     
-    'application': True,     
+    # only loaded in demonstration mode
+    'demo': [
+        # 'demo/demo.xml',
+    ],
+    'installable': True,
+    'application': True,
 }
