@@ -12,13 +12,13 @@
         "mail",
         'website',
     ],
-   "data": [
+    "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
         "views/procurement_package_views.xml",
         "views/contract_views.xml",
         "views/menu.xml",
-        "views/portal_templates.xml",  
+        "views/portal_templates.xml",
     ],
     "application": True,
     "installable": True,
