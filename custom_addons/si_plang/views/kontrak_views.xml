@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <!-- ========== SEARCH VIEW ========== -->
+    <record model="ir.ui.view" id="view_si_plang_kontrak_search">
+      <field name="name">si_plang.kontrak.search</field>
+      <field name="model">si_plang.kontrak</field>
+      <field name="arch" type="xml">
+        <search string="Cari Kontrak">
+          <field name="name" string="Nama Paket"/>
+          <field name="pejabat_pembuat"/>
+          <field name="penyedia"/>
+          <filter string="Barang" name="filter_barang"
+                  domain="[('jenis_pengadaan','=','barang')]"/>
+          <filter string="Jasa Lainnya" name="filter_jasa_lainnya"
+                  domain="[('jenis_pengadaan','=','jasa_lainnya')]"/>
+          <filter string="Konstruksi" name="filter_konstruksi"
+                  domain="[('jenis_pengadaan','=','konstruksi')]"/>
+          <filter string="Jasa Konsultansi" name="filter_jasa_konsultansi"
+                  domain="[('jenis_pengadaan','=','jasa_konsultansi')]"/>
+          <separator/>
+          <filter string="Persiapan" name="filter_persiapan"
+                  domain="[('status_kontrak','=','persiapan_kontrak')]"/>
+          <filter string="Proses" name="filter_proses"
+                  domain="[('status_kontrak','=','proses_kontrak')]"/>
+          <filter string="Selesai" name="filter_selesai"
+                  domain="[('status_kontrak','=','selesai_kontrak')]"/>
+          <separator/>
+          <filter string="Status" name="group_status"
+                  context="{'group_by': 'status_kontrak'}"/>
+          <filter string="Jenis Pengadaan" name="group_jenis"
+                  context="{'group_by': 'jenis_pengadaan'}"/>
+        </search>
+      </field>
+    </record>
+
+    <!-- ========== LIST VIEW ========== -->
+    <record model="ir.ui.view" id="view_si_plang_kontrak_list">
+      <field name="name">si_plang.kontrak.list</field>
+      <field name="model">si_plang.kontrak</field>
+      <field name="arch" type="xml">
+        <list string="Daftar Kontrak">
+          <field name="name" string="Nama Paket"/>
+          <field name="pejabat_pembuat" string="Pejabat Pembuat"/>
+          <field name="penyedia" string="Penyedia"/>
+          <field name="jenis_pengadaan" string="Jenis Pengadaan"/>
+          <field name="nilai_hps" string="Nilai HPS"/>
+          <field name="status_kontrak" string="Status" widget="badge"/>
+          <field name="tanggal" string="Tanggal"/>
+        </list>
+      </field>
+    </record>
+
+    <!-- ========== FORM VIEW ========== -->
+    <record model="ir.ui.view" id="view_si_plang_kontrak_form">
+      <field name="name">si_plang.kontrak.form</field>
+      <field name="model">si_plang.kontrak</field>
+      <field name="arch" type="xml">
+        <form string="Kontrak">
+          <header>
+            <button name="action_proses_kontrak" type="object" string="Proses Kontrak"
+                    class="btn-primary"
+                    invisible="status_kontrak != 'persiapan_kontrak'"/>
+            <button name="action_selesai_kontrak" type="object" string="Selesai Kontrak"
+                    class="btn-success"
+                    invisible="status_kontrak != 'proses_kontrak'"/>
+            <button name="action_revisi" type="object" string="Revisi"
+                    invisible="status_kontrak in ('selesai_kontrak','revisi')"/>
+            <button name="action_addendum" type="object" string="Addendum"
+                    invisible="status_kontrak != 'selesai_kontrak'"/>
+            <field name="status_kontrak" widget="statusbar"
+                   statusbar_visible="persiapan_kontrak,proses_kontrak,selesai_kontrak"/>
+          </header>
+          <sheet>
+            <div class="oe_title">
+              <h1>
+                <field name="name" placeholder="Nama Paket..."/>
+              </h1>
+            </div>
+            <group>
+              <group string="Informasi Kontrak">
+                <field name="paket_id"/>
+                <field name="pejabat_pembuat"/>
+                <field name="penyedia"/>
+                <field name="jenis_pengadaan"/>
+                <field name="nilai_hps"/>
+              </group>
+              <group string="Jadwal Kontrak">
+                <field name="tanggal"/>
+                <field name="tanggal_mulai"/>
+                <field name="tanggal_selesai"/>
+              </group>
+            </group>
+            <group string="Keterangan">
+              <field name="keterangan" nolabel="1" placeholder="Catatan tambahan..."/>
+            </group>
+          </sheet>
+          <chatter/>
+        </form>
+      </field>
+    </record>
+
+    <!-- ========== ACTION ========== -->
+    <record model="ir.actions.act_window" id="action_si_plang_kontrak">
+      <field name="name">Kontrak</field>
+      <field name="res_model">si_plang.kontrak</field>
+      <field name="view_mode">list,form</field>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          Belum ada kontrak tersedia.
+        </p>
+        <p>Klik tombol <b>Baru</b> untuk membuat kontrak pertama.</p>
+      </field>
+    </record>
+
+  </data>
+</odoo>

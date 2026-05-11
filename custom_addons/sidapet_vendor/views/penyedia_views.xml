@@ -1,0 +1,107 @@
+<odoo>
+
+    <!-- LIST -->
+    <record id="view_sidapet_penyedia_tree" model="ir.ui.view">
+        <field name="name">sidapet.penyedia.tree</field>
+        <field name="model">sidapet.penyedia</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="nama_badan_usaha"/>
+                <field name="jenis_penyedia"/>
+                <field name="email"/>
+                <field name="nomor_telepon"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- FORM BESAR -->
+    <record id="view_sidapet_penyedia_form" model="ir.ui.view">
+        <field name="name">sidapet.penyedia.form</field>
+        <field name="model">sidapet.penyedia</field>
+        <field name="arch" type="xml">
+            <form string="Penyedia">
+                <sheet>
+                    <group>
+                        <field name="jenis_penyedia"/>
+                        <field name="nama_badan_usaha"/>
+                        <field name="email"/>
+                        <field name="nomor_telepon"/>
+                        <field name="nomor_whatsapp"/>
+                        <field name="narahubung"/>
+                        <field name="alamat"/>
+                    </group>
+
+                    <notebook>
+
+                        <page string="Landasan Hukum">
+                            <field name="landasan_hukum_id"/>
+                        </page>
+
+                        <page string="Pengurus">
+                            <field name="pengurus_ids"/>
+                        </page>
+
+                        <page string="Izin Usaha">
+                            <field name="izin_usaha_ids"/>
+                        </page>
+
+                        <page string="Sertifikat Perusahaan">
+                            <field name="sertifikat_perusahaan_ids"/>
+                        </page>
+
+                        <page string="Kepemilikan Saham">
+                            <field name="saham_ids"/>
+                        </page>
+
+                        <page string="Personalia">
+                            <field name="personalia_ids"/>
+                        </page>
+
+                        <page string="Kantor">
+                            <field name="kantor_ids"/>
+                        </page>
+
+                        <page string="Fasilitas">
+                            <field name="fasilitas_ids"/>
+                        </page>
+
+                        <page string="Pengalaman Perusahaan">
+                            <field name="pengalaman_perusahaan_ids"/>
+                        </page>
+
+                        <page string="Keuangan">
+                            <field name="keuangan_id"/>
+                        </page>
+
+                        <page string="Pajak">
+                            <field name="pajak_id"/>
+                        </page>
+
+                        <page string="Pendaftaran DPT">
+                            <field name="pendaftaran_dpt_ids"/>
+                        </page>
+
+                        <page string="Pengajuan TTE">
+                            <field name="tte_ids"/>
+                        </page>
+
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ACTION -->
+    <record id="action_sidapet_penyedia" model="ir.actions.act_window">
+        <field name="name">Penyedia</field>
+        <field name="res_model">sidapet.penyedia</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- MENU -->
+    <menuitem id="menu_sidapet_root" name="SI-DAPET"/>
+    <menuitem id="menu_sidapet_penyedia"
+              parent="menu_sidapet_root"
+              action="action_sidapet_penyedia"
+              name="Penyedia"/>
+</odoo>
