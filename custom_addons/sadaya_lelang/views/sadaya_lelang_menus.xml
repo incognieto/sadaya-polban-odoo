@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Top Menu Item -->
+    <menuitem id="menu_sadaya_lelang_root" name="Sadaya Lelang" sequence="10" web_icon="sadaya_lelang,static/description/icon.png"/>
+
+    <!-- Sub Menus -->
+    <menuitem id="menu_sadaya_lelang_paket" name="Paket Lelang" parent="menu_sadaya_lelang_root" sequence="1" action="action_sadaya_lelang_paket"/>
+    <menuitem id="menu_sadaya_lelang_penawaran" name="Evaluasi Penawaran" parent="menu_sadaya_lelang_root" sequence="2" action="action_sadaya_lelang_penawaran"/>
+    <menuitem id="menu_sadaya_lelang_vendor" name="Verifikasi Vendor" parent="menu_sadaya_lelang_root" sequence="3" action="action_vendor_verification"/>
+</odoo>

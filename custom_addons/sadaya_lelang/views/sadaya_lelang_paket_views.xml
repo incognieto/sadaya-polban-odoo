@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Tender Paket Tree View -->
-    <record id="view_tender_paket_tree" model="ir.ui.view">
-        <field name="name">tender.paket.tree</field>
-        <field name="model">tender.paket</field>
+    <!-- Sadaya Lelang Paket Tree View -->
+    <record id="view_sadaya_lelang_paket_tree" model="ir.ui.view">
+        <field name="name">sadaya_lelang.paket.tree</field>
+        <field name="model">sadaya_lelang.paket</field>
         <field name="arch" type="xml">
-            <list string="Daftar Paket Tender">
+            <list string="Daftar Paket Lelang">
                 <field name="kode_tender"/>
                 <field name="name"/>
                 <field name="metode_pemilihan"/>
@@ -16,14 +16,14 @@
         </field>
     </record>
 
-    <!-- Tender Paket Form View -->
-    <record id="view_tender_paket_form" model="ir.ui.view">
-        <field name="name">tender.paket.form</field>
-        <field name="model">tender.paket</field>
+    <!-- Sadaya Lelang Paket Form View -->
+    <record id="view_sadaya_lelang_paket_form" model="ir.ui.view">
+        <field name="name">sadaya_lelang.paket.form</field>
+        <field name="model">sadaya_lelang.paket</field>
         <field name="arch" type="xml">
-            <form string="Paket Tender">
+            <form string="Paket Lelang">
                 <header>
-                    <field name="status" widget="statusbar" statusbar_visible="draft,announced,registration,evaluation,awarded"/>
+                    <field name="status" widget="statusbar" statusbar_visible="persiapan_lelang,pengumuman_lelang,pendaftaran_penawaran,evaluasi_pembuktian,laporan_hasil,sppbj,kontrak,pelaksanaan,bast,selesai"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
@@ -35,41 +35,63 @@
                         <group>
                             <field name="name"/>
                             <field name="metode_pemilihan"/>
-                        </group>
-                        <group>
                             <field name="hps" widget="monetary"/>
                             <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Aktor Terlibat">
+                            <field name="user_id"/>
+                            <field name="manajemen_id"/>
+                            <field name="ppk_id"/>
+                            <field name="pokja_id"/>
+                            <field name="pphp_id"/>
                         </group>
                     </group>
                     <notebook>
                         <page string="Deskripsi">
                             <field name="description"/>
                         </page>
-                        <page string="Jadwal Tender">
+                        <page string="Jadwal Lelang">
                             <field name="jadwal_ids">
                                 <list editable="bottom">
                                     <field name="name"/>
-                                    <field name="date_start"/>
-                                    <field name="date_end"/>
+                                    <field name="start_date"/>
+                                    <field name="end_date"/>
+                                    <field name="perubahan"/>
                                 </list>
                             </field>
                         </page>
-                        <page string="Dokumen Pemilihan (Pokja)">
+                        <page string="Dokumen Pengadaan &amp; Hasil">
+                            <group>
+                                <group string="Fase Persiapan">
+                                    <field name="file_kebutuhan"/>
+                                    <field name="file_disposisi"/>
+                                </group>
+                                <group string="Fase Penetapan">
+                                    <field name="file_sppbj"/>
+                                    <field name="file_jaminan_pelaksanaan"/>
+                                    <field name="file_kontrak"/>
+                                </group>
+                                <group string="Fase Serah Terima">
+                                    <field name="file_bast"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Dokumen Lelang (POKJA)">
                             <field name="dokumen_ids">
                                 <list editable="bottom">
                                     <field name="name"/>
                                     <field name="file_name" invisible="1"/>
-                                    <field name="file" filename="file_name"/>
+                                    <field name="file_dokumen" filename="file_name"/>
                                     <field name="description"/>
                                 </list>
                             </field>
                         </page>
-                        <page string="Dokumen Penawaran (Vendor)">
+                        <page string="Penawaran Vendor">
                             <field name="penawaran_ids" readonly="1">
                                 <list>
                                     <field name="name"/>
                                     <field name="vendor_id"/>
-                                    <field name="nilai_penawaran" widget="monetary"/>
+                                    <field name="harga_penawaran" widget="monetary"/>
                                     <field name="status"/>
                                     <field name="skor_teknis"/>
                                     <field name="skor_harga"/>
@@ -87,10 +109,10 @@
         </field>
     </record>
 
-    <!-- Tender Penawaran Form View (For Evaluation) -->
-    <record id="view_tender_penawaran_form" model="ir.ui.view">
-        <field name="name">tender.penawaran.form</field>
-        <field name="model">tender.penawaran</field>
+    <!-- Penawaran Form View -->
+    <record id="view_sadaya_lelang_penawaran_form" model="ir.ui.view">
+        <field name="name">sadaya_lelang.penawaran.form</field>
+        <field name="model">sadaya_lelang.penawaran</field>
         <field name="arch" type="xml">
             <form string="Dokumen Penawaran">
                 <header>
@@ -104,13 +126,13 @@
                             <field name="vendor_id" readonly="1"/>
                         </group>
                         <group>
-                            <field name="nilai_penawaran" widget="monetary" readonly="1"/>
+                            <field name="harga_penawaran" widget="monetary" readonly="1"/>
                             <field name="currency_id" invisible="1"/>
-                            <field name="file_name" invisible="1"/>
-                            <field name="file_penawaran" filename="file_name" readonly="1"/>
+                            <field name="file_kualifikasi" readonly="1"/>
+                            <field name="file_penawaran" readonly="1"/>
                         </group>
                     </group>
-                    <group string="Evaluasi Pokja" groups="sadaya_tender.group_tender_pokja">
+                    <group string="Evaluasi Pokja" groups="sadaya_lelang.group_lelang_pokja">
                         <field name="skor_teknis"/>
                         <field name="skor_harga"/>
                     </group>
@@ -120,15 +142,15 @@
     </record>
 
     <!-- Actions -->
-    <record id="action_tender_paket" model="ir.actions.act_window">
-        <field name="name">Paket Tender</field>
-        <field name="res_model">tender.paket</field>
+    <record id="action_sadaya_lelang_paket" model="ir.actions.act_window">
+        <field name="name">Paket Lelang</field>
+        <field name="res_model">sadaya_lelang.paket</field>
         <field name="view_mode">list,form</field>
     </record>
 
-    <record id="action_tender_penawaran" model="ir.actions.act_window">
+    <record id="action_sadaya_lelang_penawaran" model="ir.actions.act_window">
         <field name="name">Semua Penawaran</field>
-        <field name="res_model">tender.penawaran</field>
+        <field name="res_model">sadaya_lelang.penawaran</field>
         <field name="view_mode">list,form</field>
     </record>
 
