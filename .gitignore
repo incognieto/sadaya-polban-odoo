@@ -1,3 +1,8 @@
+clean_pycache.bat
+restart.bat
+docker_down.bat
+docker_up.bat
+
 # Python
 __pycache__/
 *.py[cod]
