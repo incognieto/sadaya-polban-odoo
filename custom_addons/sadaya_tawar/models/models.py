@@ -1,3 +1,4 @@
+# pyrefly: ignore [missing-import]
 from odoo import models, fields, api
 
 class SadayaTawarPaket(models.Model):
@@ -18,6 +19,13 @@ class SadayaTawarPaket(models.Model):
         ('eval', 'Evaluasi / Routing'),
         ('routed', 'Terkirim ke Eksekusi')
     ], string='Status', default='draft')
+
+    def write(self, vals):
+        res = super(SadayaTawarPaket, self).write(vals)
+        if 'state' in vals and vals['state'] == 'eval':
+            for record in self:
+                record.action_route_paket()
+        return res
 
     def action_route_paket(self):
         for record in self:

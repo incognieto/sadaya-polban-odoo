@@ -10,7 +10,7 @@ Modul ini menangani:
     'website': "https://www.polban.ac.id",
     'category': 'Procurement',
     'version': '1.0',
-    'depends': ['base'],
+    'depends': ['base', 'sadaya_rutin', 'sadaya_langsung', 'sadaya_lelang'],
     'data': [
         'security/ir.model.access.csv',
         'views/views.xml',

@@ -21,7 +21,7 @@
                 <form>
                     <header>
                         <button name="action_route_paket" string="Kirim ke Modul Eksekusi (Otomatis)" type="object" class="oe_highlight" invisible="state == 'routed'"/>
-                        <field name="state" widget="statusbar"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,published,eval,routed"/>
                     </header>
                     <sheet>
                         <group>

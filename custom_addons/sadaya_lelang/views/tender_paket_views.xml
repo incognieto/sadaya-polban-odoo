@@ -110,7 +110,7 @@
                             <field name="file_penawaran" filename="file_name" readonly="1"/>
                         </group>
                     </group>
-                    <group string="Evaluasi Pokja" groups="sadaya_tender.group_tender_pokja">
+                    <group string="Evaluasi Pokja" groups="sadaya_lelang.group_tender_pokja">
                         <field name="skor_teknis"/>
                         <field name="skor_harga"/>
                     </group>

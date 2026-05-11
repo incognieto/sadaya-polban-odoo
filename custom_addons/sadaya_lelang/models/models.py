@@ -1,9 +1,9 @@
 from odoo import models, fields, api
 
 
-class sadaya_tender(models.Model):
-    _name = 'sadaya_tender.sadaya_tender'
-    _description = 'sadaya_tender.sadaya_tender'
+class sadaya_lelang(models.Model):
+    _name = 'sadaya_lelang.sadaya_lelang'
+    _description = 'sadaya_lelang.sadaya_lelang'
 
     kode = fields.Char(string="Kode SadayaLelang")
     nama = fields.Char(string="Nama SadayaLelang")
