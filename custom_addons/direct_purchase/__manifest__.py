@@ -10,6 +10,7 @@
     "depends": [
         "base",
         "mail",
+        'website',
     ],
     "data": [
         "security/security.xml",
@@ -17,6 +18,7 @@
         "views/procurement_package_views.xml",
         "views/contract_views.xml",
         "views/menu.xml",
+        "views/portal_templates.xml",
     ],
     "application": True,
     "installable": True,
