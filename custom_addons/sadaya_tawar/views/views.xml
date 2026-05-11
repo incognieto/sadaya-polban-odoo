@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_sadaya_tawar_paket_list" model="ir.ui.view">
+            <field name="name">sadaya_tawar.paket.list</field>
+            <field name="model">sadaya_tawar.paket</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="nilai_hps"/>
+                    <field name="jenis_kontrak"/>
+                    <field name="state"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_sadaya_tawar_paket_form" model="ir.ui.view">
+            <field name="name">sadaya_tawar.paket.form</field>
+            <field name="model">sadaya_tawar.paket</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_route_paket" string="Kirim ke Modul Eksekusi (Otomatis)" type="object" class="oe_highlight" invisible="state == 'routed'"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="nilai_hps"/>
+                            <field name="jenis_kontrak"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_sadaya_tawar_paket" model="ir.actions.act_window">
+            <field name="name">Paket Pengadaan (RUP)</field>
+            <field name="res_model">sadaya_tawar.paket</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="menu_sadaya_tawar_root" name="Sadaya Tawar" sequence="10"/>
+        <menuitem id="menu_sadaya_tawar_paket" name="Daftar RUP" parent="menu_sadaya_tawar_root" action="action_sadaya_tawar_paket" sequence="10"/>
+    </data>
+</odoo>

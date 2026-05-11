@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <!-- Root menu -->
+    <menuitem name="Sadaya Langsung"
+              id="menu_sadaya_langsung_root"
+              sequence="50"/>
+
+    <!-- Dashboard → tampilkan custom owl dashboard -->
+    <menuitem name="Dashboard"
+              id="menu_sadaya_langsung_dashboard"
+              parent="menu_sadaya_langsung_root"
+              action="action_sadaya_langsung_dashboard"
+              sequence="10"/>
+
+    <!-- Paket Penyedia -->
+    <menuitem name="Paket"
+              id="menu_sadaya_langsung_paket"
+              parent="menu_sadaya_langsung_root"
+              action="action_sadaya_langsung_paket"
+              sequence="20"/>
+
+    <!-- Kontrak -->
+    <menuitem name="Kontrak"
+              id="menu_sadaya_langsung_kontrak"
+              parent="menu_sadaya_langsung_root"
+              action="action_sadaya_langsung_kontrak"
+              sequence="30"/>
+
+  </data>
+</odoo>

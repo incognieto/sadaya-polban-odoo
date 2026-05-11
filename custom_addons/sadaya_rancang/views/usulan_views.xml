@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Action -->
+    <record id="action_rancang_usulan" model="ir.actions.act_window">
+        <field name="name">Usulan Kebutuhan (RAB &amp; KAK)</field>
+        <field name="res_model">rancang.usulan</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_rancang_usulan_tree" model="ir.ui.view">
+        <field name="name">rancang.usulan.tree</field>
+        <field name="model">rancang.usulan</field>
+        <field name="arch" type="xml">
+            <list string="Daftar Usulan">
+                <field name="name"/>
+                <field name="pemohon"/>
+                <field name="rab"/>
+                <field name="klasifikasi"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-warning="state == 'submitted'" decoration-success="state == 'approved' or state == 'published'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_rancang_usulan_form" model="ir.ui.view">
+        <field name="name">rancang.usulan.form</field>
+        <field name="model">rancang.usulan</field>
+        <field name="arch" type="xml">
+            <form string="Detail Usulan">
+                <header>
+                    <button name="action_submit" string="Ajukan" type="object" invisible="state != 'draft'" class="oe_highlight"/>
+                    <button name="action_approve" string="Setujui" type="object" invisible="state != 'submitted'" class="oe_highlight"/>
+                    <button name="action_publish_rup" string="Publikasi ke RUP" type="object" invisible="state != 'approved'" class="oe_highlight"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,published"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" readonly="state != 'draft'"/>
+                            <field name="pemohon" readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="rab" readonly="state != 'draft'"/>
+                            <field name="klasifikasi" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Kerangka Acuan Kerja (KAK)">
+                            <field name="kak" readonly="state != 'draft'"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Menus -->
+    <menuitem id="menu_rancang_root" name="Sadaya Rancang" sequence="5"/>
+    <menuitem id="menu_rancang_usulan" name="Usulan Kebutuhan" parent="menu_rancang_root" action="action_rancang_usulan" sequence="10"/>
+
+</odoo>

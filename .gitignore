@@ -40,3 +40,7 @@ ENV/
 # Docker (if you decide to map local data folders instead of volumes)
 /pgdata/
 /odoo_data/
+
+# Custom scripts
+rename_*.py
+check_script.py

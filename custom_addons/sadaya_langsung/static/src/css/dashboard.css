@@ -1,0 +1,12 @@
+.o_sadaya_langsung_dashboard {
+    height: 100%;
+}
+
+.o_sadaya_langsung_dashboard .dashboard-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.o_sadaya_langsung_dashboard .dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1) !important;
+}
