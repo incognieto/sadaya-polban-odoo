@@ -4,7 +4,7 @@
     <!-- 0. TEMPLATE LAYOUT SIDEBAR UTAMA           -->
     <!-- ========================================== -->
     <template id="portal_sidebar_layout" name="Portal Sidebar Lelang">
-        <t t-call="website.layout">
+        <t t-call="portal.portal_layout">
             <div id="wrap" class="bg-light pb-5" style="min-height: 100vh;">
                 <div class="container-fluid pt-4 px-4">
                     <div class="row">

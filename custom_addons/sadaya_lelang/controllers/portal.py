@@ -4,20 +4,20 @@ from odoo.http import request
 
 class TenderPortal(http.Controller):
 
-    @http.route('/tender-portal/tenders', type='http', auth='public', website=True)
+    @http.route('/tender-portal/tenders', type='http', auth='public', website=False)
     def tender_list(self, **kwargs):
         tenders = request.env['sadaya_lelang.paket'].sudo().search([('status', '!=', 'persiapan_lelang')])
         return request.render('sadaya_lelang.portal_tender_list', {
             'tenders': tenders
         })
 
-    @http.route(['/tenders/<model("sadaya_lelang.paket"):tender>'], type='http', auth='public', website=True)
+    @http.route(['/tenders/<model("sadaya_lelang.paket"):tender>'], type='http', auth='public', website=False)
     def tender_detail(self, tender, **kwargs):
         return request.render('sadaya_lelang.portal_tender_detail', {
             'tender': tender
         })
 
-    @http.route('/tender-portal/dashboard', type='http', auth='user', website=True)
+    @http.route('/tender-portal/dashboard', type='http', auth='user', website=False)
     def my_tenders(self, **kwargs):
         partner = request.env.user.partner_id
         if not partner.is_vendor_tender:

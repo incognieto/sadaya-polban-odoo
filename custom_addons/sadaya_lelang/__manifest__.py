@@ -18,7 +18,7 @@
     'version': '1.0',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'mail', 'website', 'portal'],
+    'depends': ['base', 'mail', 'portal'],
 
     # always loaded
     'data': [
