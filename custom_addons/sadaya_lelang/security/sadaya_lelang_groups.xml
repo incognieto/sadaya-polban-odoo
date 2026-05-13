@@ -10,31 +10,26 @@
 
         <record id="group_lelang_user" model="res.groups">
             <field name="name">USER / Pemohon</field>
-            <field name="category_id" ref="module_category_sadaya_lelang"/>
             <field name="comment">Akses untuk melihat paket yang diajukan.</field>
         </record>
 
         <record id="group_lelang_manajemen" model="res.groups">
             <field name="name">MANAJEMEN / Approver</field>
-            <field name="category_id" ref="module_category_sadaya_lelang"/>
             <field name="comment">Akses untuk menyetujui anggaran.</field>
         </record>
 
         <record id="group_lelang_pphp" model="res.groups">
             <field name="name">PPHP</field>
-            <field name="category_id" ref="module_category_sadaya_lelang"/>
             <field name="comment">Akses untuk menerima barang/jasa (BAST).</field>
         </record>
 
         <record id="group_lelang_pokja" model="res.groups">
             <field name="name">Pokja Pemilihan</field>
-            <field name="category_id" ref="module_category_sadaya_lelang"/>
             <field name="comment">Akses untuk mengelola tahapan tender dan evaluasi penawaran.</field>
         </record>
 
         <record id="group_lelang_ppk" model="res.groups">
             <field name="name">Pejabat Pembuat Komitmen (PPK)</field>
-            <field name="category_id" ref="module_category_sadaya_lelang"/>
             <field name="implied_ids" eval="[(4, ref('group_lelang_pokja'))]"/>
             <field name="comment">Akses penuh untuk pembuatan SPPBJ dan Kontrak.</field>
         </record>
