@@ -7,7 +7,7 @@
               id="menu_sadaya_langsung_root"
               sequence="50"/>
 
-    <!-- Dashboard → tampilkan custom owl dashboard -->
+    <!-- Dashboard -->
     <menuitem name="Dashboard"
               id="menu_sadaya_langsung_dashboard"
               parent="menu_sadaya_langsung_root"

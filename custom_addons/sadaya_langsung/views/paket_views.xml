@@ -35,17 +35,43 @@
     </record>
 
     <!-- ========== LIST VIEW ========== -->
+    <record model="ir.ui.view" id="view_sadaya_langsung_paket_kanban">
+      <field name="name">sadaya_langsung.paket.kanban</field>
+      <field name="model">sadaya_langsung.paket</field>
+      <field name="arch" type="xml">
+        <kanban class="o_kanban_small_column">
+          <field name="name"/>
+          <field name="unit_pengusul"/>
+          <field name="jenis_pengadaan"/>
+          <field name="status_paket"/>
+          <templates>
+            <t t-name="card">
+              <div class="oe_kanban_card">
+                <div class="o_kanban_header">
+                  <strong><field name="name"/></strong>
+                </div>
+                <div class="o_kanban_content">
+                  <div><strong>Unit:</strong> <field name="unit_pengusul"/></div>
+                  <div><strong>Jenis:</strong> <field name="jenis_pengadaan"/></div>
+                  <div><strong>Status:</strong> <field name="status_paket"/></div>
+                </div>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+
     <record model="ir.ui.view" id="view_sadaya_langsung_paket_list">
       <field name="name">sadaya_langsung.paket.list</field>
       <field name="model">sadaya_langsung.paket</field>
       <field name="arch" type="xml">
         <list string="Paket Sadaya Langsung">
-          <field name="name" string="Nama Paket"/>
           <field name="unit_pengusul" string="Unit Pengusul"/>
+          <field name="name" string="Nama Paket"/>
           <field name="jenis_pengadaan" string="Jenis Pengadaan"/>
-          <field name="nilai_hps" string="Nilai HPS"/>
           <field name="status_paket" string="Status" widget="badge"/>
-          <field name="tanggal" string="Tanggal"/>
+          <field name="tanggal_mulai" string="Tanggal Mulai"/>
         </list>
       </field>
     </record>
@@ -57,35 +83,40 @@
       <field name="arch" type="xml">
         <form string="Paket Sadaya Langsung">
           <header>
-            <!-- BPMN Step 1→2: Pemicu → Input Paket -->
-            <button name="action_input_paket" type="object"
-                    string="Input Paket Pengadaan"
+            <button name="action_kirim_undangan" type="object"
+                    string="Kirim Undangan"
                     class="btn-primary"
                     invisible="status_paket != 'draft'"/>
 
-            <!-- BPMN Step 2→3: Input Paket → Submit Penawaran -->
-            <button name="action_submit_penawaran" type="object"
-                    string="Submit Penawaran Vendor"
+            <button name="action_tunggu_penawaran" type="object"
+                    string="Menunggu Penawaran"
                     class="btn-primary"
-                    invisible="status_paket != 'input_paket'"/>
+                    invisible="status_paket != 'undangan'"/>
 
-            <!-- BPMN Step 3→4: Submit Penawaran → Seleksi & Validasi -->
-            <button name="action_seleksi_validasi" type="object"
-                    string="Seleksi &amp; Validasi"
+            <button name="action_evaluasi" type="object"
+                    string="Evaluasi Dokumen"
                     class="btn-primary"
                     invisible="status_paket != 'penawaran'"/>
 
-            <!-- BPMN Step 4→5: Seleksi → Terbitkan SPK -->
-            <button name="action_terbitkan_spk" type="object"
-                    string="Terbitkan SPK"
-                    class="btn-success"
-                    invisible="status_paket != 'seleksi'"/>
+            <button name="action_negosiasi" type="object"
+                    string="Klarifikasi &amp; Negosiasi"
+                    class="btn-primary"
+                    invisible="status_paket != 'evaluasi'"/>
 
-            <!-- BPMN Step 5→6: Terbit SPK → Selesai -->
+            <button name="action_tetapkan_pemenang" type="object"
+                    string="Keluarkan SPPBJ (Penetapan)"
+                    class="btn-success"
+                    invisible="status_paket != 'negosiasi'"/>
+
+            <button name="action_buat_kontrak" type="object"
+                    string="Buat SPK / Kontrak"
+                    class="btn-success"
+                    invisible="status_paket != 'sppbj'"/>
+
             <button name="action_selesai" type="object"
                     string="Selesai Pengadaan"
                     class="btn-success"
-                    invisible="status_paket != 'terbit_spk'"/>
+                    invisible="status_paket != 'kontrak'"/>
 
             <!-- Exception buttons -->
             <button name="action_batal" type="object" string="Batalkan"
@@ -96,7 +127,7 @@
 
             <!-- Statusbar -->
             <field name="status_paket" widget="statusbar"
-                   statusbar_visible="draft,input_paket,penawaran,seleksi,terbit_spk,selesai"/>
+                   statusbar_visible="draft,undangan,penawaran,evaluasi,negosiasi,sppbj,kontrak,selesai"/>
           </header>
           <sheet>
             <div class="oe_title">
@@ -107,9 +138,9 @@
             <group>
               <group string="Informasi Paket">
                 <field name="unit_pengusul"/>
+                <field name="contract_count" readonly="1"/>
                 <field name="jenis_pengadaan"/>
-                <field name="nilai_hps"/>
-                <field name="vendor_pemenang_id" readonly="1"/>
+                <field name="status_paket" string="Status Paket"/>
               </group>
               <group string="Jadwal">
                 <field name="tanggal"/>
@@ -118,6 +149,14 @@
               </group>
             </group>
             <notebook>
+              <page string="Dokumen Persiapan" name="dokumen_persiapan_page">
+                <group>
+                  <field name="dokumen_kak" filename="filename_kak"/>
+                  <field name="filename_kak" invisible="1"/>
+                  <field name="dokumen_rab" filename="filename_rab"/>
+                  <field name="filename_rab" invisible="1"/>
+                </group>
+              </page>
               <page string="Daftar Barang / Jasa" name="items_page">
                 <field name="item_ids" nolabel="1">
                   <list editable="bottom">
@@ -130,24 +169,32 @@
                   </list>
                 </field>
               </page>
-              <page string="Penawaran Vendor" name="penawaran_page">
+              <page string="Pengolahan Penawaran" name="penawaran_page">
                 <field name="penawaran_ids" nolabel="1">
                   <list editable="bottom">
                     <field name="vendor_id"/>
                     <field name="harga_penawaran"/>
-                    <field name="tanggal"/>
                     <field name="dokumen_penawaran" filename="dokumen_filename"/>
                     <field name="dokumen_filename" column_invisible="1"/>
-                    <field name="catatan"/>
+                    <field name="evaluasi_administrasi" widget="badge"/>
+                    <field name="evaluasi_teknis" widget="badge"/>
+                    <field name="evaluasi_harga" widget="badge"/>
+                    <field name="lulus_evaluasi" readonly="1"/>
                     <field name="status_penawaran" widget="badge"/>
                     <button name="action_pilih_pemenang" type="object"
-                            string="✓ Pilih" class="btn-success"
+                            string="✓ Tetapkan" class="btn-success"
                             icon="fa-check"/>
                     <button name="action_tolak" type="object"
                             string="✗ Tolak" class="btn-link text-danger"
                             icon="fa-times"/>
                   </list>
                 </field>
+              </page>
+              <page string="Klarifikasi &amp; Negosiasi" name="negosiasi_page">
+                <group>
+                  <field name="catatan_negosiasi" placeholder="Masukkan log catatan proses negosiasi harga dan teknis dengan vendor..."/>
+                  <field name="harga_sepakat" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                </group>
               </page>
               <page string="Kontrak / SPK" name="kontrak_page">
                 <field name="kontrak_ids" nolabel="1">
@@ -171,6 +218,19 @@
     </record>
 
     <!-- ========== ACTION ========== -->
+    <record model="ir.actions.act_window" id="action_sadaya_langsung_dashboard">
+      <field name="name">Dashboard</field>
+      <field name="res_model">sadaya_langsung.paket</field>
+      <field name="view_mode">kanban,list,form</field>
+      <field name="view_id" ref="view_sadaya_langsung_paket_kanban"/>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          Belum ada paket tersedia.
+        </p>
+        <p>Dashboard Sadaya Langsung. Nanti bisa diperluas dengan grafik dan ringkasan KPI.</p>
+      </field>
+    </record>
+
     <record model="ir.actions.act_window" id="action_sadaya_langsung_paket">
       <field name="name">Paket Sadaya Langsung</field>
       <field name="res_model">sadaya_langsung.paket</field>

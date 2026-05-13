@@ -18,18 +18,11 @@
     ],
     "data": [
         "security/ir.model.access.csv",
+        "security/sadaya_langsung_groups.xml",
         "views/paket_views.xml",
         "views/kontrak_views.xml",
-        "views/dashboard_action.xml",
         "views/menu.xml",
     ],
-    "assets": {
-        "web.assets_backend": [
-            "sadaya_langsung/static/src/css/dashboard.css",
-            "sadaya_langsung/static/src/js/dashboard.js",
-            "sadaya_langsung/static/src/xml/dashboard.xml",
-        ],
-    },
     "demo": [],
     "application": True,
     "installable": True,
