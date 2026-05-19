@@ -14,19 +14,25 @@ class SadayaLelangPaket(models.Model):
     currency_id = fields.Many2one('res.currency', default=lambda self: self.env.company.currency_id.id)
     
     status = fields.Selection([
-        ('persiapan_lelang', 'Persiapan Lelang (POKJA)'),
-        ('pengumuman_lelang', 'Pengumuman Lelang'),
-        ('pendaftaran_penawaran', 'Pendaftaran & Penawaran'),
-        ('evaluasi_pembuktian', 'Evaluasi & Pembuktian'),
-        ('laporan_hasil', 'Laporan Hasil Lelang'),
-        ('sppbj', 'SPPBJ'),
-        ('jaminan_pelaksanaan', 'Jaminan Pelaksanaan'),
+        ('draft', 'Draft'),
+        ('menunggu_persetujuan', 'Menunggu Persetujuan'),
+        ('pengumuman', 'Pengumuman'),
+        ('pendaftaran', 'Pendaftaran Peserta'),
+        ('lelang', 'Lelang'),
+        ('pemasukan_penawaran', 'Pemasukan Penawaran'),
+        ('pembukaan', 'Pembukaan Penawaran'),
+        ('eval_administrasi', 'Evaluasi Administrasi'),
+        ('eval_teknis', 'Evaluasi Teknis'),
+        ('eval_harga', 'Evaluasi Harga'),
+        ('pembuktian_kualifikasi', 'Pembuktian Kualifikasi'),
+        ('penetapan_pemenang', 'Penetapan Pemenang'),
+        ('masa_sanggah', 'Masa Sanggah'),
+        ('sppbj', 'SPPBJ / SPK'),
+        ('pam', 'Pre-Award Meeting (PAM)'),
         ('kontrak', 'Tanda Tangan Kontrak'),
-        ('pelaksanaan', 'Pelaksanaan Pekerjaan'),
-        ('bast', 'Serah Terima (BAST)'),
-        ('selesai', 'Selesai'),
-        ('cancelled', 'Dibatalkan')
-    ], string='Status', default='persiapan_lelang', tracking=True)
+        ('pelaksanaan', 'Pelaksanaan Pekerjaan & BAST'),
+        ('batal', 'Batal')
+    ], string='Status', default='draft', tracking=True)
 
     metode_pemilihan = fields.Selection([
         ('tender', 'Tender'),
@@ -51,6 +57,7 @@ class SadayaLelangPaket(models.Model):
     jadwal_ids = fields.One2many('sadaya_lelang.jadwal', 'paket_id', string='Jadwal Tender')
     dokumen_ids = fields.One2many('sadaya_lelang.dokumen', 'paket_id', string='Dokumen Pemilihan')
     penawaran_ids = fields.One2many('sadaya_lelang.penawaran', 'paket_id', string='Dokumen Penawaran')
+    sanggah_ids = fields.One2many('sadaya_lelang.sanggah', 'paket_id', string='Daftar Sanggahan')
 
     @api.model_create_multi
     def create(self, vals_list):

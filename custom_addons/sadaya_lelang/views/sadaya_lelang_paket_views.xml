@@ -23,7 +23,7 @@
         <field name="arch" type="xml">
             <form string="Paket Lelang">
                 <header>
-                    <field name="status" widget="statusbar" statusbar_visible="persiapan_lelang,pengumuman_lelang,pendaftaran_penawaran,evaluasi_pembuktian,laporan_hasil,sppbj,kontrak,pelaksanaan,bast,selesai"/>
+                    <field name="status" widget="statusbar" statusbar_visible="draft,menunggu_persetujuan,pengumuman,pendaftaran,lelang,pemasukan_penawaran,pembukaan,eval_administrasi,eval_teknis,eval_harga,pembuktian_kualifikasi,penetapan_pemenang,masa_sanggah,sppbj,pam,kontrak,pelaksanaan"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
@@ -86,6 +86,16 @@
                                 </list>
                             </field>
                         </page>
+                        <page string="Masa Sanggah" invisible="status not in ['masa_sanggah', 'sppbj', 'pam', 'kontrak', 'pelaksanaan', 'selesai']">
+                            <field name="sanggah_ids">
+                                <list editable="bottom" decoration-danger="status_sanggah == 'masuk'" decoration-success="status_sanggah == 'diterima'">
+                                    <field name="vendor_id"/>
+                                    <field name="pertanyaan"/>
+                                    <field name="jawaban_pokja"/>
+                                    <field name="status_sanggah"/>
+                                </list>
+                            </field>
+                        </page>
                         <page string="Penawaran Vendor">
                             <field name="penawaran_ids" readonly="1">
                                 <list>
@@ -133,8 +143,15 @@
                         </group>
                     </group>
                     <group string="Evaluasi Pokja" groups="sadaya_lelang.group_lelang_pokja">
-                        <field name="skor_teknis"/>
-                        <field name="skor_harga"/>
+                        <group string="Administrasi &amp; Teknis">
+                            <field name="eval_administrasi" widget="radio" options="{'horizontal': true}"/>
+                            <field name="skor_teknis" invisible="eval_administrasi != 'lulus'"/>
+                        </group>
+                        <group string="Harga &amp; Kualifikasi">
+                            <field name="skor_harga" invisible="eval_administrasi != 'lulus'"/>
+                            <field name="eval_harga_wajar" invisible="eval_administrasi != 'lulus'"/>
+                            <field name="eval_kualifikasi" widget="radio" options="{'horizontal': true}" invisible="not eval_harga_wajar"/>
+                        </group>
                     </group>
                 </sheet>
             </form>

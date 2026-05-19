@@ -25,8 +25,11 @@ class SadayaLelangPenawaran(models.Model):
     ], string='Status', default='submitted', tracking=True)
 
     # Field untuk Evaluasi
+    eval_administrasi = fields.Selection([('lulus', 'Lulus'), ('gugur', 'Gugur')], string='Evaluasi Administrasi', tracking=True)
     skor_teknis = fields.Float(string='Skor Teknis', tracking=True)
     skor_harga = fields.Float(string='Skor Harga', tracking=True)
+    eval_harga_wajar = fields.Boolean(string='Harga Wajar / Sesuai HPS', tracking=True)
+    eval_kualifikasi = fields.Selection([('lulus', 'Lulus'), ('gugur', 'Gugur')], string='Pembuktian Kualifikasi', tracking=True)
 
     @api.model_create_multi
     def create(self, vals_list):
