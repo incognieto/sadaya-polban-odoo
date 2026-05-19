@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 {
     'name': "Sadaya Lelang",
-
     'summary': """
         Sistem Pengadaan dan Tendering (SPSE Style)""",
 
     'description': """
-        Modul kustom Odoo untuk mengelola proses pengadaan/tender, 
+        Modul kustom Odoo untuk mengelola proses pengadaan/sadaya_lelang, 
         termasuk pendaftaran vendor (Penyedia), paket pengadaan, jadwal, 
         dan evaluasi (Pokja/PPK).
     """,

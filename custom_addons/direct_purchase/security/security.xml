@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-  <!-- Simple baseline group for prototype access -->
-  <record id="group_direct_purchase_user" model="res.groups">
-    <field name="name">Pembelian Langsung User</field>
-  </record>
-</odoo>

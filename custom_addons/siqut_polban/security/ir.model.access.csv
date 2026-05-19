@@ -1,3 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_siqut_paket,siqut.paket,model_siqut_paket,base.group_user,1,1,1,1
-access_siqut_penawaran,siqut.penawaran,model_siqut_penawaran,base.group_user,1,1,1,1

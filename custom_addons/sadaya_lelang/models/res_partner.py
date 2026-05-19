@@ -4,7 +4,7 @@ from odoo import models, fields
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
-    is_vendor_tender = fields.Boolean(string='Vendor Tender/SPSE', default=False)
+    is_vendor_tender = fields.Boolean(string='Vendor SadayaLelang/SPSE', default=False)
     vendor_status = fields.Selection([
         ('draft', 'Belum Lengkap'),
         ('waiting', 'Menunggu Verifikasi'),
