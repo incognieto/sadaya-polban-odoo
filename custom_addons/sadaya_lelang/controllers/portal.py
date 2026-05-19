@@ -6,7 +6,7 @@ class TenderPortal(http.Controller):
 
     @http.route('/tender-portal/tenders', type='http', auth='public', website=False)
     def tender_list(self, **kwargs):
-        tenders = request.env['sadaya_lelang.paket'].sudo().search([('status', '!=', 'persiapan_lelang')])
+        tenders = request.env['sadaya_lelang.paket'].sudo().search([('status', 'not in', ['draft', 'menunggu_persetujuan'])])
         return request.render('sadaya_lelang.portal_tender_list', {
             'tenders': tenders
         })
