@@ -39,11 +39,11 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Kata Sandi</label>
-                                    <input type="password" class="form-control" name="password" required="required"/>
+                                    <input type="kata_sandi" class="form-control" name="kata_sandi" required="required" t-att-value="values.get('kata_sandi')"/>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Konfirmasi Kata Sandi</label>
-                                    <input type="password" class="form-control" name="password_confirm" required="required"/>
+                                    <input type="kata_sandi" class="form-control" name="kata_sandi_confirm" required="required"/>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Nomor Telepon</label>
@@ -54,12 +54,28 @@
                                     <input type="text" class="form-control" name="nomor_whatsapp" t-att-value="values.get('nomor_whatsapp')"/>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Narahubung</label>
+                                    <label class="form-label">Nama Narahubung</label>
                                     <input type="text" class="form-control" name="narahubung" t-att-value="values.get('narahubung')"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Nomor NIK Narahubung</label>
+                                    <input type="text" class="form-control" name="nomor_nik_narahubung" t-att-value="values.get('nomor_nik_narahubung')"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Swafoto Narahubung (Memegang KTP)</label>
+                                    <input type="file" class="form-control" name="swafoto_narahubung"/>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Alamat</label>
                                     <textarea class="form-control" name="alamat" rows="3"><t t-esc="values.get('alamat')"/></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Nomor NPWP Perusahaan</label>
+                                    <input type="text" class="form-control" name="nomor_npwp_perusahaan" t-att-value="values.get('nomor_npwp_perusahaan')"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Bukti NPWP</label>
+                                    <input type="file" class="form-control" name="bukti_npwp"/>
                                 </div>
                                 
                             </div>

@@ -17,6 +17,7 @@ FORM_CONFIG = {
 			{'name': 'nomor_pengesahan', 'label': 'Nomor Pengesahan', 'type': 'text'},
 			{'name': 'tanggal_pengesahan', 'label': 'Tanggal Pengesahan', 'type': 'date'},
 			{'name': 'perubahan_akta', 'label': 'Perubahan Akta', 'type': 'textarea', 'full_width': True},
+			{'name': 'scan_bukti', 'label': 'Scan Bukti (PDF)', 'type': 'binary', 'full_width': True},
 		],
 	},
 	'pengurus': {
@@ -54,6 +55,7 @@ FORM_CONFIG = {
 					{'value': 'lainnya', 'label': 'Lainnya'},
 				],
 			},
+			{'name': 'nama_izin', 'label': 'Nama/Judul Izin', 'type': 'text'},
 			{'name': 'nomor_izin', 'label': 'Nomor Izin', 'type': 'text'},
 			{'name': 'scan_dokumen', 'label': 'Scan Dokumen', 'type': 'binary', 'full_width': True},
 			{'name': 'masa_berlaku', 'label': 'Masa Berlaku', 'type': 'date'},
@@ -72,7 +74,9 @@ FORM_CONFIG = {
 		'description': 'Informasi kepemilikan saham.',
 		'model': 'sadaya_mitra.saham',
 		'fields': [
-			{'name': 'name', 'label': 'Keterangan Saham', 'type': 'text'},
+			{'name': 'susunan', 'label': 'Susunan', 'type': 'text'},
+			{'name': 'nik', 'label': 'NIK', 'type': 'text'},
+			{'name': 'posisi', 'label': 'Posisi', 'type': 'text'},
 		],
 	},
 	'personalia': {
@@ -89,7 +93,7 @@ FORM_CONFIG = {
 					{'value': 'pendukung', 'label': 'Pendukung'},
 				],
 			},
-			{'name': 'nama', 'label': 'Nama', 'type': 'text'},
+			{'name': 'tenaga_ahli', 'label': 'Tenaga Ahli', 'type': 'text'},
 			{'name': 'nik', 'label': 'NIK', 'type': 'text'},
 			{'name': 'tempat_lahir', 'label': 'Tempat Lahir', 'type': 'text'},
 			{'name': 'tanggal_lahir', 'label': 'Tanggal Lahir', 'type': 'date'},
@@ -98,7 +102,26 @@ FORM_CONFIG = {
 			{'name': 'posisi', 'label': 'Posisi', 'type': 'text'},
 			{'name': 'scan_ktp', 'label': 'Scan KTP', 'type': 'binary', 'full_width': True},
 			{'name': 'scan_ijazah', 'label': 'Scan Ijazah', 'type': 'binary', 'full_width': True},
+			{'name': 'cv_pdf', 'label': 'CV (PDF)', 'type': 'binary', 'full_width': True},
 			{'name': 'cv_tanggal', 'label': 'Tanggal CV', 'type': 'date'},
+		],
+	},
+	'pengalaman_personalia': {
+		'title': 'Pengalaman Personalia',
+		'description': 'Pengalaman tenaga ahli/personalia.',
+		'model': 'sadaya_mitra.pengalaman.personalia',
+		'fields': [
+			{'name': 'pengalaman', 'label': 'Pengalaman', 'type': 'text'},
+			{'name': 'bukti_pengalaman', 'label': 'Bukti Pengalaman', 'type': 'binary', 'full_width': True},
+		],
+	},
+	'sertifikat_personalia': {
+		'title': 'Sertifikat Personalia',
+		'description': 'Sertifikat tenaga ahli/personalia.',
+		'model': 'sadaya_mitra.sertifikat.personalia',
+		'fields': [
+			{'name': 'nama_sertifikat', 'label': 'Nama Sertifikat', 'type': 'text'},
+			{'name': 'bukti_sertifikat', 'label': 'Bukti Sertifikat', 'type': 'binary', 'full_width': True},
 		],
 	},
 	'kantor': {
@@ -217,6 +240,8 @@ FORM_ORDER = [
 	'sertifikat_perusahaan',
 	'saham',
 	'personalia',
+	'pengalaman_personalia',
+	'sertifikat_personalia',
 	'kantor',
 	'fasilitas',
 	'pengalaman_perusahaan',
@@ -363,9 +388,10 @@ class SadayaMitraWebsite(http.Controller):
 			'nomor_telepon': post.get('nomor_telepon') or False,
 			'nomor_whatsapp': post.get('nomor_whatsapp') or False,
 			'narahubung': post.get('narahubung') or False,
+			'nomor_nik_narahubung': post.get('nomor_nik_narahubung') or False,
 			'alamat': post.get('alamat') or False,
-			'kualifikasi_usaha': post.get('kualifikasi_usaha') or False,
-			'masa_berlaku_domisili': post.get('masa_berlaku_domisili') or False,
+			'kata_sandi': post.get('kata_sandi') or False,
+			'nomor_npwp_perusahaan': post.get('nomor_npwp_perusahaan') or False,
 		}
 
 		password = post.get('password') or ''
@@ -378,14 +404,20 @@ class SadayaMitraWebsite(http.Controller):
 			errors.append('Nama badan usaha wajib diisi.')
 		if not values['email']:
 			errors.append('Email wajib diisi.')
-		if not password:
+		if not values['kata_sandi']:
 			errors.append('Kata sandi wajib diisi.')
-		if password and password != password_confirm:
-			errors.append('Konfirmasi kata sandi tidak sama.')
 
 		scan_file = request.httprequest.files.get('scan_domisili')
 		if scan_file and scan_file.filename:
 			values['scan_domisili'] = base64.b64encode(scan_file.read())
+
+		swafoto_file = request.httprequest.files.get('swafoto_narahubung')
+		if swafoto_file and swafoto_file.filename:
+			values['swafoto_narahubung'] = base64.b64encode(swafoto_file.read())
+
+		npwp_file = request.httprequest.files.get('bukti_npwp')
+		if npwp_file and npwp_file.filename:
+			values['bukti_npwp'] = base64.b64encode(npwp_file.read())
 
 		if password:
 			values['password'] = password

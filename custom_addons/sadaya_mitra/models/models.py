@@ -16,13 +16,12 @@ class SadayaMitraPenyedia(models.Model):
     nomor_telepon = fields.Char()
     nomor_whatsapp = fields.Char()
     narahubung = fields.Char()
+    nomor_nik_narahubung = fields.Char()
     alamat = fields.Text()
-    password = fields.Char()
-
-    kualifikasi_usaha = fields.Char()
-    scan_domisili = fields.Binary()
-    masa_berlaku_domisili = fields.Date()
-
+    kata_sandi = fields.Char()
+    swafoto_narahubung = fields.Binary()
+    nomor_npwp_perusahaan = fields.Char()
+    bukti_npwp = fields.Binary()
     # 1:1
     landasan_hukum_id = fields.One2many('sadaya_mitra.landasan.hukum', 'penyedia_id')
     keuangan_id = fields.One2many('sadaya_mitra.keuangan', 'penyedia_id')
@@ -52,6 +51,7 @@ class IzinUsaha(models.Model):
         ('lainnya', 'Lainnya')
     ])
 
+    nama_izin = fields.Char()
     nomor_izin = fields.Char()
     scan_dokumen = fields.Binary()
     masa_berlaku = fields.Date()
@@ -121,7 +121,7 @@ class Personalia(models.Model):
         ('pendukung', 'Pendukung')
     ])
 
-    nama = fields.Char()
+    tenaga_ahli = fields.Char()
     nik = fields.Char()
     tempat_lahir = fields.Char()
     tanggal_lahir = fields.Date()
@@ -131,7 +131,10 @@ class Personalia(models.Model):
 
     scan_ktp = fields.Binary()
     scan_ijazah = fields.Binary()
+    cv_pdf = fields.Binary()
     cv_tanggal = fields.Date()
+    pengalaman_ids = fields.One2many('sadaya_mitra.pengalaman.personalia', 'personalia_id')
+    sertifikat_ids = fields.One2many('sadaya_mitra.sertifikat.personalia', 'personalia_id')
 
 
 class SadayaMitraPengalamanPerusahaan(models.Model):
@@ -146,8 +149,8 @@ class PengalamanPersonalia(models.Model):
     _name = 'sadaya_mitra.pengalaman.personalia'
 
     personalia_id = fields.Many2one('sadaya_mitra.personalia', required=True)
-    nama_pengalaman = fields.Char()
-    upload_bukti = fields.Binary()
+    pengalaman = fields.Char()
+    bukti_pengalaman = fields.Binary()
 
 
 class Pengurus(models.Model):
@@ -185,8 +188,8 @@ class SertifikatKeahlianPersonalia(models.Model):
     _name = 'sadaya_mitra.sertifikat.personalia'
 
     personalia_id = fields.Many2one('sadaya_mitra.personalia', required=True)
-    judul = fields.Char()
-    upload = fields.Binary()
+    nama_sertifikat = fields.Char()
+    bukti_sertifikat = fields.Binary()
 
 
 class SadayaMitraRiwayatDpt(models.Model):
@@ -216,6 +219,7 @@ class LandasanHukum(models.Model):
     nomor_pengesahan = fields.Char()
     tanggal_pengesahan = fields.Date()
     perubahan_akta = fields.Text()
+    scan_bukti = fields.Binary()
 
     _sql_constraints = [
         ('unique_penyedia_landasan', 'unique(penyedia_id)',
@@ -228,7 +232,9 @@ class SadayaMitraSaham(models.Model):
     _description = 'Kepemilikan Saham'
 
     penyedia_id = fields.Many2one('sadaya_mitra.penyedia', required=True, ondelete='cascade')
-    name = fields.Char()
+    susunan = fields.Char()
+    nik = fields.Char()
+    posisi = fields.Char()
 
 
 class SadayaMitraKantor(models.Model):
