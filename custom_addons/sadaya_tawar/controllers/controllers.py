@@ -1,21 +1,16 @@
-# from odoo import http
+from odoo import http
+from odoo.http import request
 
+class SadayaTawarPortal(http.Controller):
 
-# class SadayaTawarPolban(http.Controller):
-#     @http.route('/sadaya_tawar_polban/sadaya_tawar_polban', auth='public')
-#     def index(self, **kw):
-#         return "Hello, world"
+    # Membuat URL /sadaya_tawar/paket untuk melihat daftar pengumuman
+    @http.route(['/sadaya_tawar/paket'], type='http', auth="public", website=True)
+    def list_paket_tawar(self, **kwargs):
+        # Hanya tarik paket yang statusnya 'published' (Pengumuman)
+        pakets = request.env['sadaya_tawar.paket'].sudo().search([('state', '=', 'published')])
+        return request.render('sadaya_tawar.portal_list_paket_template', {'pakets': pakets})
 
-#     @http.route('/sadaya_tawar_polban/sadaya_tawar_polban/objects', auth='public')
-#     def list(self, **kw):
-#         return http.request.render('sadaya_tawar_polban.listing', {
-#             'root': '/sadaya_tawar_polban/sadaya_tawar_polban',
-#             'objects': http.request.env['sadaya_tawar_polban.sadaya_tawar_polban'].search([]),
-#         })
-
-#     @http.route('/sadaya_tawar_polban/sadaya_tawar_polban/objects/<model("sadaya_tawar_polban.sadaya_tawar_polban"):obj>', auth='public')
-#     def object(self, obj, **kw):
-#         return http.request.render('sadaya_tawar_polban.object', {
-#             'object': obj
-#         })
-
+    # Membuat URL untuk melihat detail satu paket spesifik
+    @http.route(['/sadaya_tawar/paket/<model("sadaya_tawar.paket"):paket>'], type='http', auth="public", website=True)
+    def detail_paket_tawar(self, paket, **kwargs):
+        return request.render('sadaya_tawar.portal_detail_paket_template', {'paket': paket})
