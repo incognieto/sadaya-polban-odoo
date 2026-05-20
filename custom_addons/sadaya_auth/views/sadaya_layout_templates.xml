@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ============================================
+         SADAYA BASE LAYOUT (untuk halaman auth)
+         ============================================ -->
+    <template id="sadaya_layout_auth" name="Sadaya Auth Layout">
+        <t t-call="web.layout">
+            <t t-set="head">
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <title><t t-out="title or 'Sadaya'"/> | Sadaya</title>
+                <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=Fraunces:ital,wght@0,400;0,600;1,400&amp;display=swap"/>
+                <link rel="stylesheet" t-att-href="'/sadaya_auth/static/src/css/sadaya_main.css'"/>
+            </t>
+
+            <div class="sadaya-auth-page">
+                <!-- Panel Kiri: Branding -->
+                <div class="sadaya-auth-panel-left">
+                    <div class="sadaya-auth-brand">
+                        <div class="sadaya-auth-brand-logo">
+                            <span>S</span>
+                        </div>
+                        <h1 class="sadaya-auth-brand-name">Sadaya</h1>
+                        <p class="sadaya-auth-tagline">Platform Pengadaan Barang &amp; Jasa Digital</p>
+                    </div>
+
+                    <div class="sadaya-auth-features">
+                        <div class="sadaya-auth-feature">
+                            <div class="sadaya-auth-feature-icon">&#127963;</div>
+                            <div class="sadaya-auth-feature-text">
+                                <div class="sadaya-auth-feature-title">Terpercaya &amp; Terverifikasi</div>
+                                <div class="sadaya-auth-feature-desc">Setiap vendor diverifikasi NIK dan dokumen resmi perusahaan</div>
+                            </div>
+                        </div>
+                        <div class="sadaya-auth-feature">
+                            <div class="sadaya-auth-feature-icon">&#128203;</div>
+                            <div class="sadaya-auth-feature-text">
+                                <div class="sadaya-auth-feature-title">Pengadaan Transparan</div>
+                                <div class="sadaya-auth-feature-desc">Proses tender dan seleksi vendor yang adil dan akuntabel</div>
+                            </div>
+                        </div>
+                        <div class="sadaya-auth-feature">
+                            <div class="sadaya-auth-feature-icon">&#128274;</div>
+                            <div class="sadaya-auth-feature-text">
+                                <div class="sadaya-auth-feature-title">Keamanan Data</div>
+                                <div class="sadaya-auth-feature-desc">Data Anda dilindungi dengan enkripsi tingkat enterprise</div>
+                            </div>
+                        </div>
+                        <div class="sadaya-auth-feature">
+                            <div class="sadaya-auth-feature-icon">&#9889;</div>
+                            <div class="sadaya-auth-feature-text">
+                                <div class="sadaya-auth-feature-title">Proses Cepat</div>
+                                <div class="sadaya-auth-feature-desc">Pengadaan digital yang efisien dan hemat waktu</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel Kanan: Form -->
+                <div class="sadaya-auth-panel-right">
+                    <div class="sadaya-auth-form-container sadaya-animate-fade">
+                        <t t-out="0"/>
+                    </div>
+                    <div class="sadaya-auth-footer">
+                        &#169; 2026 Sadaya. Hak Cipta Dilindungi.
+                    </div>
+                </div>
+            </div>
+
+            <script t-att-src="'/sadaya_auth/static/src/js/sadaya_auth.js'"/>
+            <script t-att-src="'/sadaya_auth/static/src/js/sadaya_register.js'"/>
+        </t>
+    </template>
+
+    <!-- ============================================
+         SADAYA APP LAYOUT (setelah login)
+         ============================================ -->
+    <template id="sadaya_layout_app" name="Sadaya App Layout">
+        <t t-call="web.layout">
+            <t t-set="head">
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <title><t t-out="title or 'Dashboard'"/> | Sadaya</title>
+                <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=Fraunces:ital,wght@0,400;0,600;1,400&amp;display=swap"/>
+                <link rel="stylesheet" t-att-href="'/sadaya_auth/static/src/css/sadaya_main.css'"/>
+            </t>
+
+            <div class="sadaya-layout">
+                <!-- NAVBAR -->
+                <nav class="sadaya-navbar">
+                    <a href="/sadaya/dashboard" class="sadaya-navbar-brand">
+                        <div class="sadaya-navbar-logo">S</div>
+                        <span class="sadaya-navbar-name">Sadaya</span>
+                    </a>
+
+                    <ul class="sadaya-navbar-nav">
+                        <li><a href="/sadaya/dashboard">Dashboard</a></li>
+                        <li><a href="/sadaya/pengadaan">Pengadaan</a></li>
+                        <li><a href="/sadaya/dokumen">Dokumen</a></li>
+                    </ul>
+
+                    <div class="sadaya-navbar-user">
+                        <div class="sadaya-avatar">
+                            <t t-out="(request.env.user.name or 'U')[0].upper()"/>
+                        </div>
+                        <span style="font-size:0.9rem; font-weight:500; color:var(--sadaya-text);">
+                            <t t-out="request.env.user.name"/>
+                        </span>
+                        <a href="/sadaya/logout" class="sadaya-btn sadaya-btn-outline sadaya-btn-sm" style="margin-left:0.5rem;">
+                            Keluar
+                        </a>
+                    </div>
+                </nav>
+
+                <!-- BODY -->
+                <div class="sadaya-app-container">
+                    <!-- SIDEBAR -->
+                    <aside class="sadaya-sidebar">
+                        <div class="sadaya-sidebar-section">
+                            <div class="sadaya-sidebar-label">Menu Utama</div>
+                            <a href="/sadaya/dashboard" class="sadaya-sidebar-item">
+                                <span class="sadaya-sidebar-icon">&#127968;</span>
+                                Dashboard
+                            </a>
+                            <a href="/sadaya/profile" class="sadaya-sidebar-item">
+                                <span class="sadaya-sidebar-icon">&#128100;</span>
+                                Profil Saya
+                            </a>
+                            <a href="/sadaya/pengadaan" class="sadaya-sidebar-item">
+                                <span class="sadaya-sidebar-icon">&#128203;</span>
+                                Pengadaan
+                            </a>
+                            <a href="/sadaya/dokumen" class="sadaya-sidebar-item">
+                                <span class="sadaya-sidebar-icon">&#128193;</span>
+                                Dokumen Saya
+                            </a>
+                        </div>
+
+                        <div class="sadaya-sidebar-section">
+                            <div class="sadaya-sidebar-label">Akun</div>
+                            <a href="/sadaya/profile" class="sadaya-sidebar-item">
+                                <span class="sadaya-sidebar-icon">&#9881;</span>
+                                Pengaturan
+                            </a>
+                            <a href="/sadaya/logout" class="sadaya-sidebar-item" style="color: var(--sadaya-error)">
+                                <span class="sadaya-sidebar-icon">&#128682;</span>
+                                Keluar
+                            </a>
+                        </div>
+                    </aside>
+
+                    <!-- MAIN CONTENT -->
+                    <main class="sadaya-main">
+                        <t t-out="0"/>
+                    </main>
+                </div>
+            </div>
+
+            <script t-att-src="'/sadaya_auth/static/src/js/sadaya_auth.js'"/>
+        </t>
+    </template>
+
+</odoo>

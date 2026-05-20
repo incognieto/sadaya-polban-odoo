@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_list_paket_template" name="Daftar Paket Sadaya Tawar">
+        <t t-call="website.layout">
+            <div class="container mt-5">
+                <h2 class="mb-4">Portal Pengadaan - Sadaya Tawar</h2>
+                <table class="table table-striped table-hover border">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Kode Paket</th>
+                            <th>Nama Paket</th>
+                            <th>Metode Pemilihan</th>
+                            <th>Nilai HPS</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="pakets" t-as="pkt">
+                            <tr>
+                                <td><t t-esc="pkt.kode_paket"/></td>
+                                <td><strong><t t-esc="pkt.name"/></strong></td>
+                                <td class="text-uppercase"><t t-esc="pkt.metode_pemilihan"/></td>
+                                <td>Rp <t t-esc="'{:,}'.format(pkt.nilai_hps)"/></td>
+                                <td>
+                                    <a t-attf-href="/sadaya_tawar/paket/#{pkt.id}" class="btn btn-sm btn-primary">Lihat Detail</a>
+                                </td>
+                            </tr>
+                        </t>
+                        <tr t-if="not pakets">
+                            <td colspan="5" class="text-center text-muted">Belum ada paket yang diumumkan.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_detail_paket_template" name="Detail Paket Sadaya Tawar">
+        <t t-call="website.layout">
+            <div class="container mt-5 mb-5">
+                <a href="/sadaya_tawar/paket" class="btn btn-outline-secondary mb-3">&amp;larr; Kembali ke Daftar</a>
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><t t-esc="paket.name"/></h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <p><strong>Kode Paket:</strong> <t t-esc="paket.kode_paket"/></p>
+                                <p><strong>Metode Pemilihan:</strong> <t t-esc="paket.metode_pemilihan.replace('_', ' ').title()"/></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Jenis Kontrak:</strong> <t t-esc="paket.jenis_kontrak.replace('_', ' ').title()"/></p>
+                                <p><strong>Nilai HPS:</strong> Rp <t t-esc="'{:,}'.format(paket.nilai_hps)"/></p>
+                            </div>
+                        </div>
+                        <div class="alert alert-info">
+                            <strong>Batas Pendaftaran:</strong> <t t-esc="paket.batas_pendaftaran or 'Belum ditentukan'"/>
+                        </div>
+                        
+                        <div class="mt-4 text-end">
+                            <button class="btn btn-success btn-lg">Nyatakan Minat / Daftar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>
