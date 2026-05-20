@@ -3,3 +3,5 @@ access_sadaya_langsung_paket,sadaya_langsung.paket,model_sadaya_langsung_paket,b
 access_sadaya_langsung_paket_line,sadaya_langsung.paket.line,model_sadaya_langsung_paket_line,base.group_user,1,1,1,1
 access_sadaya_langsung_penawaran,sadaya_langsung.penawaran,model_sadaya_langsung_penawaran,base.group_user,1,1,1,1
 access_sadaya_langsung_kontrak,sadaya_langsung.kontrak,model_sadaya_langsung_kontrak,base.group_user,1,1,1,1
+access_sadaya_langsung_paket_portal,sadaya_langsung.paket,model_sadaya_langsung_paket,base.group_portal,1,0,0,0
+access_sadaya_langsung_penawaran_portal,sadaya_langsung.penawaran,model_sadaya_langsung_penawaran,base.group_portal,1,1,1,0

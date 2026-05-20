@@ -394,8 +394,8 @@ class SadayaMitraWebsite(http.Controller):
 			'nomor_npwp_perusahaan': post.get('nomor_npwp_perusahaan') or False,
 		}
 
-		password = post.get('password') or ''
-		password_confirm = post.get('password_confirm') or ''
+		password = post.get('kata_sandi') or ''
+		password_confirm = post.get('kata_sandi_confirm') or ''
 
 		errors = []
 		if not values['jenis_penyedia']:
@@ -404,8 +404,12 @@ class SadayaMitraWebsite(http.Controller):
 			errors.append('Nama badan usaha wajib diisi.')
 		if not values['email']:
 			errors.append('Email wajib diisi.')
-		if not values['kata_sandi']:
+		if not password:
 			errors.append('Kata sandi wajib diisi.')
+		if not password_confirm:
+			errors.append('Konfirmasi kata sandi wajib diisi.')
+		if password and password_confirm and password != password_confirm:
+			errors.append('Kata sandi dan konfirmasi kata sandi harus sama.')
 
 		scan_file = request.httprequest.files.get('scan_domisili')
 		if scan_file and scan_file.filename:
@@ -419,9 +423,6 @@ class SadayaMitraWebsite(http.Controller):
 		if npwp_file and npwp_file.filename:
 			values['bukti_npwp'] = base64.b64encode(npwp_file.read())
 
-		if password:
-			values['password'] = password
-
 		if errors:
 			return request.render('sadaya_mitra.sadaya_mitra_penyedia_form', {
 				'values': post,
@@ -430,4 +431,3 @@ class SadayaMitraWebsite(http.Controller):
 
 		request.env['sadaya_mitra.penyedia'].sudo().create(values)
 		return request.redirect('/sadaya_mitra/lanjutan')
-
