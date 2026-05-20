@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Action -->
-    <record id="action_rancang_usulan" model="ir.actions.act_window">
-        <field name="name">Usulan Kebutuhan (RAB &amp; KAK)</field>
-        <field name="res_model">rancang.usulan</field>
-        <field name="view_mode">list,form</field>
+    <!-- Search View -->
+    <record id="view_rancang_usulan_search" model="ir.ui.view">
+        <field name="name">rancang.usulan.search</field>
+        <field name="model">rancang.usulan</field>
+        <field name="arch" type="xml">
+            <search string="Pencarian Usulan">
+                <field name="name"/>
+                <field name="pemohon"/>
+                <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                <filter string="Menunggu Persetujuan" name="submitted" domain="[('state','=','submitted')]"/>
+                <filter string="Disetujui" name="approved" domain="[('state','=','approved')]"/>
+                <separator/>
+                <filter string="Berdasarkan Unit Kerja" name="group_by_pemohon" context="{'group_by':'pemohon'}"/>
+                <filter string="Berdasarkan Status" name="group_by_state" context="{'group_by':'state'}"/>
+            </search>
+        </field>
     </record>
 
     <!-- Tree View -->
@@ -15,9 +26,10 @@
             <list string="Daftar Usulan">
                 <field name="name"/>
                 <field name="pemohon"/>
+                <field name="jenis_kebutuhan"/>
                 <field name="rab"/>
                 <field name="klasifikasi"/>
-                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-warning="state == 'submitted'" decoration-success="state == 'approved' or state == 'published'"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-warning="state == 'submitted'" decoration-danger="state in ('rejected', 'returned')" decoration-success="state == 'approved' or state == 'published'"/>
             </list>
         </field>
     </record>
@@ -29,25 +41,38 @@
         <field name="arch" type="xml">
             <form string="Detail Usulan">
                 <header>
-                    <button name="action_submit" string="Ajukan" type="object" invisible="state != 'draft'" class="oe_highlight"/>
+                    <button name="action_submit" string="Ajukan" type="object" invisible="state not in ('draft', 'returned')" class="oe_highlight"/>
                     <button name="action_approve" string="Setujui" type="object" invisible="state != 'submitted'" class="oe_highlight"/>
+                    <button name="action_return" string="Kembalikan" type="object" invisible="state != 'submitted'" class="btn-warning"/>
+                    <button name="action_reject" string="Tolak" type="object" invisible="state != 'submitted'" class="btn-danger"/>
                     <button name="action_publish_rup" string="Publikasi ke RUP" type="object" invisible="state != 'approved'" class="oe_highlight"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,published"/>
                 </header>
                 <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="state not in ('draft', 'returned')" placeholder="Judul Usulan"/>
+                        </h1>
+                    </div>
                     <group>
                         <group>
-                            <field name="name" readonly="state != 'draft'"/>
-                            <field name="pemohon" readonly="state != 'draft'"/>
+                            <field name="pemohon" readonly="state not in ('draft', 'returned')"/>
+                            <field name="jenis_kebutuhan" readonly="state not in ('draft', 'returned')"/>
                         </group>
                         <group>
-                            <field name="rab" readonly="state != 'draft'"/>
+                            <field name="rab" readonly="state not in ('draft', 'returned')"/>
                             <field name="klasifikasi" readonly="1"/>
                         </group>
                     </group>
                     <notebook>
+                        <page string="Detail Kebutuhan">
+                            <field name="deskripsi_kebutuhan" readonly="state not in ('draft', 'returned')" placeholder="Jelaskan secara detail..."/>
+                        </page>
                         <page string="Kerangka Acuan Kerja (KAK)">
-                            <field name="kak" readonly="state != 'draft'"/>
+                            <field name="kak" readonly="state not in ('draft', 'returned')"/>
+                        </page>
+                        <page string="Lampiran">
+                            <field name="attachment_ids" widget="many2many_binary" readonly="state not in ('draft', 'returned')"/>
                         </page>
                     </notebook>
                 </sheet>
@@ -55,8 +80,25 @@
         </field>
     </record>
 
+    <!-- Action untuk User/Unit Kerja -->
+    <record id="action_rancang_usulan_user" model="ir.actions.act_window">
+        <field name="name">Pengajuan Kebutuhan</field>
+        <field name="res_model">rancang.usulan</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_draft': 1}</field>
+    </record>
+
+    <!-- Action untuk Manajemen -->
+    <record id="action_rancang_usulan_manajemen" model="ir.actions.act_window">
+        <field name="name">Persetujuan Manajemen</field>
+        <field name="res_model">rancang.usulan</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_submitted': 1}</field>
+    </record>
+
     <!-- Menus -->
     <menuitem id="menu_rancang_root" name="Sadaya Rancang" sequence="5"/>
-    <menuitem id="menu_rancang_usulan" name="Usulan Kebutuhan" parent="menu_rancang_root" action="action_rancang_usulan" sequence="10"/>
+    <menuitem id="menu_rancang_usulan_user" name="Pengajuan Kebutuhan" parent="menu_rancang_root" action="action_rancang_usulan_user" sequence="10"/>
+    <menuitem id="menu_rancang_usulan_manajemen" name="Persetujuan Manajemen" parent="menu_rancang_root" action="action_rancang_usulan_manajemen" sequence="20"/>
 
 </odoo>

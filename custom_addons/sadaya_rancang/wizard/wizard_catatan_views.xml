@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_rancang_wizard_catatan_form" model="ir.ui.view">
+        <field name="name">rancang.wizard.catatan.form</field>
+        <field name="model">rancang.wizard.catatan</field>
+        <field name="arch" type="xml">
+            <form string="Catatan">
+                <sheet>
+                    <group>
+                        <field name="usulan_id" invisible="1"/>
+                        <field name="action_type" invisible="1"/>
+                        <field name="catatan" placeholder="Masukkan alasan atau catatan Anda di sini..."/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_confirm" string="Konfirmasi" type="object" class="btn-primary"/>
+                    <button string="Batal" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
