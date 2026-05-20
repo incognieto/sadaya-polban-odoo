@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sadaya_langsung_paket,sadaya_langsung.paket,model_sadaya_langsung_paket,base.group_user,1,1,1,1
+access_sadaya_langsung_paket_line,sadaya_langsung.paket.line,model_sadaya_langsung_paket_line,base.group_user,1,1,1,1
+access_sadaya_langsung_penawaran,sadaya_langsung.penawaran,model_sadaya_langsung_penawaran,base.group_user,1,1,1,1
+access_sadaya_langsung_kontrak,sadaya_langsung.kontrak,model_sadaya_langsung_kontrak,base.group_user,1,1,1,1
