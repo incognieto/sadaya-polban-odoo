@@ -140,6 +140,8 @@
                 <field name="unit_pengusul"/>
                 <field name="contract_count" readonly="1"/>
                 <field name="jenis_pengadaan"/>
+                <field name="vendor_pemenang_id" string="Vendor Pemenang"
+                       invisible="status_paket in ('draft','undangan','penawaran','evaluasi')"/>
                 <field name="status_paket" string="Status Paket"/>
               </group>
               <group string="Jadwal">
@@ -172,7 +174,7 @@
               <page string="Pengolahan Penawaran" name="penawaran_page">
                 <field name="penawaran_ids" nolabel="1">
                   <list editable="bottom">
-                    <field name="vendor_id"/>
+                    <field name="vendor_id" domain="[('is_sadaya_mitra_vendor','=',True)]"/>
                     <field name="harga_penawaran"/>
                     <field name="dokumen_penawaran" filename="dokumen_filename"/>
                     <field name="dokumen_filename" column_invisible="1"/>
@@ -223,6 +225,7 @@
       <field name="res_model">sadaya_langsung.paket</field>
       <field name="view_mode">kanban,list,form</field>
       <field name="view_id" ref="view_sadaya_langsung_paket_kanban"/>
+      <field name="domain">[("status_paket", "!=", "draft")]</field>
       <field name="help" type="html">
         <p class="o_view_nocontent_smiling_face">
           Belum ada paket tersedia.

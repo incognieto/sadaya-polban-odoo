@@ -98,6 +98,7 @@ class SadayaLangsungPaket(models.Model):
         string="Vendor Pemenang",
         tracking=True,
         help="Vendor yang terpilih sebagai pemenang pengadaan",
+        domain=[("is_sadaya_mitra_vendor", "=", True)],
     )
 
     kontrak_ids = fields.One2many(
@@ -203,7 +204,26 @@ class SadayaLangsungPaket(models.Model):
         for rec in self:
             if not rec.vendor_pemenang_id:
                 raise ValidationError(
-                    "Harap pilih Vendor Pemenang terlebih dahulu sebelum melanjutkan ke tahap ini."
+                    "Harap pilih Vendor terlebih dahulu sebelum melanjutkan ke tahap ini."
+                )
+
+    def _ensure_ready_for_undangan(self, vals=None):
+        vals = vals or {}
+        for rec in self:
+            tanggal_mulai = vals.get("tanggal_mulai", rec.tanggal_mulai)
+            tanggal_selesai = vals.get("tanggal_selesai", rec.tanggal_selesai)
+
+            if not tanggal_mulai or not tanggal_selesai:
+                raise ValidationError(
+                    "Tanggal Mulai dan Tanggal Selesai wajib diisi sebelum melanjutkan."
+                )
+            if tanggal_selesai < tanggal_mulai:
+                raise ValidationError(
+                    "Tanggal Selesai tidak boleh lebih awal dari Tanggal Mulai."
+                )
+            if not rec.penawaran_ids or not any(p.vendor_id for p in rec.penawaran_ids):
+                raise ValidationError(
+                    "Minimal 1 Vendor wajib diisi di subtab 'Pengolahan Penawaran' sebelum mengirim undangan."
                 )
 
     def _ensure_contract_not_exists(self):
@@ -214,6 +234,7 @@ class SadayaLangsungPaket(models.Model):
     def action_kirim_undangan(self):
         """Step 1→2: Draft → Kirim Undangan"""
         self._ensure_status_transition_allowed("undangan")
+        self._ensure_ready_for_undangan()
         self.write({"status_paket": "undangan"})
 
     def action_tunggu_penawaran(self):
@@ -268,6 +289,8 @@ class SadayaLangsungPaket(models.Model):
     def write(self, vals):
         if vals.get("status_paket"):
             self._ensure_status_transition_allowed(vals.get("status_paket"))
+            if vals.get("status_paket") == "undangan":
+                self._ensure_ready_for_undangan(vals)
             if vals.get("status_paket") == "kontrak":
                 self._ensure_vendor_pemenang()
                 if any(rec.kontrak_ids for rec in self):
@@ -346,8 +369,9 @@ class SadayaLangsungPenawaran(models.Model):
         "res.partner",
         string="Vendor / Penyedia",
         required=True,
+        domain=[("is_sadaya_mitra_vendor", "=", True)],
     )
-    harga_penawaran = fields.Float(string="Harga Penawaran", required=True)
+    harga_penawaran = fields.Float(string="Harga Penawaran")
     tanggal = fields.Date(string="Tanggal Penawaran", default=fields.Date.today)
 
     dokumen_penawaran = fields.Binary(string="Dokumen Penawaran")
@@ -391,6 +415,10 @@ class SadayaLangsungPenawaran(models.Model):
         for rec in self:
             if not rec.lulus_evaluasi:
                 raise ValidationError("Vendor tidak memenuhi syarat lulus evaluasi!")
+            if not rec.harga_penawaran:
+                raise ValidationError(
+                    "Harga penawaran wajib diisi sebelum menetapkan pemenang."
+                )
             # Reset semua penawaran lain di paket ini
             siblings = self.search(
                 [

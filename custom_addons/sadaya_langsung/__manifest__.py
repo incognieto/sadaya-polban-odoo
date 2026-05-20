@@ -15,6 +15,7 @@
     "depends": [
         "base",
         "mail",
+        "sadaya_mitra",
     ],
     "data": [
         "security/ir.model.access.csv",

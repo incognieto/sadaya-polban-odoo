@@ -18,3 +18,4 @@ from . import sbu
 from . import sertifikat_personalia
 from . import sertifikat_perusahaan
 from . import tte
+from . import res_partner
