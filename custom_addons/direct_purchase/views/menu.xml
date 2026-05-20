@@ -12,7 +12,7 @@
     </field>
   </record>
 
-  <menuitem id="menu_direct_purchase_root" name="Pembelian Langsung" sequence="50"/>
+  <menuitem id="menu_direct_purchase_root" name="Sadaya Rutin" sequence="50"/>
 
   <menuitem
     id="menu_direct_purchase_dashboard"

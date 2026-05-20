@@ -39,10 +39,12 @@ class Contract(models.Model):
     status = fields.Selection(
         [
             ("draft", "Draft"),
-            ("preparation", "Persiapan Kontrak"),
-            ("in_progress", "Proses Kontrak"),
-            ("done", "Selesai Kontrak"),
-            ("addendum", "Addendum Kontrak"),
+            ("spk_preparation", "Persiapan SPK"),
+            ("spk_process", "Proses SPK"),
+            ("done", "Selesai"),
+            ("revision", "Revisi"),
+            ("addendum", "Addendum"),
+            ("cancelled", "Batal"),
         ],
         string="Status Kontrak",
         default="draft",

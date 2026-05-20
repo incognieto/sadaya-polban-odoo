@@ -2,6 +2,6 @@
 <odoo>
   <!-- Simple baseline group for prototype access -->
   <record id="group_direct_purchase_user" model="res.groups">
-    <field name="name">Pembelian Langsung User</field>
+    <field name="name">Sadaya Rutin User</field>
   </record>
 </odoo>
