@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "Pembelian Langsung",
-    "summary": "Modul pembelian langsung",
+    "name": "Sadaya Rutin",
+    "summary": "E-Purchasing untuk belanja operasional rutin via e-katalog",
     "version": "0.1.0",
     "category": "Operations/Procurement",
     "license": "LGPL-3",
@@ -10,16 +10,21 @@
     "depends": [
         "base",
         "mail",
-        'website',
+        "website",
     ],
-   "data": [
+    "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
         "views/procurement_package_views.xml",
         "views/contract_views.xml",
         "views/menu.xml",
-        "views/portal_templates.xml",  
+        "views/portal_templates.xml",
     ],
+    "assets": {
+        "web.assets_frontend": [
+            "direct_purchase/static/src/css/portal.css",
+        ],
+    },
     "application": True,
     "installable": True,
 }

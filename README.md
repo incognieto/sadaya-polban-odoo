@@ -18,6 +18,12 @@ The system comprises five interconnected main modules:
 4. **Direct Procurement** - Manages procurement packages below the budget threshold with simplified processes
 5. **SIBELA** (Direct Purchase System) - Fast and efficient operational transaction module for quick purchases
 
+## Sadaya Rutin (E-Purchasing)
+
+Documentation for the standalone Sadaya Rutin module:
+
+- custom_addons/direct_purchase/docs/SADAYA_RUTIN.md
+
 ## Prerequisites
 
 Before you begin, ensure you have the following installed on your system:
