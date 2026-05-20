@@ -323,9 +323,9 @@
                                         </td>
                                     </tr>
                                 </t>
-                                <t t-foreach="packages" t-as="package" t-index="idx">
+                                <t t-foreach="packages" t-as="package">
                                     <tr class="text-center">
-                                        <td><t t-esc="idx + 1"/></td>
+                                        <td><t t-esc="package_index + 1"/></td>
                                         <td><span t-field="package.code"/></td>
                                         <td class="text-start fw-bold"><span t-field="package.name"/></td>
                                         <td><span t-field="package.proposing_unit"/></td>
@@ -413,9 +413,9 @@
                                         </td>
                                     </tr>
                                 </t>
-                                <t t-foreach="contracts" t-as="contract" t-index="idx">
+                                <t t-foreach="contracts" t-as="contract">
                                     <tr class="text-center">
-                                        <td><t t-esc="idx + 1"/></td>
+                                        <td><t t-esc="contract_index + 1"/></td>
                                         <td class="text-start fw-bold"><span t-field="contract.package_id.name"/></td>
                                         <td><span t-field="contract.officer_name"/></td>
                                         <td><span t-field="contract.vendor_name"/></td>
