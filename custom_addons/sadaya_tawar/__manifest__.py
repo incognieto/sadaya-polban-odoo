@@ -1,23 +1,19 @@
+# -*- coding: utf-8 -*-
 {
-    'name': "sadaya-tawar",
-    'summary': "Modul Sadaya Tawar untuk Pengadaan Barang dan Jasa Polban",
+    'name': "Sadaya Tawar",
+    'summary': "Modul Publikasi & Penawaran Awal eProcurement Polban",
     'description': """
-Modul ini menangani:
-- Pembuatan Rencana Umum Pengadaan (RUP)
-- Pendaftaran Penawaran Harga dari Vendor
+        Modul ini berfungsi sebagai etalase publik jembatan antara perencanaan dan eksekusi.
+        Memungkinkan PPK memublikasikan RUP dan Vendor menyatakan minat/mendaftar.
     """,
-    'author': "Ichsan & Zaenal",
-    'website': "https://www.polban.ac.id",
+    'author': "Politeknik Negeri Bandung",
     'category': 'Procurement',
     'version': '1.0',
-    'depends': ['base', 'sadaya_rutin', 'sadaya_langsung', 'sadaya_lelang'],
+    'depends': ['base', 'website'],
     'data': [
         'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
-    ],
-    'demo': [
-        'demo/demo.xml',
     ],
     'application': True,
     'installable': True,

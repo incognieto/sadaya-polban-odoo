@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Homepage -->
+    <template id="sadaya_homepage" name="Sadaya Homepage">
+        <t t-call="website.layout">
+            <div class="container mt-5">
+                <div class="text-center">
+                    <h1>Sadaya</h1>
+                    <p>Sistem Pengadaan Digital</p>
+
+                    <a href="/sadaya/login" class="btn btn-primary">
+                        Login
+                    </a>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Login -->
+    <template id="sadaya_login" name="Sadaya Login">
+        <t t-call="website.layout">
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-4">
+
+                        <div class="card p-4 shadow">
+
+                            <h3 class="text-center mb-4">
+                                Login Sadaya
+                            </h3>
+
+                            <form action="/web/login" method="post">
+
+                                <input type="hidden"
+                                       name="csrf_token"
+                                       t-att-value="request.csrf_token()"/>
+
+                                <div class="mb-3">
+                                    <label>Email</label>
+
+                                    <input type="text"
+                                           name="login"
+                                           class="form-control"/>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>Password</label>
+
+                                    <input type="password"
+                                           name="password"
+                                           class="form-control"/>
+                                </div>
+
+                                <button type="submit"
+                                        class="btn btn-primary w-100">
+                                    Masuk
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Dashboard -->
+    <template id="sadaya_dashboard" name="Sadaya Dashboard">
+        <t t-call="website.layout">
+
+            <div class="container mt-5">
+
+                <h1>Dashboard Sadaya</h1>
+
+                <div class="alert alert-success">
+                    Login berhasil.
+                </div>
+
+            </div>
+
+        </t>
+    </template>
+
+</odoo>

@@ -1,0 +1,123 @@
+<odoo>
+    <template id="sadaya_mitra_lanjutan_landing" name="SadayaMitra Lanjutan Landing">
+        <t t-call="website.layout">
+            <section class="container my-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <h1 class="mb-2">Data Lanjutan Penyedia</h1>
+                        <p class="text-muted">Pilih bagian data lanjutan yang akan diisi. Pastikan email penyedia sudah terdaftar.</p>
+
+                        <div class="row g-4 mt-3">
+                            <t t-foreach="forms" t-as="form">
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card h-100">
+                                        <div class="card-body d-flex flex-column">
+                                            <h5 class="card-title"><t t-esc="form['title']"/></h5>
+                                            <p class="card-text text-muted"><t t-esc="form.get('description')"/></p>
+                                            <a class="btn btn-outline-primary mt-auto" t-att-href="form['url']">Isi Data</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </t>
+    </template>
+
+    <template id="sadaya_mitra_lanjutan_form" name="SadayaMitra Lanjutan Form">
+        <t t-call="website.layout">
+            <section class="container my-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <h1 class="mb-3"><t t-esc="config['title']"/></h1>
+                        <p class="text-muted">Gunakan email penyedia yang sudah terdaftar.</p>
+
+                        <t t-if="errors">
+                            <div class="alert alert-danger" role="alert">
+                                <ul class="mb-0">
+                                    <t t-foreach="errors" t-as="error">
+                                        <li><t t-esc="error"/></li>
+                                    </t>
+                                </ul>
+                            </div>
+                        </t>
+
+                        <form t-att-action="'/sadaya_mitra/lanjutan/%s/submit' % config['key']" method="post" enctype="multipart/form-data" class="o_website_form">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Email Penyedia</label>
+                                    <input type="email" class="form-control" name="penyedia_email" required="required" t-att-value="values.get('penyedia_email')"/>
+                                </div>
+
+                                <t t-foreach="config['fields']" t-as="field">
+                                    <div t-att-class="field.get('full_width') and 'col-12' or 'col-md-6'">
+                                        <label class="form-label"><t t-esc="field['label']"/></label>
+
+                                        <t t-if="field['type'] == 'selection'">
+                                            <select class="form-select" t-att-name="field['name']" t-att-required="field.get('required') and 'required' or None">
+                                                <option value="">Pilih</option>
+                                                <t t-foreach="field['options']" t-as="opt">
+                                                    <option t-att-value="opt['value']" t-att-selected="values.get(field['name']) == opt['value']">
+                                                        <t t-esc="opt['label']"/>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                        </t>
+                                        <t t-elif="field['type'] == 'many2one'">
+                                            <select class="form-select" t-att-name="field['name']" t-att-required="field.get('required') and 'required' or None">
+                                                <option value="">Pilih</option>
+                                                <t t-foreach="field['options']" t-as="opt">
+                                                    <option t-att-value="opt['id']" t-att-selected="values.get(field['name']) == str(opt['id'])">
+                                                        <t t-esc="opt['label']"/>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                        </t>
+                                        <t t-elif="field['type'] == 'textarea'">
+                                            <textarea class="form-control" t-att-name="field['name']" rows="3"><t t-esc="values.get(field['name'])"/></textarea>
+                                        </t>
+                                        <t t-elif="field['type'] == 'binary'">
+                                            <input type="file" class="form-control" t-att-name="field['name']"/>
+                                        </t>
+                                        <t t-elif="field['type'] == 'date'">
+                                            <input type="date" class="form-control" t-att-name="field['name']" t-att-value="values.get(field['name'])"/>
+                                        </t>
+                                        <t t-elif="field['type'] == 'datetime'">
+                                            <input type="datetime-local" class="form-control" t-att-name="field['name']" t-att-value="values.get(field['name'])"/>
+                                        </t>
+                                        <t t-else="">
+                                            <input type="text" class="form-control" t-att-name="field['name']" t-att-required="field.get('required') and 'required' or None" t-att-value="values.get(field['name'])"/>
+                                        </t>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <div class="mt-4 d-flex justify-content-between">
+                                <a class="btn btn-light" href="/sadaya_mitra/lanjutan">Kembali</a>
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </t>
+    </template>
+
+    <template id="sadaya_mitra_lanjutan_success" name="SadayaMitra Lanjutan Success">
+        <t t-call="website.layout">
+            <section class="container my-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        <h1 class="mb-3">Data Tersimpan</h1>
+                        <p class="text-muted">Data <t t-esc="config['title']"/> sudah tersimpan.</p>
+                        <a class="btn btn-primary" href="/sadaya_mitra/lanjutan">Kembali ke Landing</a>
+                    </div>
+                </div>
+            </section>
+        </t>
+    </template>
+</odoo>

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from . import tender_paket
-from . import tender_jadwal
-from . import tender_dokumen
-from . import tender_penawaran
+from . import sadaya_lelang_paket
+from . import sadaya_lelang_jadwal
+from . import sadaya_lelang_dokumen
+from . import sadaya_lelang_penawaran
+from . import sadaya_lelang_sanggah
 from . import res_partner

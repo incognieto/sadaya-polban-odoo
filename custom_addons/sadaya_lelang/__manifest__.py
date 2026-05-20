@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "sadaya-lelang",
-
+    'name': "Sadaya Lelang",
     'summary': """
         Sistem Pengadaan dan Tendering (SPSE Style)""",
 
@@ -18,15 +17,15 @@
     'version': '1.0',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'mail', 'website', 'portal'],
+    'depends': ['base', 'mail', 'portal'],
 
     # always loaded
     'data': [
-        'security/tender_groups.xml',
+        'security/sadaya_lelang_groups.xml',
         'security/ir.model.access.csv',
-        'views/tender_paket_views.xml',
+        'views/sadaya_lelang_paket_views.xml',
         'views/res_partner_views.xml',
-        'views/tender_menus.xml',
+        'views/sadaya_lelang_menus.xml',
         'views/portal_templates.xml',
     ],
     # only loaded in demonstration mode
