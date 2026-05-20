@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sadaya_tawar_paket,sadaya_tawar.paket,model_sadaya_tawar_paket,base.group_user,1,1,1,1
+access_sadaya_tawar_penawaran,sadaya_tawar.penawaran,model_sadaya_tawar_penawaran,base.group_user,1,1,1,1

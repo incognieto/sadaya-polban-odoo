@@ -16,7 +16,7 @@ The system comprises five interconnected main modules:
 2. **Quotation** (Proposal Module) - Initial interaction bridge between Polban admin and vendors for bidding
 3. **Tender** (Open Selection) - Handles large-value procurement packages (above Rp200 Million) with strict workflow management
 4. **Direct Procurement** - Manages procurement packages below the budget threshold with simplified processes
-5. **SIBELA** (Direct Purchase System) - Fast and efficient operational transaction module for quick purchases
+5. **SIBELA** (Sistem Pembelian Langsung) - Modul transaksi operasional yang cepat dan efisien untuk pembelian langsung
 
 ## Prerequisites
 
@@ -59,7 +59,7 @@ cd sadaya-polban-odoo
 The project contains the following structure:
 
 ```
-sadaya-polban-docker/
+sadaya-polban-odoo/
 ├── docker-compose.yml       # Docker Compose configuration file
 ├── custom_addons/           # Custom Odoo modules and addons
 └── README.md

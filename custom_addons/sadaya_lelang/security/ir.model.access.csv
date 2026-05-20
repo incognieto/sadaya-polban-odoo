@@ -1,0 +1,17 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_tender_paket_pokja,sadaya_lelang.paket.pokja,model_sadaya_lelang_paket,group_tender_pokja,1,1,1,0
+access_tender_paket_admin,sadaya_lelang.paket.admin,model_sadaya_lelang_paket,group_tender_admin,1,1,1,1
+access_tender_paket_portal,sadaya_lelang.paket.portal,model_sadaya_lelang_paket,base.group_portal,1,0,0,0
+access_tender_paket_public,sadaya_lelang.paket.public,model_sadaya_lelang_paket,base.group_public,1,0,0,0
+
+access_tender_jadwal_pokja,sadaya_lelang.jadwal.pokja,model_sadaya_lelang_jadwal,group_tender_pokja,1,1,1,1
+access_tender_jadwal_portal,sadaya_lelang.jadwal.portal,model_sadaya_lelang_jadwal,base.group_portal,1,0,0,0
+access_tender_jadwal_public,sadaya_lelang.jadwal.public,model_sadaya_lelang_jadwal,base.group_public,1,0,0,0
+
+access_tender_dokumen_pokja,sadaya_lelang.dokumen.pokja,model_sadaya_lelang_dokumen,group_tender_pokja,1,1,1,1
+access_tender_dokumen_portal,sadaya_lelang.dokumen.portal,model_sadaya_lelang_dokumen,base.group_portal,1,0,0,0
+access_tender_dokumen_public,sadaya_lelang.dokumen.public,model_sadaya_lelang_dokumen,base.group_public,1,0,0,0
+
+access_tender_penawaran_pokja,sadaya_lelang.penawaran.pokja,model_sadaya_lelang_penawaran,group_tender_pokja,1,1,0,0
+access_tender_penawaran_admin,sadaya_lelang.penawaran.admin,model_sadaya_lelang_penawaran,group_tender_admin,1,1,1,1
+access_tender_penawaran_portal,sadaya_lelang.penawaran.portal,model_sadaya_lelang_penawaran,base.group_portal,1,1,1,0
