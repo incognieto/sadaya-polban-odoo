@@ -9,7 +9,7 @@
         <field name="officer_name"/>
         <field name="vendor_name"/>
         <field name="procurement_type"/>
-        <field name="hps_value"/>
+        <field name="hps_value" widget="monetary" options="{'currency_field': 'currency_id'}"/>
         <field name="status"/>
         <field name="start_date"/>
       </list>
@@ -32,8 +32,9 @@
               <field name="procurement_type"/>
             </group>
             <group>
-              <field name="status"/>
-              <field name="hps_value"/>
+              <field name="status" widget="statusbar"/>
+              <field name="hps_value" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+              <field name="currency_id" invisible="1"/>
             </group>
           </group>
 

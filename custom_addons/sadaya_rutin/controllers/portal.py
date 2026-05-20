@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
+from datetime import date, datetime, timedelta
 
 from odoo import http
 from odoo.http import request
@@ -35,7 +35,9 @@ class DirectPurchasePortal(http.Controller):
         if end_date:
             domain.append(("end_date", "<=", end_date))
         if params.get("query"):
+            domain.append("|")
             domain.append(("name", "ilike", params["query"]))
+            domain.append(("code", "ilike", params["query"]))
         return domain
 
     def _build_contract_domain(self, params):
@@ -65,18 +67,62 @@ class DirectPurchasePortal(http.Controller):
         units = package_model.search_read([], ["proposing_unit"])
         return sorted({item["proposing_unit"] for item in units if item.get("proposing_unit")})
 
-    @http.route(["/purchase-portal", "/purchase-portal/dashboard"], type="http", auth="user", website=True)
+    def _get_action_id(self, xmlid):
+        try:
+            return request.env.ref(xmlid).id
+        except ValueError:
+            return False
+
+    def _get_month_range(self, today):
+        first_day = date(today.year, today.month, 1)
+        if today.month == 12:
+            last_day = date(today.year, 12, 31)
+        else:
+            last_day = date(today.year, today.month + 1, 1) - timedelta(days=1)
+        return first_day, last_day
+
+    @http.route(
+        [
+            "/sadaya-rutin",
+            "/sadaya-rutin/dashboard",
+            "/purchase-portal",
+            "/purchase-portal/dashboard",
+        ],
+        type="http",
+        auth="user",
+        website=True,
+    )
     def portal_dashboard(self, **params):
         package_model = request.env["sadaya_rutin.procurement_package"].sudo()
         packages = package_model.search([], order="start_date desc", limit=20)
+        today = date.today()
+        first_day, last_day = self._get_month_range(today)
+        active_domain = [("status", "not in", ["done", "cancelled"])]
+        pending_spk_domain = [("status", "in", ["spk_preparation", "spk_process"])]
+        done_month_domain = [
+            ("status", "=", "done"),
+            ("end_date", ">=", first_day),
+            ("end_date", "<=", last_day),
+        ]
         return request.render(
             "sadaya_rutin.portal_dashboard",
             {
                 "packages": packages,
+                "package_active_count": package_model.search_count(active_domain),
+                "package_pending_spk_count": package_model.search_count(pending_spk_domain),
+                "package_done_month_count": package_model.search_count(done_month_domain),
+                "package_action_id": self._get_action_id(
+                    "direct_purchase.action_direct_purchase_packages"
+                ),
             },
         )
 
-    @http.route(["/purchase-portal/packages"], type="http", auth="user", website=True)
+    @http.route(
+        ["/sadaya-rutin/paket", "/sadaya-rutin/packages", "/purchase-portal/packages"],
+        type="http",
+        auth="user",
+        website=True,
+    )
     def portal_packages(self, **params):
         package_model = request.env["sadaya_rutin.procurement_package"].sudo()
         domain = self._build_package_domain(params)
@@ -96,7 +142,33 @@ class DirectPurchasePortal(http.Controller):
             },
         )
 
-    @http.route(["/purchase-portal/contracts"], type="http", auth="user", website=True)
+    @http.route(
+        [
+            "/sadaya-rutin/paket/<int:package_id>",
+            "/sadaya-rutin/packages/<int:package_id>",
+            "/purchase-portal/packages/<int:package_id>",
+        ],
+        type="http",
+        auth="user",
+        website=True,
+    )
+    def portal_package_detail(self, package_id, **params):
+        package = request.env["direct_purchase.procurement_package"].sudo().browse(package_id)
+        if not package.exists():
+            return request.not_found()
+        return request.render(
+            "direct_purchase.portal_package_detail",
+            {
+                "package": package,
+            },
+        )
+
+    @http.route(
+        ["/sadaya-rutin/kontrak", "/sadaya-rutin/contracts", "/purchase-portal/contracts"],
+        type="http",
+        auth="user",
+        website=True,
+    )
     def portal_contracts(self, **params):
         contract_model = request.env["sadaya_rutin.contract"].sudo()
         domain = self._build_contract_domain(params)
