@@ -36,7 +36,7 @@ class SadayaTawarPaket(models.Model):
                     'procurement_type': 'goods',
                     'status': 'draft',
                 })
-            elif record.nilai_hps < 200000000:
+            elif record.nilai_hps <= 200000000:
                 # Ke Sadaya Langsung
                 self.env['sadaya_langsung.paket'].sudo().create({
                     'name': record.name,
