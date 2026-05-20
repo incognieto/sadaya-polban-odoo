@@ -4,26 +4,25 @@ from odoo.http import request
 
 class TenderPortal(http.Controller):
 
-    @http.route('/tenders', type='http', auth='public', website=True)
+    @http.route('/tender-portal/tenders', type='http', auth='public', website=False)
     def tender_list(self, **kwargs):
-        tenders = request.env['sadaya_lelang.paket'].sudo().search([('status', '!=', 'draft')])
+        tenders = request.env['sadaya_lelang.paket'].sudo().search([('status', 'not in', ['draft', 'menunggu_persetujuan'])])
         return request.render('sadaya_lelang.portal_tender_list', {
             'tenders': tenders
         })
 
-    @http.route(['/tenders/<model("sadaya_lelang.paket"):sadaya_lelang>'], type='http', auth='public', website=True)
-    def tender_detail(self, sadaya_lelang, **kwargs):
+    @http.route(['/tenders/<model("sadaya_lelang.paket"):tender>'], type='http', auth='public', website=False)
+    def tender_detail(self, tender, **kwargs):
         return request.render('sadaya_lelang.portal_tender_detail', {
-            'sadaya_lelang': sadaya_lelang
+            'tender': tender
         })
 
-    @http.route('/my/tenders', type='http', auth='user', website=True)
+    @http.route('/tender-portal/dashboard', type='http', auth='user', website=False)
     def my_tenders(self, **kwargs):
         partner = request.env.user.partner_id
         if not partner.is_vendor_tender:
-            return request.render('sadaya_lelang.portal_vendor_registration', {
-                'partner': partner
-            })
+            # We don't have portal_vendor_registration yet, just fallback or create it
+            return request.redirect('/my')
             
         bids = request.env['sadaya_lelang.penawaran'].sudo().search([('vendor_id', '=', partner.id)])
         return request.render('sadaya_lelang.portal_my_tenders', {

@@ -27,7 +27,7 @@ class RancangUsulan(models.Model):
         for record in self:
             if record.rab <= 50000000: # Contoh batas untuk operasional cepat (bisa disesuaikan)
                 record.klasifikasi = 'operasional'
-            elif record.rab < 200000000:
+            elif record.rab <= 200000000:
                 record.klasifikasi = 'non_tender'
             else:
                 record.klasifikasi = 'tender'
