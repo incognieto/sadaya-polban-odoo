@@ -35,7 +35,30 @@ class SadayaTawarPaket(models.Model):
         for vals in vals_list:
             if vals.get('kode_paket', '/') == '/':
                 vals['kode_paket'] = self.env['ir.sequence'].next_by_code('sadaya.tawar.paket.seq') or '/'
+                
+            # [AUTO-FILL] Pastikan metode_pemilihan terisi otomatis saat dibuat dari modul Rancang
+            if 'nilai_hps' in vals:
+                hps = vals['nilai_hps']
+                if hps < 50000000:
+                    vals['metode_pemilihan'] = 'e_purchasing'
+                elif 50000000 <= hps <= 200000000:
+                    vals['metode_pemilihan'] = 'pengadaan_langsung'
+                else:
+                    vals['metode_pemilihan'] = 'tender'
+                    
         return super(SadayaTawarPaket, self).create(vals_list)
+
+    def write(self, vals):
+        # [AUTO-FILL] Pastikan update HPS dari backend juga mengubah metode
+        if 'nilai_hps' in vals:
+            hps = vals['nilai_hps']
+            if hps < 50000000:
+                vals['metode_pemilihan'] = 'e_purchasing'
+            elif 50000000 <= hps <= 200000000:
+                vals['metode_pemilihan'] = 'pengadaan_langsung'
+            else:
+                vals['metode_pemilihan'] = 'tender'
+        return super(SadayaTawarPaket, self).write(vals)
 
     def action_publikasikan(self):
         for record in self:
@@ -43,6 +66,29 @@ class SadayaTawarPaket(models.Model):
 
     def action_route_paket(self):
         for record in self:
+            if record.nilai_hps < 50000000:
+                # Ke Sadaya Rutin
+                self.env['sadaya_rutin.procurement_package'].sudo().create({
+                    'name': record.name,
+                    'procurement_type': 'goods',
+                    'status': 'draft',
+                })
+            elif 50000000 <= record.nilai_hps <= 200000000:
+                # Ke Sadaya Langsung
+                self.env['sadaya_langsung.paket'].sudo().create({
+                    'name': record.name,
+                    'nilai_hps': record.nilai_hps,
+                    'status_paket': 'draft',
+                    'jenis_pengadaan': 'barang',
+                })
+            else:
+                # Ke Sadaya Lelang
+                self.env['sadaya_lelang.paket'].sudo().create({
+                    'name': record.name,
+                    'hps': record.nilai_hps,
+                    'status': 'draft',
+                    'metode_pemilihan': 'tender',
+                })
             record.state = 'routed'
 
     # =========================================================
@@ -53,25 +99,23 @@ class SadayaTawarPaket(models.Model):
     def _onchange_nilai_hps(self):
         """ Logika Front-End: Otomatis mengubah dropdown saat user mengetik angka HPS """
         if self.nilai_hps > 0:
+            # Perhatikan: gunakan < bukan <=
             if self.nilai_hps < 50000000:
                 self.metode_pemilihan = 'e_purchasing'
             elif 50000000 <= self.nilai_hps <= 200000000:
                 self.metode_pemilihan = 'pengadaan_langsung'
-            elif self.nilai_hps > 200000000:
+            else:
                 self.metode_pemilihan = 'tender'
 
     @api.constrains('nilai_hps', 'metode_pemilihan')
     def _check_batasan_metode(self):
         """ Logika Back-End: Mencegah penyimpanan ke database jika input melanggar batasan """
         for record in self:
-            # 1. Validasi E-Purchasing (< 50jt)
             if record.metode_pemilihan == 'e_purchasing' and record.nilai_hps >= 50000000:
                 raise ValidationError("Aturan Sistem: Metode E-Purchasing hanya diizinkan untuk pengadaan dengan nilai HPS di bawah Rp 50.000.000.")
             
-            # 2. Validasi Pengadaan Langsung (>= 50jt dan <= 200jt)
             elif record.metode_pemilihan == 'pengadaan_langsung' and (record.nilai_hps < 50000000 or record.nilai_hps > 200000000):
                 raise ValidationError("Aturan Sistem: Metode Pengadaan Langsung harus berada di rentang nilai HPS Rp 50.000.000 hingga Rp 200.000.000.")
             
-            # 3. Validasi Tender (> 200jt)
             elif record.metode_pemilihan == 'tender' and record.nilai_hps <= 200000000:
                 raise ValidationError("Aturan Sistem: Metode Tender diwajibkan untuk pengadaan dengan nilai HPS di atas Rp 200.000.000.")
