@@ -39,7 +39,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Kata Sandi</label>
-                                    <input type="password" class="form-control" name="kata_sandi" required="required" t-att-value="values.get('kata_sandi')"/>
+                                    <input type="password" class="form-control" name="kata_sandi" required="required"/>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Konfirmasi Kata Sandi</label>
