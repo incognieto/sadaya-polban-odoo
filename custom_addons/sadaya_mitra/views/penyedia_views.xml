@@ -28,7 +28,11 @@
                         <field name="nomor_telepon"/>
                         <field name="nomor_whatsapp"/>
                         <field name="narahubung"/>
+                        <field name="nomor_nik_narahubung"/>
+                        <field name="swafoto_narahubung"/>
                         <field name="alamat"/>
+                        <field name="nomor_npwp_perusahaan"/>
+                        <field name="bukti_npwp"/>
                     </group>
 
                     <notebook>

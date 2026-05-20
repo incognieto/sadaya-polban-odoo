@@ -1,0 +1,107 @@
+<odoo>
+    <template id="sadaya_mitra_penyedia_form" name="SadayaMitra Form Penyedia">
+        <t t-call="website.layout">
+            <section class="container my-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <h1 class="mb-3">Form Pendaftaran Penyedia</h1>
+                        <p class="text-muted">Lengkapi data penyedia untuk melanjutkan ke data lanjutan.</p>
+
+                        <t t-if="errors">
+                            <div class="alert alert-danger" role="alert">
+                                <ul class="mb-0">
+                                    <t t-foreach="errors" t-as="error">
+                                        <li><t t-esc="error"/></li>
+                                    </t>
+                                </ul>
+                            </div>
+                        </t>
+
+                        <form action="/sadaya_mitra/penyedia/submit" method="post" enctype="multipart/form-data" class="o_website_form">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Jenis Penyedia</label>
+                                    <select class="form-select" name="jenis_penyedia" required="required">
+                                        <option value="">Pilih</option>
+                                        <option value="badan_usaha" t-att-selected="values.get('jenis_penyedia') == 'badan_usaha'">Badan Usaha</option>
+                                        <option value="perorangan" t-att-selected="values.get('jenis_penyedia') == 'perorangan'">Perorangan</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Nama Badan Usaha</label>
+                                    <input type="text" class="form-control" name="nama_badan_usaha" required="required" t-att-value="values.get('nama_badan_usaha')"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" name="email" required="required" t-att-value="values.get('email')"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Kata Sandi</label>
+                                    <input type="kata_sandi" class="form-control" name="kata_sandi" required="required" t-att-value="values.get('kata_sandi')"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Konfirmasi Kata Sandi</label>
+                                    <input type="kata_sandi" class="form-control" name="kata_sandi_confirm" required="required"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Nomor Telepon</label>
+                                    <input type="text" class="form-control" name="nomor_telepon" t-att-value="values.get('nomor_telepon')"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Nomor WhatsApp</label>
+                                    <input type="text" class="form-control" name="nomor_whatsapp" t-att-value="values.get('nomor_whatsapp')"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Nama Narahubung</label>
+                                    <input type="text" class="form-control" name="narahubung" t-att-value="values.get('narahubung')"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Nomor NIK Narahubung</label>
+                                    <input type="text" class="form-control" name="nomor_nik_narahubung" t-att-value="values.get('nomor_nik_narahubung')"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Swafoto Narahubung (Memegang KTP)</label>
+                                    <input type="file" class="form-control" name="swafoto_narahubung"/>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Alamat</label>
+                                    <textarea class="form-control" name="alamat" rows="3"><t t-esc="values.get('alamat')"/></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Nomor NPWP Perusahaan</label>
+                                    <input type="text" class="form-control" name="nomor_npwp_perusahaan" t-att-value="values.get('nomor_npwp_perusahaan')"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Bukti NPWP</label>
+                                    <input type="file" class="form-control" name="bukti_npwp"/>
+                                </div>
+                                
+                            </div>
+
+                            <div class="mt-4 d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary">Kirim Pendaftaran</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </t>
+    </template>
+
+    <template id="sadaya_mitra_penyedia_success" name="SadayaMitra Form Penyedia Sukses">
+        <t t-call="website.layout">
+            <section class="container my-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        <h1 class="mb-3">Pendaftaran Berhasil</h1>
+                        <p class="text-muted">Terima kasih. Data penyedia sudah tersimpan.</p>
+                        <p class="mb-4">Silakan lanjutkan pengisian data lanjutan.</p>
+                        <a class="btn btn-primary" href="/sadaya_mitra/lanjutan">Ke Data Lanjutan</a>
+                    </div>
+                </div>
+            </section>
+        </t>
+    </template>
+</odoo>
