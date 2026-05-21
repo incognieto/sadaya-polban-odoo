@@ -31,7 +31,7 @@
                 <header>
                     <button name="action_publikasikan" string="Publikasikan ke Sadaya Tawar" type="object" class="oe_highlight" invisible="state != 'draft'"/>
                     <button name="action_route_paket" string="Kirim ke Modul Eksekusi (Otomatis)" type="object" class="oe_highlight" invisible="state != 'eval'"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,published,eval,routed"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,published,eval,routed" options="{'clickable': '1'}"/>
                 </header>
                 <sheet>
                     <div class="oe_title">

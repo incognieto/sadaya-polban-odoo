@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "Sadaya Rutin",
-    "summary": "Modul pembelian langsung",
+    "summary": "E-Purchasing untuk belanja operasional rutin via e-katalog",
     "version": "0.1.0",
     "category": "Operations/Procurement",
     "license": "LGPL-3",
@@ -10,7 +10,7 @@
     "depends": [
         "base",
         "mail",
-        'website',
+        "website",
     ],
     "data": [
         "security/security.xml",
@@ -20,6 +20,11 @@
         "views/menu.xml",
         "views/portal_templates.xml",
     ],
+    "assets": {
+        "web.assets_frontend": [
+            "sadaya_rutin/static/src/css/portal.css",
+        ],
+    },
     "application": True,
     "installable": True,
 }

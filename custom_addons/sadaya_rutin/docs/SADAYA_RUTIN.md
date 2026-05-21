@@ -11,7 +11,7 @@ Modul ini berjalan mandiri (standalone) dan belum melakukan integrasi otomatis k
 - Detail Paket: /sadaya-rutin/paket/<id>
 
 ## Model Utama
-### Paket (direct_purchase.procurement_package)
+### Paket (sadaya_rutin.procurement_package)
 Field inti:
 - code, name, proposing_unit
 - procurement_type, amount_total, currency_id
@@ -31,7 +31,7 @@ Aturan bisnis:
 - delivery_date harus hari kerja (Senin-Jumat).
 - requires_ppk aktif jika amount_total > 200000000.
 
-### Kontrak (direct_purchase.contract)
+### Kontrak (sadaya_rutin.contract)
 Field inti:
 - name, package_id, procurement_type
 - officer_name, vendor_name

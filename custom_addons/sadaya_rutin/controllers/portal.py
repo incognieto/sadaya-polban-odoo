@@ -6,7 +6,7 @@ from odoo import http
 from odoo.http import request
 
 
-class DirectPurchasePortal(http.Controller):
+class SadayaRutinPortal(http.Controller):
     def _get_selection(self, model_name, field_name):
         model = request.env[model_name]
         field = model.fields_get([field_name])[field_name]
@@ -112,7 +112,7 @@ class DirectPurchasePortal(http.Controller):
                 "package_pending_spk_count": package_model.search_count(pending_spk_domain),
                 "package_done_month_count": package_model.search_count(done_month_domain),
                 "package_action_id": self._get_action_id(
-                    "direct_purchase.action_direct_purchase_packages"
+                    "sadaya_rutin.action_sadaya_rutin_packages"
                 ),
             },
         )
@@ -153,11 +153,11 @@ class DirectPurchasePortal(http.Controller):
         website=True,
     )
     def portal_package_detail(self, package_id, **params):
-        package = request.env["direct_purchase.procurement_package"].sudo().browse(package_id)
+        package = request.env["sadaya_rutin.procurement_package"].sudo().browse(package_id)
         if not package.exists():
             return request.not_found()
         return request.render(
-            "direct_purchase.portal_package_detail",
+            "sadaya_rutin.portal_package_detail",
             {
                 "package": package,
             },
