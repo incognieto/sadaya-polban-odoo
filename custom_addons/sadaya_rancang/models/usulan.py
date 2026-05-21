@@ -4,7 +4,12 @@ from odoo import models, fields, api, exceptions
 class RancangUsulan(models.Model):
     _name = 'rancang.usulan'
     _description = 'Usulan Kebutuhan Barang/Jasa'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['portal.mixin', 'mail.thread', 'mail.activity.mixin']
+
+    def _compute_access_url(self):
+        super(RancangUsulan, self)._compute_access_url()
+        for record in self:
+            record.access_url = f'/sadaya_rancang/pengajuan/{record.id}'
 
     name = fields.Char(string='Judul Usulan', required=True, tracking=True)
     pemohon = fields.Char(string='Unit Kerja / Pemohon', required=True, tracking=True)
@@ -16,8 +21,8 @@ class RancangUsulan(models.Model):
     ], string='Jenis Kebutuhan', required=True, tracking=True)
     deskripsi_kebutuhan = fields.Text(string='Deskripsi Kebutuhan', tracking=True)
     rab = fields.Float(string='Anggaran (RAB)', required=True, tracking=True)
-    kak = fields.Text(string='Kerangka Acuan Kerja (KAK)', required=True)
-    attachment_ids = fields.Many2many('ir.attachment', string='Lampiran Pendukung')
+    kak = fields.Binary(string='Kerangka Acuan Kerja (KAK)', required=True, attachment=True)
+    kak_filename = fields.Char(string='Nama File KAK')
     
     klasifikasi = fields.Selection([
         ('operasional', 'Belanja Operasional Cepat'),
@@ -43,6 +48,12 @@ class RancangUsulan(models.Model):
                 record.klasifikasi = 'non_tender'
             else:
                 record.klasifikasi = 'tender'
+
+    @api.constrains('kak_filename')
+    def _check_kak_extension(self):
+        for record in self:
+            if record.kak_filename and not record.kak_filename.lower().endswith('.pdf'):
+                raise exceptions.ValidationError("File KAK harus berformat .pdf!")
 
     def action_submit(self):
         self.state = 'submitted'
@@ -89,3 +100,17 @@ class RancangUsulan(models.Model):
                     'state': 'draft',
                 })
                 record.state = 'published'
+
+    def action_draft(self):
+        self.state = 'draft'
+
+    def action_delete(self):
+        self.ensure_one()
+        self.unlink()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Pengajuan Kebutuhan',
+            'res_model': 'rancang.usulan',
+            'view_mode': 'list,form',
+            'target': 'current'
+        }

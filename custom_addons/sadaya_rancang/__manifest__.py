@@ -10,11 +10,12 @@ Modul ini bertindak sebagai Hulu pengadaan:
     'website': "https://www.polban.ac.id",
     'category': 'Procurement',
     'version': '1.0',
-    'depends': ['base', 'sadaya_tawar', 'mail'],
+    'depends': ['base', 'sadaya_tawar', 'mail', 'website', 'portal'],
     'data': [
         'security/ir.model.access.csv',
         'wizard/wizard_catatan_views.xml',
         'views/usulan_views.xml',
+        'views/templates.xml',
     ],
     'application': True,
     'installable': True,
