@@ -1,0 +1,139 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* HERO */
+.sadaya-hero {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sadaya-card {
+    width: 500px;
+    padding: 50px;
+    border-radius: 24px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(16px);
+    color: white;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+}
+
+.sadaya-card h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.sadaya-buttons {
+    margin-top: 30px;
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+}
+
+.sadaya-btn,
+.sadaya-btn-outline {
+    padding: 14px 28px;
+    border-radius: 14px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.sadaya-btn {
+    background: #3b82f6;
+    color: white;
+}
+
+.sadaya-btn:hover {
+    background: #2563eb;
+}
+
+.sadaya-btn-outline {
+    border: 1px solid white;
+    color: white;
+}
+
+/* LOGIN */
+.sadaya-login-wrapper {
+    min-height: 100vh;
+    background: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sadaya-login-card {
+    width: 400px;
+    padding: 40px;
+    background: white;
+    border-radius: 24px;
+}
+
+.sadaya-login-card h2 {
+    margin-bottom: 24px;
+}
+
+.sadaya-login-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.sadaya-login-card input {
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+}
+
+.sadaya-login-card button {
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+}
+
+/* DASHBOARD */
+.sadaya-dashboard {
+    display: flex;
+    min-height: 100vh;
+}
+
+.dashboard-sidebar {
+    width: 260px;
+    background: #0f172a;
+    color: white;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.dashboard-sidebar a {
+    color: white;
+    text-decoration: none;
+}
+
+.dashboard-content {
+    flex: 1;
+    padding: 40px;
+    background: #f1f5f9;
+}
+
+.dashboard-grid {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 20px;
+}
+
+.dashboard-card {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}

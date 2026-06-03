@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <record id="action_sadaya_langsung_dashboard" model="ir.actions.client">
-        <field name="name">Dashboard Sadaya Langsung</field>
-        <field name="tag">sadaya_langsung_dashboard_action</field>
-    </record>
-</odoo>
