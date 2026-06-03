@@ -97,7 +97,7 @@
                             </field>
                         </page>
                         <page string="Penawaran Vendor">
-                            <field name="penawaran_ids" readonly="1">
+                            <field name="penawaran_ids">
                                 <list>
                                     <field name="name"/>
                                     <field name="vendor_id"/>
@@ -122,7 +122,7 @@
         <field name="arch" type="xml">
             <form string="Dokumen Penawaran">
                 <header>
-                    <field name="status" widget="statusbar"/>
+                    <field name="status" widget="statusbar" options="{'clickable': '1'}"/>
                 </header>
                 <sheet>
                     <group>
