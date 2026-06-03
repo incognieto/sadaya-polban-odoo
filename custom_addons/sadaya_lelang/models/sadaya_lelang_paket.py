@@ -34,10 +34,16 @@ class SadayaLelangPaket(models.Model):
         ('batal', 'Batal')
     ], string='Status', default='draft', tracking=True)
 
+    # metode_pemilihan = fields.Selection([
+    #     ('sadaya_lelang', 'Sadaya Lelang'),
+    #     ('seleksi', 'Seleksi')
+    # ], string='Metode Pemilihan', default='sadaya_lelang', tracking=True)
+
     metode_pemilihan = fields.Selection([
         ('sadaya_lelang', 'Sadaya Lelang'),
-        ('seleksi', 'Seleksi')
-    ], string='Metode Pemilihan', default='sadaya_lelang', tracking=True)
+        ('seleksi', 'Seleksi'),
+        ('tender', 'Tender')
+    ], string='Metode Pemilihan', default='tender', tracking=True)
 
     # SOP Roles Assignment
     user_id = fields.Many2one('res.users', string='USER / Pemohon')
