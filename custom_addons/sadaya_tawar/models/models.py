@@ -34,6 +34,19 @@ class SadayaTawarPaket(models.Model):
         string='Dokumen Addendum'
     )
     
+    # === TAMBAHAN DOKUMEN PERSIAPAN PENGADAAN ===
+    deskripsi = fields.Text(string='Deskripsi Singkat Paket')
+    
+    dokumen_kak = fields.Binary(string='Dokumen KAK', attachment=True)
+    filename_kak = fields.Char(string='Nama File KAK')
+    
+    dokumen_spektek = fields.Binary(string='Spesifikasi Teknis', attachment=True)
+    filename_spektek = fields.Char(string='Nama File Spektek')
+    
+    dokumen_rab = fields.Binary(string='Dokumen RAB/BoQ', attachment=True)
+    filename_rab = fields.Char(string='Nama File RAB')
+    # ============================================
+
     state = fields.Selection([
         ('draft', 'Draft RUP'),
         ('published', 'Pengumuman / Masa Penawaran'),
@@ -80,43 +93,69 @@ class SadayaTawarPaket(models.Model):
             record.state = 'eval'
 
     def action_route_paket(self):
-        for record in self:
-            if record.nilai_hps < 50000000:
-                model_name = 'sadaya_rutin.procurement_package'
-                module_label = 'Sadaya Rutin'
-                vals = {
-                    'name': record.name,
-                    'procurement_type': 'goods',
-                    'status': 'draft',
-                }
-            elif 50000000 <= record.nilai_hps <= 200000000:
-                model_name = 'sadaya_langsung.paket'
-                module_label = 'Sadaya Langsung'
-                vals = {
-                    'name': record.name,
-                    'nilai_hps': record.nilai_hps,
-                    'status_paket': 'draft',
-                    'jenis_pengadaan': 'barang',
-                }
-            else:
-                model_name = 'sadaya_lelang.paket'
-                module_label = 'Sadaya Lelang'
-                vals = {
-                    'name': record.name,
-                    'hps': record.nilai_hps,
-                    'status': 'draft',
-                    'metode_pemilihan': 'tender',
-                }
+        self.ensure_one()
+        
+        # Validasi state: Hanya bisa di-route jika sedang dalam tahap pengumuman/evaluasi
+        if self.state not in ['published', 'eval']:
+            raise UserError("Paket hanya dapat diteruskan ke modul eksekusi jika sudah dipublikasikan atau dievaluasi.")
 
-            try:
-                target_model = self.env[model_name]
-            except KeyError as exc:
-                raise UserError(
-                    "Modul %s belum terpasang. Install modulnya terlebih dahulu sebelum routing." % module_label
-                ) from exc
+        if self.nilai_hps < 50000000:
+            model_name = 'sadaya_rutin.procurement_package'
+            module_label = 'Sadaya Rutin'
+            vals = {
+                'name': self.name,
+                # procurement_type WAJIB dikirim karena di sadaya_rutin diset required=True
+                'procurement_type': 'goods', 
+                
+                # ==== DIKOMENTARI SEMENTARA KARENA BELUM KOMUNIKASI ====
+                # 'status': 'draft',
+                # 'nilai_anggaran': self.nilai_hps, 
+            }
+        elif 50000000 <= self.nilai_hps <= 200000000:
+            model_name = 'sadaya_langsung.paket'
+            module_label = 'Sadaya Langsung'
+            vals = {
+                'name': self.name,
+                
+                # ==== DIKOMENTARI SEMENTARA KARENA BELUM KOMUNIKASI ====
+                # 'nilai_hps': self.nilai_hps, 
+                # 'status_paket': 'draft',
+                # 'jenis_pengadaan': 'barang',
+            }
+        else:
+            model_name = 'sadaya_lelang.paket'
+            module_label = 'Sadaya Lelang'
+            vals = {
+                'name': self.name,
+                
+                # ==== DIKOMENTARI SEMENTARA KARENA BELUM KOMUNIKASI ====
+                # 'hps': self.nilai_hps,
+                # 'status': 'draft',
+                # 'metode_pemilihan': 'tender',
+            }
 
-            target_model.sudo().create(vals)
-            record.state = 'routed'
+        try:
+            target_model = self.env[model_name]
+        except KeyError as exc:
+            raise UserError(
+                "Modul %s belum terpasang. Install modulnya terlebih dahulu sebelum routing." % module_label
+            ) from exc
+
+        # 1. Buat record di modul tujuan dengan atribut paling minimal (Safe Create)
+        new_record = target_model.sudo().create(vals)
+        
+        # 2. Ubah state paket Tawar saat ini menjadi routed
+        self.state = 'routed'
+
+        # 3. Redirect browser pengguna ke dokumen yang baru dibuat
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Eksekusi {module_label}',
+            'res_model': model_name,
+            'res_id': new_record.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
 
     # =========================================================
     # BLOK VALIDASI LOGIKA METODE PEMILIHAN VS HPS

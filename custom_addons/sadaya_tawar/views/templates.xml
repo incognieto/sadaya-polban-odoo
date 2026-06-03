@@ -4,11 +4,14 @@
         <t t-call="website.layout">
             <div class="container mt-5">
                 <h2 class="mb-4">Portal Pengadaan - Sadaya Tawar</h2>
-                <form method="get" action="/sadaya_tawar/paket" class="row g-2 mb-3">
-                    <div class="col-md-6">
-                        <input type="text" name="search" class="form-control" placeholder="Cari nama atau kode paket" t-att-value="search or ''"/>
+                
+                <form method="get" action="/sadaya_tawar/paket" class="row g-2 mb-4 bg-light p-3 rounded border">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Cari Nama/Kode</label>
+                        <input type="text" name="search" class="form-control" placeholder="Ketik kata kunci..." t-att-value="search or ''"/>
                     </div>
                     <div class="col-md-4">
+                        <label class="form-label fw-bold">Metode Pemilihan</label>
                         <select name="metode" class="form-select">
                             <option value="">Semua Metode</option>
                             <option value="e_purchasing" t-att-selected="metode == 'e_purchasing'">E-Purchasing</option>
@@ -16,16 +19,43 @@
                             <option value="tender" t-att-selected="metode == 'tender'">Tender</option>
                         </select>
                     </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-primary w-100" type="submit">Cari</button>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Jenis Pengadaan</label>
+                        <select name="jenis" class="form-select">
+                            <option value="">Semua Jenis</option>
+                            <option value="barang" t-att-selected="jenis == 'barang'">Barang</option>
+                            <option value="jasa_lainnya" t-att-selected="jenis == 'jasa_lainnya'">Jasa Lainnya</option>
+                            <option value="konstruksi" t-att-selected="jenis == 'konstruksi'">Konstruksi</option>
+                            <option value="jasa_konsultansi" t-att-selected="jenis == 'jasa_konsultansi'">Jasa Konsultansi</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mt-2">
+                        <label class="form-label fw-bold">Min HPS (Rp)</label>
+                        <input type="number" name="min_hps" class="form-control" t-att-value="min_hps or ''"/>
+                    </div>
+                    <div class="col-md-3 mt-2">
+                        <label class="form-label fw-bold">Max HPS (Rp)</label>
+                        <input type="number" name="max_hps" class="form-control" t-att-value="max_hps or ''"/>
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <label class="form-label fw-bold">Status Paket</label>
+                        <select name="status" class="form-select">
+                            <option value="">Semua Status Aktif</option>
+                            <option value="published" t-att-selected="status == 'published'">Pengumuman</option>
+                            <option value="eval" t-att-selected="status == 'eval'">Evaluasi / Routing</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mt-2 d-flex align-items-end">
+                        <button class="btn btn-primary w-100" type="submit">Filter Data</button>
                     </div>
                 </form>
+
                 <table class="table table-striped table-hover border">
                     <thead class="table-dark">
                         <tr>
                             <th>Kode Paket</th>
                             <th>Nama Paket</th>
-                            <th>Metode Pemilihan</th>
+                            <th class="text-center">Metode Pemilihan</th>
                             <th>Nilai HPS</th>
                             <th>Aksi</th>
                         </tr>
@@ -35,7 +65,17 @@
                             <tr>
                                 <td><t t-esc="pkt.kode_paket"/></td>
                                 <td><strong><t t-esc="pkt.name"/></strong></td>
-                                <td class="text-uppercase"><t t-esc="pkt.metode_pemilihan"/></td>
+                                <td class="text-center">
+                                    <t t-if="pkt.metode_pemilihan == 'e_purchasing'">
+                                        <span class="badge-rutin">E-Purchasing</span>
+                                    </t>
+                                    <t t-if="pkt.metode_pemilihan == 'pengadaan_langsung'">
+                                        <span class="badge-langsung">Pengadaan Langsung</span>
+                                    </t>
+                                    <t t-if="pkt.metode_pemilihan == 'tender'">
+                                        <span class="badge-lelang">Tender</span>
+                                    </t>
+                                </td>
                                 <td>Rp <t t-esc="'{:,}'.format(pkt.nilai_hps)"/></td>
                                 <td>
                                     <a t-attf-href="/sadaya_tawar/paket/#{pkt.id}" class="btn btn-sm btn-primary">Lihat Detail</a>
@@ -43,7 +83,7 @@
                             </tr>
                         </t>
                         <tr t-if="not pakets">
-                            <td colspan="5" class="text-center text-muted">Belum ada paket yang diumumkan.</td>
+                            <td colspan="5" class="text-center text-muted">Tidak ada paket yang sesuai dengan pencarian Anda.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -55,9 +95,11 @@
         <t t-call="website.layout">
             <div class="container mt-5 mb-5">
                 <a href="/sadaya_tawar/paket" class="btn btn-outline-secondary mb-3">&amp;larr; Kembali ke Daftar</a>
+                
                 <div t-if="daftar == 'success'" class="alert alert-success">Pendaftaran berhasil. Tim akan memverifikasi data vendor Anda.</div>
                 <div t-if="error == 'not_verified'" class="alert alert-warning">Akun vendor belum terverifikasi. Silakan lengkapi data di Sadaya Mitra.</div>
                 <div t-if="error == 'already_registered'" class="alert alert-info">Vendor sudah terdaftar pada paket ini.</div>
+                
                 <div class="card shadow">
                     <div class="card-header bg-primary text-white">
                         <h4 class="mb-0"><t t-esc="paket.name"/></h4>
@@ -76,6 +118,52 @@
                         <div class="alert alert-info">
                             <strong>Batas Pendaftaran:</strong> <t t-esc="paket.batas_pendaftaran or 'Belum ditentukan'"/>
                         </div>
+
+                        <div class="mt-4 mb-4">
+                            <h5>Informasi &amp; Dokumen Persiapan</h5>
+                            
+                            <t t-if="paket.deskripsi">
+                                <div class="alert alert-secondary mt-2">
+                                    <strong>Deskripsi/Ruang Lingkup:</strong><br/>
+                                    <span t-esc="paket.deskripsi"/>
+                                </div>
+                            </t>
+
+                            <div class="row g-3 mt-1">
+                                <div class="col-md-4" t-if="paket.dokumen_kak">
+                                    <div class="card h-100 border-info">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title text-info">Kerangka Acuan Kerja (KAK)</h6>
+                                            <p class="card-text small text-muted text-truncate" t-esc="paket.filename_kak"/>
+                                            <a t-attf-href="/web/content/sadaya_tawar.paket/#{paket.id}/dokumen_kak?download=true" class="btn btn-sm btn-outline-info w-100">Unduh KAK</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4" t-if="paket.dokumen_spektek">
+                                    <div class="card h-100 border-success">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title text-success">Spesifikasi Teknis</h6>
+                                            <p class="card-text small text-muted text-truncate" t-esc="paket.filename_spektek"/>
+                                            <a t-attf-href="/web/content/sadaya_tawar.paket/#{paket.id}/dokumen_spektek?download=true" class="btn btn-sm btn-outline-success w-100">Unduh Spektek</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4" t-if="paket.dokumen_rab">
+                                    <div class="card h-100 border-warning">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title text-warning">Rincian Anggaran (BoQ)</h6>
+                                            <p class="card-text small text-muted text-truncate" t-esc="paket.filename_rab"/>
+                                            <a t-attf-href="/web/content/sadaya_tawar.paket/#{paket.id}/dokumen_rab?download=true" class="btn btn-sm btn-outline-warning w-100">Unduh BoQ</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div t-if="not paket.dokumen_kak and not paket.dokumen_spektek and not paket.dokumen_rab" class="text-muted mt-2">
+                                <em>Dokumen persiapan (KAK/Spektek) belum diunggah oleh PPK.</em>
+                            </div>
+                        </div>
+                        
                         <div class="mt-4">
                             <h5>Dokumen Addendum</h5>
                             <t t-if="paket.addendum_ids">

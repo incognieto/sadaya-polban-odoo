@@ -11,35 +11,63 @@ class SadayaTawarPortal(http.Controller):
             return bool(partner.sadaya_mitra_penyedia_id)
         return True
 
-    # Membuat URL /sadaya_tawar/paket untuk melihat daftar pengumuman
     @http.route(['/sadaya_tawar/paket'], type='http', auth="public", website=True)
     def list_paket_tawar(self, **kwargs):
-        domain = [('state', '=', 'published')]
         search = kwargs.get('search')
         metode = kwargs.get('metode')
+        jenis = kwargs.get('jenis')
+        status = kwargs.get('status')
+        min_hps = kwargs.get('min_hps')
+        max_hps = kwargs.get('max_hps')
+
+        if status in ['published', 'eval', 'routed']:
+            domain = [('state', '=', status)]
+        else:
+            domain = [('state', 'in', ['published', 'eval', 'routed'])]
 
         if search:
             domain += ['|', ('name', 'ilike', search), ('kode_paket', 'ilike', search)]
+        
         if metode in ['e_purchasing', 'pengadaan_langsung', 'tender']:
             domain.append(('metode_pemilihan', '=', metode))
+            
+        if jenis in ['barang', 'jasa', 'konstruksi', 'konsultansi']: 
+            domain.append(('jenis_pengadaan', '=', jenis))
+
+        if min_hps and min_hps.isdigit():
+            domain.append(('nilai_hps', '>=', float(min_hps)))
+            
+        if max_hps and max_hps.isdigit():
+            domain.append(('nilai_hps', '<=', float(max_hps)))
 
         pakets = request.env['sadaya_tawar.paket'].sudo().search(domain, order='batas_pendaftaran asc, id desc')
+        
         return request.render('sadaya_tawar.portal_list_paket_template', {
             'pakets': pakets,
             'search': search,
             'metode': metode,
+            'jenis': jenis,
+            'status': status,
+            'min_hps': min_hps,
+            'max_hps': max_hps,
         })
 
-    # Membuat URL untuk melihat detail satu paket spesifik
+    # --- KEMBALI MENGGUNAKAN MODEL SLUG CONVERTER ODOO ---
     @http.route(['/sadaya_tawar/paket/<model("sadaya_tawar.paket"):paket>'], type='http', auth="public", website=True)
     def detail_paket_tawar(self, paket, **kwargs):
+        # Sudo agar bypass limitasi hak akses
         paket = paket.sudo()
-        if paket.state != 'published':
+        
+        if not paket.exists():
+            return request.not_found()
+
+        # Izinkan paket dengan status Pengumuman, Evaluasi, atau Terkirim Eksekusi
+        if paket.state not in ['published', 'eval', 'routed']:
             return request.not_found()
 
         is_public = request.env.user.has_group('base.group_public')
         partner = None if is_public else request.env.user.partner_id
-        peserta_env = request.env['sadaya_tawar.peserta']
+        peserta_env = request.env['sadaya_tawar.peserta'].sudo()
 
         is_registered = False
         can_register = False
@@ -58,24 +86,26 @@ class SadayaTawarPortal(http.Controller):
             'error': kwargs.get('error'),
         })
 
-    # Endpoint untuk memproses aksi klik "Daftar Sebagai Peserta"
     @http.route([
         '/sadaya_tawar/paket/<model("sadaya_tawar.paket"):paket>/daftar'
     ], type='http', auth='user', website=True, methods=['POST'])
     def daftar_peserta(self, paket, **kwargs):
         paket = paket.sudo()
-        if paket.state != 'published':
+        
+        # Pendaftaran hanya bisa dilakukan jika status masih pengumuman atau evaluasi awal
+        if not paket.exists() or paket.state not in ['published', 'eval']:
             return request.redirect('/sadaya_tawar/paket?error=not_available')
 
         partner = request.env.user.partner_id
         if not self._is_vendor_eligible(partner):
             return request.redirect('/sadaya_tawar/paket/%s?error=not_verified' % paket.id)
 
-        peserta_env = request.env['sadaya_tawar.peserta']
+        peserta_env = request.env['sadaya_tawar.peserta'].sudo()
         existing = peserta_env.search([
             ('paket_id', '=', paket.id),
             ('vendor_id', '=', partner.id)
         ], limit=1)
+        
         if existing:
             return request.redirect('/sadaya_tawar/paket/%s?error=already_registered' % paket.id)
 

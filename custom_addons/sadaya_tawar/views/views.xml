@@ -50,6 +50,22 @@
                         </group>
                     </group>
                     <notebook>
+                        <page string="Dokumen Persiapan">
+                            <group>
+                                <field name="deskripsi" placeholder="Tuliskan deskripsi atau ruang lingkup singkat..."/>
+                            </group>
+                            <group col="4">
+                                <field name="dokumen_kak" filename="filename_kak" widget="binary"/>
+                                <field name="filename_kak" invisible="1"/>
+                                
+                                <field name="dokumen_spektek" filename="filename_spektek" widget="binary"/>
+                                <field name="filename_spektek" invisible="1"/>
+                                
+                                <field name="dokumen_rab" filename="filename_rab" widget="binary"/>
+                                <field name="filename_rab" invisible="1"/>
+                            </group>
+                        </page>
+
                         <page string="Peserta">
                             <field name="peserta_ids">
                                 <list editable="bottom">
@@ -67,6 +83,7 @@
                                 </form>
                             </field>
                         </page>
+                        
                         <page string="Addendum">
                             <field name="addendum_ids">
                                 <list editable="bottom">
