@@ -79,9 +79,114 @@
                         <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3"><span t-field="package.status"/></span>
                     </div>
 
+                    <t t-if="package.status == 'negotiation_vendor'">
+                        <t t-if="package.vendor_id and env.user.partner_id.id in (package.vendor_id.id, package.vendor_id.parent_id.id)">
+                            <div class="alert alert-success border-0 rounded-4 mb-4">
+                                <div class="fw-bold mb-1">Permintaan sudah diterima oleh vendor</div>
+                                <div class="small">Isi penawaran harga dan konfirmasi stok sebelum dikirim ke PP untuk direview.</div>
+                                <t t-if="package.admin_counter_price">
+                                    <div class="small mt-2">Harga counter admin: <strong><span t-field="package.admin_counter_price" t-options="{'widget': 'monetary', 'display_currency': package.currency_id}"/></strong></div>
+                                </t>
+                            </div>
+                            <form t-att-action="'/sadaya-rutin/paket/%s/submit-offer' % package.id" method="post" class="row g-3 mb-4">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Vendor</label>
+                                <input type="text" name="vendor_id_name" class="form-control" t-att-value="package.vendor_id.name" readonly="readonly"/>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Harga Penawaran</label>
+                                <input type="number" name="negotiation_price" step="0.01" class="form-control" t-att-value="package.negotiation_price or ''"/>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold">Catatan Penawaran</label>
+                                <textarea name="vendor_offer_notes" class="form-control" rows="3"><t t-esc="package.vendor_offer_notes or ''"/></textarea>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="vendor_stock_confirmed" value="1" id="vendor_stock_confirmed" t-att-checked="package.vendor_stock_confirmed and 'checked' or None"/>
+                                    <label class="form-check-label" for="vendor_stock_confirmed">Saya mengonfirmasi stok tersedia</label>
+                                </div>
+                            </div>
+                            <div class="col-12 d-flex gap-2">
+                                <button type="submit" class="btn btn-success rounded-pill px-4">Kirim Penawaran</button>
+                                <button type="submit" class="btn btn-outline-danger rounded-pill px-4" formaction="/sadaya-rutin/paket/#{package.id}/reject-offer" formnovalidate="formnovalidate">Tolak / Stok Habis</button>
+                            </div>
+                        </form>
+                        </t>
+                        <t t-else="">
+                            <div class="alert alert-info border-0 rounded-4 mb-4">
+                                <div class="fw-bold mb-1">Status: Negosiasi (Penyedia)</div>
+                                <div class="small">Hanya vendor yang ditunjuk yang dapat mengisi penawaran. Menunggu respon dari vendor.</div>
+                            </div>
+                        </t>
+                    </t>
+
+                    <t t-if="package.status == 'negotiation_pp'">
+                        <t t-if="package.vendor_id and env.user.partner_id.id in (package.vendor_id.id, package.vendor_id.parent_id.id)">
+                            <div class="alert alert-warning border-0 rounded-4 mb-4">
+                                <div class="fw-bold mb-1">Penawaran sedang direview admin</div>
+                                <div class="small">Vendor menunggu hasil review admin/PP. Jika ada counter-offer, status akan kembali ke Negosiasi (Penyedia).</div>
+                                <t t-if="package.admin_counter_price">
+                                    <div class="small mt-2">Counter terbaru admin: <strong><span t-field="package.admin_counter_price" t-options="{'widget': 'monetary', 'display_currency': package.currency_id}"/></strong></div>
+                                </t>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="alert alert-warning border-0 rounded-4 mb-4">
+                                <div class="fw-bold mb-1">Status: Negosiasi (PP)</div>
+                                <div class="small">Admin sedang mereview penawaran dari vendor.</div>
+                            </div>
+                        </t>
+                    </t>
+
+                    <t t-if="package.status == 'delivery'">
+                        <t t-if="package.vendor_id and env.user.partner_id.id in (package.vendor_id.id, package.vendor_id.parent_id.id)">
+                            <!-- Alert if delivery date already submitted but waiting for inspection -->
+                            <t t-if="package.delivery_date">
+                                <div class="alert alert-info border-0 rounded-4 mb-4">
+                                    <div class="fw-bold mb-1">Jadwal Pengiriman Telah Diajukan</div>
+                                    <div class="small">Barang akan dikirimkan pada <strong><t t-esc="package.delivery_date"/></strong>. Menunggu pemeriksaan dari Tim Teknis.</div>
+                                </div>
+                            </t>
+                            <!-- Form to submit delivery date -->
+                            <t t-if="not package.delivery_date">
+                                <t t-if="request.params.get('error')">
+                                    <div class="alert alert-danger border-0 rounded-4 mb-4">
+                                        <div class="fw-bold mb-1">Pengajuan Ditolak!</div>
+                                        <div class="small"><t t-esc="request.params.get('error')"/></div>
+                                    </div>
+                                </t>
+                                <div class="alert alert-success border-0 rounded-4 mb-4">
+                                    <div class="fw-bold mb-1">Waktunya Pengiriman</div>
+                                    <div class="small">Silakan tentukan jadwal pengiriman. <strong>Catatan: Pengiriman hanya dapat dilakukan pada hari kerja (Senin - Jumat).</strong></div>
+                                </div>
+                                <form t-att-action="'/sadaya-rutin/paket/%s/submit-delivery' % package.id" method="post" class="row g-3 mb-4">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Tanggal Pengiriman</label>
+                                        <input type="date" name="delivery_date" class="form-control" required="required"/>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label fw-bold">Catatan Pengiriman</label>
+                                        <textarea name="delivery_notes" class="form-control" rows="3"></textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-success rounded-pill px-4">Ajukan Jadwal Pengiriman</button>
+                                    </div>
+                                </form>
+                            </t>
+                        </t>
+                        <t t-else="">
+                            <div class="alert alert-info border-0 rounded-4 mb-4">
+                                <div class="fw-bold mb-1">Status: Pengiriman</div>
+                                <div class="small">Menunggu jadwal pengiriman dari vendor atau proses pengiriman sedang berlangsung.</div>
+                            </div>
+                        </t>
+                    </t>
+
                     <ul class="nav nav-tabs" role="tablist">
                         <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab-request" role="tab">Data Permintaan</a></li>
-                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-ecatalog" role="tab">Cek E-Katalog</a></li>
                         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-negotiation" role="tab">Negosiasi</a></li>
                         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-sp" role="tab">Surat Pesanan</a></li>
                         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-delivery" role="tab">Pengiriman</a></li>
@@ -111,16 +216,9 @@
                             </div>
                         </div>
 
-                        <div class="tab-pane fade" id="tab-ecatalog" role="tabpanel">
-                            <p class="text-muted mb-1">Status E-Katalog</p>
-                            <p class="fw-bold"><span t-field="package.ecatalog_status"/></p>
-                            <p class="text-muted mb-1">Catatan</p>
-                            <p class="fw-bold"><t t-esc="package.ecatalog_notes"/></p>
-                        </div>
-
                         <div class="tab-pane fade" id="tab-negotiation" role="tabpanel">
                             <p class="text-muted mb-1">Vendor</p>
-                            <p class="fw-bold"><t t-esc="package.vendor_name"/></p>
+                            <p class="fw-bold"><t t-esc="package.vendor_id.name"/></p>
                             <p class="text-muted mb-1">Harga Negosiasi</p>
                             <p class="fw-bold"><span t-field="package.negotiation_price" t-options="{'widget': 'monetary', 'display_currency': package.currency_id}"/></p>
                             <p class="text-muted mb-1">Catatan</p>
@@ -168,7 +266,7 @@
             
             <div class="mb-4">
                 <h4 class="fw-bold mb-1">Sadaya Rutin</h4>
-                <p class="text-muted small mb-4">E-Purchasing untuk belanja operasional rutin via e-katalog</p>
+                <p class="text-muted small mb-4">E-Purchasing untuk belanja operasional rutin</p>
                 <h3 class="fw-bold text-success mb-3">Halo, <t t-esc="env.user.name"/>, Selamat Datang!</h3>
                 <div class="d-flex gap-2 mb-4">
                     <span class="badge rounded-pill bg-success bg-opacity-10 text-success border border-success">Transparansi</span>
@@ -183,9 +281,6 @@
                     <span class="badge bg-white text-success border mb-3 rounded-pill px-3 py-2"><i class="fa fa-star me-1"/> Modul Unggulan</span>
                     <h2 class="fw-bold text-dark mb-3">Sadaya Rutin – E-Purchasing</h2>
                     <p class="text-muted w-75 mb-4">Kelola belanja operasional rutin dari permintaan, negosiasi, SPK hingga serah terima secara transparan.</p>
-                    <t t-if="package_action_id">
-                        <a t-attf-href="/web#action=#{package_action_id}&amp;model=sadaya_rutin.procurement_package&amp;view_type=form" class="btn btn-outline-success bg-white fw-bold rounded-pill px-4">Buat Permintaan Pembelian Baru</a>
-                    </t>
                 </div>
             </div>
 
@@ -215,9 +310,9 @@
                 <div class="col-md-4">
                     <div class="card h-100 border-0 shadow-sm rounded-4 p-4 border-top border-warning border-3">
                         <i class="fa fa-folder text-warning fa-2x mb-3"/>
-                        <h5 class="fw-bold">Ajukan Permintaan Pembelian</h5>
-                        <p class="text-muted small mb-4">Buat dan kelola permintaan pengadaan barang/jasa secara digital – dari kebutuhan hingga persetujuan.</p>
-                        <a href="/sadaya-rutin/paket" class="text-secondary text-decoration-none small fw-bold mt-auto">Mulai Cepat</a>
+                        <h5 class="fw-bold">Pantau Penawaran</h5>
+                        <p class="text-muted small mb-4">Lihat paket yang sudah dipublikasikan, lalu kirim penawaran harga dan konfirmasi stok melalui portal.</p>
+                        <a href="/sadaya-rutin/paket" class="text-secondary text-decoration-none small fw-bold mt-auto">Lihat Paket</a>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -293,6 +388,12 @@
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-0 rounded-start-pill ps-4"><i class="fa fa-search text-muted"/></span>
                                 <input type="text" name="query" class="form-control bg-light border-0 rounded-end-pill py-2" placeholder="Cari paket..." t-att-value="filters.get('query')"/>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-2">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="filterMyPackages" name="my_packages" value="1" t-att-checked="filters.get('my_packages') and 'checked' or None" onchange="this.form.submit()"/>
+                                <label class="form-check-label text-muted small fw-bold" for="filterMyPackages">Hanya tampilkan paket yang ditujukan ke saya (sebagai Vendor)</label>
                             </div>
                         </div>
                         <button type="submit" class="d-none">Filter</button>
@@ -413,7 +514,7 @@
                                         </td>
                                     </tr>
                                 </t>
-                                <t t-foreach="contracts" t-as="contract">
+                                <t t-foreach="contracts" t-as="contract" t-foreach-index="contract_index">
                                     <tr class="text-center">
                                         <td><t t-esc="contract_index + 1"/></td>
                                         <td class="text-start fw-bold"><span t-field="contract.package_id.name"/></td>

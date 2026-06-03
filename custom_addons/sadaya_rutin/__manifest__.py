@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "Sadaya Rutin",
-    "summary": "E-Purchasing untuk belanja operasional rutin via e-katalog",
+    "summary": "E-Purchasing untuk belanja operasional rutin",
     "version": "0.1.0",
     "category": "Operations/Procurement",
     "license": "LGPL-3",
@@ -15,6 +15,7 @@
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
+        "reports/ba_negotiation_report.xml",
         "views/procurement_package_views.xml",
         "views/contract_views.xml",
         "views/menu.xml",

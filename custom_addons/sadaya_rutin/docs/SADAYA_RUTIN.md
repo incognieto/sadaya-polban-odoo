@@ -1,8 +1,13 @@
 # Sadaya Rutin - E-Purchasing (Standalone)
 
 ## Ringkas Modul
-Sadaya Rutin adalah modul e-purchasing untuk belanja operasional rutin via e-katalog.
+Sadaya Rutin adalah modul e-purchasing untuk belanja operasional rutin.
 Modul ini berjalan mandiri (standalone) dan belum melakukan integrasi otomatis ke modul Sadaya lain.
+
+Catatan UI:
+- Admin memakai backend Odoo untuk membuat dan memproses paket.
+- Vendor memakai portal untuk melihat paket yang sudah dipublikasikan, mengonfirmasi stok, dan mengirim penawaran harga.
+- Paket dengan status `draft` hanya terlihat di backend admin.
 
 ## Akses Portal UI
 - Dashboard: /sadaya-rutin atau /sadaya-rutin/dashboard
@@ -19,12 +24,10 @@ Field inti:
 
 Field alur kerja (tab):
 - Data Permintaan: item_name, item_spec, item_qty, estimated_budget, request_notes
-- Cek E-Katalog: ecatalog_status, ecatalog_notes
-- Negosiasi: vendor_name, negotiation_price, negotiation_notes, negotiation_history
+- Negosiasi: vendor_name, vendor_stock_confirmed, vendor_offer_notes, negotiation_price, negotiation_notes, negotiation_history, admin_counter_price, admin_review_notes
 - SP: sp_number, sp_date, sp_signed_ppk, sp_signed_vendor
 - Pengiriman: delivery_date, delivery_notes
-- Pemeriksaan: inspection_status, inspection_notes, bast_number, bast_date,
-  bast_signed_pphp, bast_signed_user, bast_signed_vendor
+- Pemeriksaan: inspection_status, inspection_notes, bast_number, bast_date, bast_signed_pphp, bast_signed_user, bast_signed_vendor
 - Selesai: completion_notes
 
 Aturan bisnis:
@@ -41,25 +44,23 @@ Field inti:
 ## Status Paket dan Tindakan
 Status paket (Sadaya Rutin):
 1. draft
-2. ecatalog_check
-3. negotiation_vendor
-4. negotiation_pp
-5. negotiation_done
-6. negotiation_minutes
-7. spk_preparation
-8. spk_process
-9. delivery
-10. inspection
-11. done
-12. revision
-13. addendum
-14. cancelled
+2. negotiation_vendor
+3. negotiation_pp
+4. negotiation_done
+5. negotiation_minutes
+6. spk_preparation
+7. spk_process
+8. delivery
+9. inspection
+10. done
+11. revision
+12. addendum
+13. cancelled
 
 Tindakan status tersedia (backend):
-- Cek E-Katalog -> action_to_ecatalog
 - Kirim ke Vendor -> action_to_negotiation_vendor
-- Review PP -> action_to_negotiation_pp
-- Negosiasi Selesai -> action_to_negotiation_done
+- Terima Penawaran -> action_to_negotiation_done
+- Counter Offer -> action_counter_offer
 - Buat BA Negosiasi -> action_to_negotiation_minutes
 - Persiapan SPK -> action_to_spk_preparation
 - Proses SPK -> action_to_spk_process
@@ -72,10 +73,10 @@ Tindakan status tersedia (backend):
 - Kembalikan ke Draft -> action_reset_draft
 
 Validasi minimum saat transisi:
-- Draft -> Cek E-Katalog: item_name, item_qty, estimated_budget wajib.
-- Cek E-Katalog -> Negosiasi (Vendor): ecatalog_status harus tersedia.
-- Negosiasi (Vendor) -> Negosiasi (PP): vendor_name wajib.
-- Negosiasi (PP) -> Negosiasi Selesai: negotiation_price wajib.
+- Draft/Revisi -> Negosiasi (Vendor): item_name, item_qty, estimated_budget, vendor_name wajib.
+- Negosiasi (Vendor) -> Negosiasi (PP): vendor harus mengisi harga penawaran dan mengonfirmasi stok.
+- Negosiasi (PP) -> Negosiasi (Vendor): admin melakukan counter-offer dan status kembali ke vendor.
+- Negosiasi (PP) -> Terima Penawaran: negotiation_price wajib.
 - Persiapan SPK -> Proses SPK: sp_number & sp_date wajib.
 - Proses SPK -> Pengiriman: sp_signed_ppk & sp_signed_vendor wajib.
 - Pengiriman -> Pemeriksaan: delivery_date wajib.
@@ -94,7 +95,6 @@ Status kontrak:
 ## Integrasi Antar Modul (Rencana)
 Modul ini disiapkan untuk integrasi, namun belum otomatis.
 Integrasi yang direncanakan:
-- Reroute ke Sadaya Langsung jika ecatalog_status == not_available
 - Sinkronisasi data paket ke modul lain berdasarkan threshold nilai
 - Notifikasi vendor dan TTE dokumen
 

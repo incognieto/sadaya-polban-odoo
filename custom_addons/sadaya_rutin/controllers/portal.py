@@ -3,6 +3,7 @@
 from datetime import date, datetime, timedelta
 
 from odoo import http
+from odoo.exceptions import ValidationError
 from odoo.http import request
 
 
@@ -21,7 +22,7 @@ class SadayaRutinPortal(http.Controller):
             return None
 
     def _build_package_domain(self, params):
-        domain = []
+        domain = [("status", "!=", "draft")]
         if params.get("procurement_type"):
             domain.append(("procurement_type", "=", params["procurement_type"]))
         if params.get("status"):
@@ -38,6 +39,13 @@ class SadayaRutinPortal(http.Controller):
             domain.append("|")
             domain.append(("name", "ilike", params["query"]))
             domain.append(("code", "ilike", params["query"]))
+            
+        if params.get("my_packages"):
+            user_partner_id = request.env.user.partner_id.id
+            domain.append("|")
+            domain.append(("vendor_id", "=", user_partner_id))
+            domain.append(("vendor_id.parent_id", "=", user_partner_id))
+            
         return domain
 
     def _build_contract_domain(self, params):
@@ -94,10 +102,11 @@ class SadayaRutinPortal(http.Controller):
     )
     def portal_dashboard(self, **params):
         package_model = request.env["sadaya_rutin.procurement_package"].sudo()
-        packages = package_model.search([], order="start_date desc", limit=20)
+        visible_domain = [("status", "!=", "draft")]
+        packages = package_model.search(visible_domain, order="start_date desc", limit=20)
         today = date.today()
         first_day, last_day = self._get_month_range(today)
-        active_domain = [("status", "not in", ["done", "cancelled"])]
+        active_domain = [("status", "not in", ["draft", "done", "cancelled"])]
         pending_spk_domain = [("status", "in", ["spk_preparation", "spk_process"])]
         done_month_domain = [
             ("status", "=", "done"),
@@ -135,9 +144,11 @@ class SadayaRutinPortal(http.Controller):
                 "procurement_types": self._get_selection(
                     "sadaya_rutin.procurement_package", "procurement_type"
                 ),
-                "statuses": self._get_selection(
-                    "sadaya_rutin.procurement_package", "status"
-                ),
+                "statuses": [
+                    item
+                    for item in self._get_selection("sadaya_rutin.procurement_package", "status")
+                    if item[0] != "draft"
+                ],
                 "units": self._get_units(),
             },
         )
@@ -154,7 +165,7 @@ class SadayaRutinPortal(http.Controller):
     )
     def portal_package_detail(self, package_id, **params):
         package = request.env["sadaya_rutin.procurement_package"].sudo().browse(package_id)
-        if not package.exists():
+        if not package.exists() or package.status == "draft":
             return request.not_found()
         return request.render(
             "sadaya_rutin.portal_package_detail",
@@ -162,6 +173,95 @@ class SadayaRutinPortal(http.Controller):
                 "package": package,
             },
         )
+
+    @http.route(
+        [
+            "/sadaya-rutin/paket/<int:package_id>/submit-offer",
+            "/sadaya-rutin/packages/<int:package_id>/submit-offer",
+        ],
+        type="http",
+        auth="user",
+        website=True,
+        methods=["POST"],
+    )
+    def portal_submit_offer(self, package_id, **post):
+        package = request.env["sadaya_rutin.procurement_package"].sudo().browse(package_id)
+        if not package.exists() or package.status != "negotiation_vendor":
+            return request.not_found()
+        if package.vendor_id and request.env.user.partner_id.id not in (package.vendor_id.id, package.vendor_id.parent_id.id):
+            raise ValidationError("Anda tidak memiliki akses untuk memberikan penawaran pada paket ini.")
+        negotiation_price = float(post.get("negotiation_price") or 0.0)
+        if negotiation_price <= 0:
+            raise ValidationError("Harga penawaran wajib diisi dan harus lebih dari nol.")
+        if not post.get("vendor_stock_confirmed"):
+            raise ValidationError("Vendor harus mengonfirmasi stok tersedia sebelum mengirim penawaran.")
+        package.write(
+            {
+                "negotiation_price": negotiation_price,
+                "vendor_stock_confirmed": True,
+                "vendor_offer_notes": post.get("vendor_offer_notes"),
+            }
+        )
+        package.action_vendor_submit_offer()
+        return request.redirect("/sadaya-rutin/paket/%s" % package_id)
+
+    @http.route(
+        [
+            "/sadaya-rutin/paket/<int:package_id>/reject-offer",
+            "/sadaya-rutin/packages/<int:package_id>/reject-offer",
+        ],
+        type="http",
+        auth="user",
+        website=True,
+        methods=["POST"],
+    )
+    def portal_reject_offer(self, package_id, **post):
+        package = request.env["sadaya_rutin.procurement_package"].sudo().browse(package_id)
+        if not package.exists() or package.status != "negotiation_vendor":
+            return request.not_found()
+        if package.vendor_id and request.env.user.partner_id.id not in (package.vendor_id.id, package.vendor_id.parent_id.id):
+            raise ValidationError("Anda tidak memiliki akses untuk memberikan penawaran pada paket ini.")
+        
+        # Save rejection reason if provided
+        if post.get("vendor_offer_notes"):
+            package.write({
+                "vendor_offer_notes": post.get("vendor_offer_notes"),
+            })
+        
+        package.action_vendor_reject_offer()
+        return request.redirect("/sadaya-rutin/paket/%s" % package_id)
+
+    @http.route(
+        [
+            "/sadaya-rutin/paket/<int:package_id>/submit-delivery",
+            "/sadaya-rutin/packages/<int:package_id>/submit-delivery",
+        ],
+        type="http",
+        auth="user",
+        website=True,
+        methods=["POST"],
+    )
+    def portal_submit_delivery(self, package_id, **post):
+        package = request.env["sadaya_rutin.procurement_package"].sudo().browse(package_id)
+        if not package.exists() or package.status != "delivery":
+            return request.not_found()
+        if package.vendor_id and request.env.user.partner_id.id not in (package.vendor_id.id, package.vendor_id.parent_id.id):
+            raise ValidationError("Anda tidak memiliki akses untuk mengajukan jadwal pengiriman.")
+        
+        delivery_date = self._parse_date(post.get("delivery_date"))
+        if not delivery_date:
+            return request.redirect("/sadaya-rutin/paket/%s?error=Tanggal pengiriman tidak valid." % package_id)
+            
+        # Validation for weekday
+        if delivery_date.weekday() >= 5:
+            return request.redirect("/sadaya-rutin/paket/%s?error=Pengiriman hanya dapat dilakukan pada hari kerja (Senin-Jumat)." % package_id)
+            
+        package.write({
+            "delivery_date": delivery_date,
+            "delivery_notes": post.get("delivery_notes"),
+        })
+        
+        return request.redirect("/sadaya-rutin/paket/%s" % package_id)
 
     @http.route(
         ["/sadaya-rutin/kontrak", "/sadaya-rutin/contracts", "/purchase-portal/contracts"],

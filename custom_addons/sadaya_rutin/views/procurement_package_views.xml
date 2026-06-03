@@ -46,10 +46,9 @@
     <field name="arch" type="xml">
       <form string="Paket">
         <header>
-          <button name="action_to_ecatalog" type="object" string="Cek E-Katalog" class="btn-primary" invisible="status != 'draft'"/>
-          <button name="action_to_negotiation_vendor" type="object" string="Kirim ke Vendor" class="btn-primary" invisible="status != 'ecatalog_check'"/>
-          <button name="action_to_negotiation_pp" type="object" string="Review PP" class="btn-primary" invisible="status != 'negotiation_vendor'"/>
-          <button name="action_to_negotiation_done" type="object" string="Negosiasi Selesai" class="btn-primary" invisible="status != 'negotiation_pp'"/>
+          <button name="action_to_negotiation_vendor" type="object" string="Kirim ke Vendor" class="btn-primary" invisible="status not in ('draft', 'revision')"/>
+          <button name="action_to_negotiation_done" type="object" string="Terima Penawaran" class="btn-primary" invisible="status != 'negotiation_pp'"/>
+          <button name="action_counter_offer" type="object" string="Counter Offer" class="btn-secondary" invisible="status != 'negotiation_pp'"/>
           <button name="action_to_negotiation_minutes" type="object" string="Buat BA Negosiasi" class="btn-secondary" invisible="status != 'negotiation_done'"/>
           <button name="action_to_spk_preparation" type="object" string="Persiapan SPK" class="btn-primary" invisible="status != 'negotiation_minutes'"/>
           <button name="action_to_spk_process" type="object" string="Proses SPK" class="btn-primary" invisible="status != 'spk_preparation'"/>
@@ -60,6 +59,7 @@
           <button name="action_set_addendum" type="object" string="Addendum" class="btn-secondary" invisible="status not in ('spk_process', 'done')"/>
           <button name="action_reset_draft" type="object" string="Kembalikan ke Draft" class="btn-secondary" invisible="status not in ('revision', 'cancelled')"/>
           <button name="action_cancel" type="object" string="Batalkan" class="btn-danger" invisible="status in ('done', 'cancelled')"/>
+          <button name="action_print_ba_negotiation" type="object" string="Cetak BA Negosiasi" class="btn-info" invisible="status not in ('negotiation_minutes', 'spk_preparation', 'spk_process', 'delivery', 'inspection', 'done')"/>
         </header>
         <sheet>
           <div class="oe_title">
@@ -109,24 +109,20 @@
               </group>
             </page>
 
-            <page string="Cek E-Katalog">
-              <group>
-                <field name="ecatalog_status"/>
-                <field name="needs_reroute" readonly="1"/>
-              </group>
-              <group>
-                <field name="ecatalog_notes"/>
-              </group>
-            </page>
-
             <page string="Negosiasi">
               <group>
                 <group>
-                  <field name="vendor_name"/>
+                  <field name="vendor_id"/>
+                  <field name="vendor_stock_confirmed"/>
                   <field name="negotiation_price" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                  <field name="admin_counter_price" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                 </group>
                 <group>
+                  <field name="vendor_offer_notes"/>
                   <field name="negotiation_notes"/>
+                  <field name="admin_review_notes"/>
+                  <field name="ba_negotiation_filename" invisible="1"/>
+                  <field name="ba_negotiation_file" filename="ba_negotiation_filename"/>
                 </group>
               </group>
               <group>
@@ -143,6 +139,8 @@
                 <group>
                   <field name="sp_signed_ppk"/>
                   <field name="sp_signed_vendor"/>
+                  <field name="sp_signed_filename" invisible="1"/>
+                  <field name="sp_signed_file" filename="sp_signed_filename"/>
                 </group>
               </group>
             </page>
