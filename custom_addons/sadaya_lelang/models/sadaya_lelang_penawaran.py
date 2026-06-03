@@ -31,6 +31,22 @@ class SadayaLelangPenawaran(models.Model):
     eval_harga_wajar = fields.Boolean(string='Harga Wajar / Sesuai HPS', tracking=True)
     eval_kualifikasi = fields.Selection([('lulus', 'Lulus'), ('gugur', 'Gugur')], string='Pembuktian Kualifikasi', tracking=True)
 
+    @api.onchange('eval_administrasi', 'skor_teknis', 'skor_harga', 'eval_kualifikasi')
+    def _onchange_evaluasi_status(self):
+        for rec in self:
+            # Pemenang Lelang tidak diganggu oleh otomasi (karena ditetapkan manual)
+            if rec.status == 'winner':
+                continue
+                
+            if rec.eval_administrasi == 'gugur' or rec.eval_kualifikasi == 'gugur':
+                rec.status = 'failed'
+            elif rec.eval_kualifikasi == 'lulus':
+                rec.status = 'passed'
+            elif rec.eval_administrasi == 'lulus' or rec.skor_teknis > 0 or rec.skor_harga > 0:
+                rec.status = 'evaluated'
+            else:
+                rec.status = 'submitted'
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:

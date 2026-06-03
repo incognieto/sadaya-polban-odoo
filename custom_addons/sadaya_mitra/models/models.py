@@ -106,13 +106,14 @@ class SadayaMitraPenyedia(models.Model):
     def _register_hook(self):
         res = super()._register_hook()
         try:
-            missing = (
-                self.env["sadaya_mitra.penyedia"]
-                .sudo()
-                .search([("partner_id", "=", False)])
-            )
-            if missing:
-                missing._ensure_partner_exists()
+            with self.env.cr.savepoint():
+                missing = (
+                    self.env["sadaya_mitra.penyedia"]
+                    .sudo()
+                    .search([("partner_id", "=", False)])
+                )
+                if missing:
+                    missing._ensure_partner_exists()
         except Exception:
             _logger.exception("Failed to backfill partner_id for sadaya_mitra.penyedia")
         return res
@@ -300,6 +301,7 @@ class SadayaMitraFasilitas(models.Model):
 
 class LandasanHukum(models.Model):
     _name = "sadaya_mitra.landasan.hukum"
+    _description = "Landasan Hukum"
 
     penyedia_id = fields.Many2one(
         "sadaya_mitra.penyedia", required=True, ondelete="cascade"
@@ -346,6 +348,7 @@ class SadayaMitraKantor(models.Model):
 
 class PendaftaranDPT(models.Model):
     _name = "sadaya_mitra.pendaftaran.dpt"
+    _description = "Pendaftaran DPT"
 
     penyedia_id = fields.Many2one("sadaya_mitra.penyedia", required=True)
     kategori_id = fields.Many2one("sadaya_mitra.kategori.dpt", required=True)
@@ -370,6 +373,7 @@ class PendaftaranDPT(models.Model):
 
 class PengajuanTTE(models.Model):
     _name = "sadaya_mitra.tte"
+    _description = "Pengajuan TTE"
 
     penyedia_id = fields.Many2one("sadaya_mitra.penyedia", required=True)
 
