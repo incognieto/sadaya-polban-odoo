@@ -1,0 +1,457 @@
+.o_sadaya_frontend {
+  --sl-bg: #edf1f3;
+  --sl-surface: #f8fbfc;
+  --sl-surface-strong: #ffffff;
+  --sl-text: #132238;
+  --sl-muted: #5c6b7a;
+  --sl-accent: #0d4f8b;
+  --sl-accent-2: #c2410c;
+  --sl-border: rgba(19, 34, 56, 0.14);
+  --sl-shadow: 0 24px 60px rgba(19, 34, 56, 0.14);
+  background:
+    radial-gradient(circle at top left, rgba(13, 79, 139, 0.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(194, 65, 12, 0.14), transparent 26%),
+    linear-gradient(180deg, var(--sl-bg) 0%, #f7f9fb 100%);
+  color: var(--sl-text);
+  min-height: 100vh;
+}
+
+.o_sadaya_frontend:has(.sl-app-shell) #wrapwrap > header,
+.o_sadaya_frontend:has(.sl-app-shell) #wrapwrap > footer,
+.o_sadaya_frontend:has(.sl-app-shell) header#top,
+.o_sadaya_frontend:has(.sl-app-shell) footer#bottom {
+  display: none !important;
+}
+
+.o_sadaya_frontend .sl-app-header,
+.o_sadaya_frontend .sl-app-footer {
+  padding: 1rem 0;
+}
+
+.o_sadaya_frontend .sl-app-header__inner,
+.o_sadaya_frontend .sl-app-footer__inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--sl-border);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: var(--sl-shadow);
+  backdrop-filter: blur(14px);
+}
+
+.o_sadaya_frontend .sl-app-brand {
+  color: var(--sl-text);
+  font-size: 1.35rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.o_sadaya_frontend .sl-app-eyebrow {
+  margin-bottom: 0.15rem;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--sl-muted);
+}
+
+.o_sadaya_frontend .sl-app-nav {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.o_sadaya_frontend .sl-app-nav a {
+  text-decoration: none;
+  color: var(--sl-text);
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+}
+
+.o_sadaya_frontend .sl-app-nav a.active,
+.o_sadaya_frontend .sl-app-nav a:hover {
+  border-color: rgba(13, 79, 139, 0.18);
+  background: rgba(13, 79, 139, 0.08);
+}
+
+.o_sadaya_frontend .sl-hero,
+.o_sadaya_frontend .sl-page-header {
+  padding: 4rem 0 2rem;
+}
+
+.o_sadaya_frontend .sl-hero__inner {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  align-items: end;
+  padding: 2rem;
+  border: 1px solid var(--sl-border);
+  border-radius: 28px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(244, 248, 251, 0.94)),
+    linear-gradient(135deg, rgba(13, 79, 139, 0.08), rgba(194, 65, 12, 0.05));
+  box-shadow: var(--sl-shadow);
+  backdrop-filter: blur(12px);
+}
+
+.o_sadaya_frontend h1,
+.o_sadaya_frontend h2,
+.o_sadaya_frontend h3 {
+  color: var(--sl-text);
+  margin-bottom: 0;
+}
+
+.o_sadaya_frontend .sl-kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--sl-accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.o_sadaya_frontend .sl-lead {
+  color: var(--sl-muted);
+  max-width: 54rem;
+  margin-top: 0.9rem;
+  font-size: 1.05rem;
+}
+
+.o_sadaya_frontend .sl-hero__actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.o_sadaya_frontend .sl-hero__stats {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+.o_sadaya_frontend .sl-hero__stats div {
+  min-width: 140px;
+  padding: 0.95rem 1rem;
+  border-radius: 18px;
+  background: rgba(13, 79, 139, 0.08);
+  border: 1px solid rgba(13, 79, 139, 0.12);
+}
+
+.o_sadaya_frontend .sl-hero__stats span,
+.o_sadaya_frontend .sl-field-label {
+  display: block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--sl-muted);
+  margin-bottom: 0.35rem;
+}
+
+.o_sadaya_frontend .sl-hero__stats strong {
+  font-size: 1.35rem;
+  color: var(--sl-text);
+}
+
+.o_sadaya_frontend .sl-section {
+  padding: 1.25rem 0 2rem;
+}
+
+.o_sadaya_frontend .sl-section--alt {
+  padding-bottom: 4rem;
+}
+
+.o_sadaya_frontend .sl-section--form {
+  padding-top: 0;
+}
+
+.o_sadaya_frontend .sl-card {
+  border: 1px solid var(--sl-border);
+  border-radius: 24px;
+  background: var(--sl-surface-strong);
+  box-shadow: 0 16px 36px rgba(24, 33, 47, 0.08);
+}
+
+.o_sadaya_frontend .sl-card--metric {
+  padding: 1.25rem 1.4rem;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.o_sadaya_frontend .sl-card--metric span {
+  color: var(--sl-muted);
+  font-size: 0.92rem;
+}
+
+.o_sadaya_frontend .sl-card--metric strong {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.o_sadaya_frontend .sl-grid-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: end;
+  margin-bottom: 1rem;
+}
+
+.o_sadaya_frontend .sl-grid-header p {
+  color: var(--sl-muted);
+  margin-bottom: 0;
+}
+
+.o_sadaya_frontend .sl-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.o_sadaya_frontend .sl-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
+  background: rgba(13, 79, 139, 0.09);
+  color: var(--sl-text);
+  border: 1px solid rgba(13, 79, 139, 0.14);
+}
+
+.o_sadaya_frontend .sl-label {
+  display: inline-flex;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(194, 65, 12, 0.14);
+  color: #9a3412;
+  font-size: 0.77rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.o_sadaya_frontend .sl-card--detail {
+  padding: 1.25rem 1.35rem;
+}
+
+.o_sadaya_frontend .sl-notice {
+  border-radius: 16px;
+  border: 1px solid transparent;
+  margin-bottom: 1rem;
+}
+
+.o_sadaya_frontend .sl-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+
+.o_sadaya_frontend .sl-actions form {
+  margin: 0;
+}
+
+.o_sadaya_frontend .sl-actions .btn {
+  border-radius: 999px;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+}
+
+.o_sadaya_frontend .sl-inline-panel {
+  margin-top: 1rem;
+  border-top: 1px dashed var(--sl-border);
+  padding-top: 0.8rem;
+}
+
+.o_sadaya_frontend .sl-inline-panel summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--sl-accent);
+}
+
+.o_sadaya_frontend .sl-inline-panel__body {
+  margin-top: 0.9rem;
+}
+
+.o_sadaya_frontend .sl-form--inline {
+  box-shadow: none;
+  border-radius: 18px;
+  margin-bottom: 0.8rem;
+}
+
+.o_sadaya_frontend .sl-subsection {
+  margin-top: 1rem;
+}
+
+.o_sadaya_frontend .sl-subsection h4 {
+  font-size: 1rem;
+  margin-bottom: 0.55rem;
+}
+
+.o_sadaya_frontend .sl-penawaran-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.o_sadaya_frontend .sl-penawaran-item {
+  border: 1px solid var(--sl-border);
+  border-radius: 14px;
+  padding: 0.8rem;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.o_sadaya_frontend .sl-penawaran-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.o_sadaya_frontend .sl-penawaran-meta {
+  margin: 0.3rem 0 0.7rem;
+  color: var(--sl-muted);
+  font-size: 0.9rem;
+}
+
+.o_sadaya_frontend .sl-inline-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 0.55rem;
+}
+
+.o_sadaya_frontend .sl-card__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: start;
+  margin-bottom: 1rem;
+}
+
+.o_sadaya_frontend .sl-card__top strong {
+  white-space: nowrap;
+  color: var(--sl-accent);
+}
+
+.o_sadaya_frontend .sl-form {
+  padding: 1.4rem;
+  border-radius: 24px;
+  border: 1px solid var(--sl-border);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 250, 252, 0.98));
+  box-shadow: var(--sl-shadow);
+}
+
+.o_sadaya_frontend .sl-input {
+  border-radius: 16px;
+  border-color: rgba(24, 33, 47, 0.14);
+  background-color: #fff;
+  color: var(--sl-text);
+  padding: 0.8rem 0.95rem;
+}
+
+.o_sadaya_frontend .sl-input:focus {
+  border-color: var(--sl-accent);
+  box-shadow: 0 0 0 0.18rem rgba(11, 107, 99, 0.16);
+}
+
+.o_sadaya_frontend .sl-submit {
+  border-radius: 999px;
+  padding: 0.8rem 1.25rem;
+  background: linear-gradient(135deg, var(--sl-accent), #08335d);
+  border-color: transparent;
+  box-shadow: 0 10px 22px rgba(13, 79, 139, 0.24);
+}
+
+.o_sadaya_frontend .sl-submit:hover {
+  filter: brightness(1.04);
+}
+
+.o_sadaya_frontend .btn-primary {
+  background-color: var(--sl-accent);
+  border-color: var(--sl-accent);
+}
+
+.o_sadaya_frontend .btn-dark {
+  background-color: #111827;
+  border-color: #111827;
+}
+
+.o_sadaya_frontend .btn-outline-primary {
+  color: var(--sl-accent);
+  border-color: var(--sl-accent);
+}
+
+.o_sadaya_frontend .btn-outline-primary:hover {
+  background-color: var(--sl-accent);
+  color: #fff;
+}
+
+.o_sadaya_frontend .sl-dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem 1rem;
+  margin: 0;
+}
+
+.o_sadaya_frontend .sl-dl div {
+  min-width: 0;
+}
+
+.o_sadaya_frontend .sl-dl dt {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--sl-muted);
+}
+
+.o_sadaya_frontend .sl-dl dd {
+  margin: 0.2rem 0 0;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.o_sadaya_frontend .sl-empty-card,
+.o_sadaya_frontend .sl-empty {
+  color: var(--sl-muted);
+}
+
+.o_sadaya_frontend .sl-app-footer {
+  padding-bottom: 2rem;
+}
+
+.o_sadaya_frontend .sl-app-footer__meta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: end;
+  color: var(--sl-muted);
+  font-size: 0.92rem;
+}
+
+.o_sadaya_frontend .sl-app-footer strong {
+  display: block;
+  margin-top: 0.15rem;
+}
+
+@media (max-width: 767.98px) {
+  .o_sadaya_frontend .sl-hero__inner,
+  .o_sadaya_frontend .sl-grid-header,
+  .o_sadaya_frontend .sl-app-header__inner,
+  .o_sadaya_frontend .sl-app-footer__inner {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .o_sadaya_frontend .sl-dl {
+    grid-template-columns: 1fr;
+  }
+
+  .o_sadaya_frontend .sl-inline-grid {
+    grid-template-columns: 1fr;
+  }
+}

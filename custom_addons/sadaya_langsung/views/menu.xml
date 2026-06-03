@@ -11,21 +11,21 @@
     <menuitem name="Dashboard"
               id="menu_sadaya_langsung_dashboard"
               parent="menu_sadaya_langsung_root"
-              action="action_sadaya_langsung_dashboard"
+              action="action_sadaya_langsung_dashboard_url"
               sequence="10"/>
 
     <!-- Paket Penyedia -->
     <menuitem name="Paket"
               id="menu_sadaya_langsung_paket"
               parent="menu_sadaya_langsung_root"
-              action="action_sadaya_langsung_paket"
+              action="action_sadaya_langsung_paket_url"
               sequence="20"/>
 
     <!-- Kontrak -->
     <menuitem name="Kontrak"
               id="menu_sadaya_langsung_kontrak"
               parent="menu_sadaya_langsung_root"
-              action="action_sadaya_langsung_kontrak"
+              action="action_sadaya_langsung_kontrak_url"
               sequence="30"/>
 
   </data>
