@@ -1,21 +1,768 @@
-# from odoo import http
+from odoo import fields, http
+from odoo.http import request
+from urllib.parse import quote_plus
+import base64
 
 
-# class SadayaLangsung(http.Controller):
-#     @http.route('/sadaya_langsung/sadaya_langsung', auth='public')
-#     def index(self, **kw):
-#         return "Hello, world"
+class SadayaLangsungController(http.Controller):
+	def _selection_options(self, record, field_name):
+		field = record._fields.get(field_name)
+		if not field:
+			return []
+		return [{"value": value, "label": label} for value, label in field.selection or []]
 
-#     @http.route('/sadaya_langsung/sadaya_langsung/objects', auth='public')
-#     def list(self, **kw):
-#         return http.request.render('sadaya_langsung.listing', {
-#             'root': '/sadaya_langsung/sadaya_langsung',
-#             'objects': http.request.env['sadaya_langsung.sadaya_langsung'].search([]),
-#         })
+	def _safe_float(self, value):
+		if value in (None, ""):
+			return 0.0
+		try:
+			return float(str(value).replace(",", "."))
+		except (TypeError, ValueError):
+			return 0.0
 
-#     @http.route('/sadaya_langsung/sadaya_langsung/objects/<model("sadaya_langsung.sadaya_langsung"):obj>', auth='public')
-#     def object(self, obj, **kw):
-#         return http.request.render('sadaya_langsung.object', {
-#             'object': obj
-#         })
+	def _safe_int(self, value):
+		if value in (None, ""):
+			return 0
+		try:
+			return int(value)
+		except (TypeError, ValueError):
+			return 0
+
+	def _safe_selection(self, value, options):
+		allowed = {item["value"] for item in options}
+		if value in allowed:
+			return value
+		return False
+
+	def _format_money(self, amount):
+		amount = amount or 0.0
+		return "Rp {:,.0f}".format(amount).replace(",", ".")
+
+	def _redirect_with_message(self, path, success=None, error=None):
+		if success:
+			return request.redirect(f"{path}?success={quote_plus(success)}")
+		if error:
+			return request.redirect(f"{path}?error={quote_plus(error)}")
+		return request.redirect(path)
+
+	def _paket_actions(self, record):
+		actions = []
+		if record.status_paket == "draft":
+			actions.append({"key": "kirim_undangan", "label": "Kirim Undangan", "class": "btn-primary"})
+		elif record.status_paket == "undangan":
+			actions.append({"key": "tunggu_penawaran", "label": "Menunggu Penawaran", "class": "btn-primary"})
+		elif record.status_paket == "penawaran":
+			actions.append({"key": "evaluasi", "label": "Evaluasi", "class": "btn-primary"})
+		elif record.status_paket == "evaluasi":
+			actions.append({"key": "negosiasi", "label": "Klarifikasi & Negosiasi", "class": "btn-primary"})
+		elif record.status_paket == "negosiasi":
+			actions.append({"key": "tetapkan_pemenang", "label": "Tetapkan Pemenang", "class": "btn-success"})
+		elif record.status_paket == "sppbj":
+			actions.append({"key": "buat_kontrak", "label": "Buat Kontrak", "class": "btn-success"})
+		elif record.status_paket == "kontrak":
+			actions.append({"key": "selesai", "label": "Selesai Pengadaan", "class": "btn-success"})
+
+		if record.status_paket in ("draft", "undangan", "penawaran", "evaluasi", "negosiasi", "sppbj", "kontrak"):
+			actions.append({"key": "batal", "label": "Batalkan", "class": "btn-outline-danger"})
+		if record.status_paket == "batal":
+			actions.append({"key": "reset_draft", "label": "Reset ke Draft", "class": "btn-outline-secondary"})
+		return actions
+
+	def _kontrak_actions(self, record):
+		actions = []
+		if record.status_kontrak == "persiapan_kontrak":
+			actions.append({"key": "proses_kontrak", "label": "Proses Kontrak", "class": "btn-primary"})
+		elif record.status_kontrak == "proses_kontrak":
+			actions.append({"key": "selesai_kontrak", "label": "Selesai Kontrak", "class": "btn-success"})
+		elif record.status_kontrak == "selesai_kontrak":
+			actions.append({"key": "addendum", "label": "Addendum", "class": "btn-warning"})
+
+		if record.status_kontrak not in ("selesai_kontrak", "revisi"):
+			actions.append({"key": "revisi", "label": "Revisi", "class": "btn-outline-secondary"})
+		return actions
+
+	def _group_count(self, item, field_name):
+		return item.get("__count") or item.get(f"{field_name}_count") or 0
+
+	def _format_date(self, value):
+		if not value:
+			return "-"
+		return fields.Date.to_string(value)
+
+	def _selection_label(self, record, field_name, value):
+		field = record._fields.get(field_name)
+		if not field:
+			return value or "-"
+		return dict(field.selection or []).get(value, value or "-")
+
+	def _vendor_options(self):
+		vendors = request.env["res.partner"].sudo().search(
+			[("is_sadaya_mitra_vendor", "=", True)], order="name asc"
+		)
+		return [{"id": vendor.id, "name": vendor.name} for vendor in vendors]
+
+	def _penawaran_actions(self, record):
+		actions = []
+		if record.status_penawaran == "diajukan":
+			actions.append({"key": "tolak", "label": "Tolak", "class": "btn-outline-danger"})
+		if record.status_penawaran != "dipilih":
+			actions.append({"key": "pilih", "label": "Pilih Pemenang", "class": "btn-success"})
+		if record.status_penawaran in ("ditolak", "dipilih"):
+			actions.append({"key": "reset", "label": "Reset Status", "class": "btn-outline-secondary"})
+		return actions
+
+	def _build_penawaran_rows(self, records):
+		rows = []
+		for record in records:
+			rows.append(
+				{
+					"id": record.id,
+					"vendor": record.vendor_id.name,
+					"harga_penawaran": self._format_money(record.harga_penawaran),
+					"status_penawaran": self._selection_label(
+						record, "status_penawaran", record.status_penawaran
+					),
+					"evaluasi_administrasi": record.evaluasi_administrasi or "",
+					"evaluasi_teknis": record.evaluasi_teknis or "",
+					"evaluasi_harga": record.evaluasi_harga or "",
+					"lulus_evaluasi": "Lulus" if record.lulus_evaluasi else "Belum",
+					"actions": self._penawaran_actions(record),
+				}
+			)
+		return rows
+
+	def _build_paket_cards(self, records):
+		cards = []
+		Paket = request.env["sadaya_langsung.paket"]
+		Penawaran = request.env["sadaya_langsung.penawaran"]
+		for record in records:
+			status_options = self._selection_options(Paket, "status_paket")
+			penawaran_records = record.penawaran_ids.sorted(lambda p: (p.harga_penawaran, p.id))
+			cards.append(
+				{
+					"id": record.id,
+					"name": record.name,
+					"unit_pengusul": record.unit_pengusul or "-",
+					"keterangan": record.keterangan or "",
+					"tanggal_mulai": fields.Date.to_string(record.tanggal_mulai) if record.tanggal_mulai else "",
+					"tanggal_selesai": fields.Date.to_string(record.tanggal_selesai) if record.tanggal_selesai else "",
+					"status_code": record.status_paket,
+					"status_options": status_options,
+					"jenis_pengadaan": self._selection_label(
+						record, "jenis_pengadaan", record.jenis_pengadaan
+					),
+					"jenis_pengadaan_code": record.jenis_pengadaan,
+					"status_paket": self._selection_label(
+						record, "status_paket", record.status_paket
+					),
+					"nilai_hps": self._format_money(record.nilai_hps),
+					"nilai_hps_raw": record.nilai_hps or 0.0,
+					"tanggal": self._format_date(record.tanggal),
+					"tanggal_raw": fields.Date.to_string(record.tanggal) if record.tanggal else "",
+					"vendor_pemenang_id": record.vendor_pemenang_id.id if record.vendor_pemenang_id else 0,
+					"vendor_pemenang": record.vendor_pemenang_id.name
+					if record.vendor_pemenang_id
+					else "-",
+					"penawaran_rows": self._build_penawaran_rows(penawaran_records),
+					"item_rows": [
+						{
+							"id": item.id,
+							"name": item.name,
+							"deskripsi": item.deskripsi or "",
+							"qty": item.qty,
+							"satuan": item.satuan,
+							"harga_satuan": item.harga_satuan,
+							"subtotal": item.subtotal,
+						}
+						for item in record.item_ids.sorted(key=lambda r: r.id)
+					],
+					"evaluasi_options": self._selection_options(Penawaran, "evaluasi_administrasi"),
+					"actions": self._paket_actions(record),
+				}
+			)
+		return cards
+
+	def _build_kontrak_cards(self, records):
+		cards = []
+		Kontrak = request.env["sadaya_langsung.kontrak"]
+		for record in records:
+			cards.append(
+				{
+					"id": record.id,
+					"name": record.name,
+					"paket": record.paket_id.name if record.paket_id else "-",
+					"paket_id": record.paket_id.id if record.paket_id else 0,
+					"pejabat_pembuat": record.pejabat_pembuat or "-",
+					"penyedia": record.penyedia or "-",
+					"status_code": record.status_kontrak,
+					"status_options": self._selection_options(Kontrak, "status_kontrak"),
+					"jenis_pengadaan_code": record.jenis_pengadaan,
+					"status_kontrak": self._selection_label(
+						record, "status_kontrak", record.status_kontrak
+					),
+					"nilai_hps": self._format_money(record.nilai_hps),
+					"nilai_hps_raw": record.nilai_hps or 0.0,
+					"tanggal": self._format_date(record.tanggal),
+					"tanggal_raw": fields.Date.to_string(record.tanggal) if record.tanggal else "",
+					"tanggal_mulai": fields.Date.to_string(record.tanggal_mulai) if record.tanggal_mulai else "",
+					"tanggal_selesai": fields.Date.to_string(record.tanggal_selesai) if record.tanggal_selesai else "",
+					"keterangan": record.keterangan or "",
+					"actions": self._kontrak_actions(record),
+				}
+			)
+		return cards
+
+	def _get_dashboard_payload(self):
+		Paket = request.env["sadaya_langsung.paket"].sudo()
+		Kontrak = request.env["sadaya_langsung.kontrak"].sudo()
+
+		paket_breakdown = Paket.read_group(
+			[], ["status_paket"], ["status_paket"], lazy=False
+		)
+		kontrak_breakdown = Kontrak.read_group(
+			[], ["status_kontrak"], ["status_kontrak"], lazy=False
+		)
+
+		return {
+			"total_paket": Paket.search_count([]),
+			"total_kontrak": Kontrak.search_count([]),
+			"paket_aktif": Paket.search_count(
+				[("status_paket", "not in", ["selesai", "batal"])]
+			),
+			"paket_selesai": Paket.search_count([("status_paket", "=", "selesai")]),
+			"kontrak_persiapan": Kontrak.search_count(
+				[("status_kontrak", "=", "persiapan_kontrak")]
+			),
+			"kontrak_selesai": Kontrak.search_count(
+				[("status_kontrak", "=", "selesai_kontrak")]
+			),
+			"recent_paket": self._build_paket_cards(
+				Paket.search([], order="tanggal desc, id desc", limit=5)
+			),
+			"recent_kontrak": self._build_kontrak_cards(
+				Kontrak.search([], order="tanggal desc, id desc", limit=5)
+			),
+			"paket_breakdown": [
+				{
+					"label": dict(Paket._fields["status_paket"].selection).get(
+						item["status_paket"], item["status_paket"]
+					),
+					"count": self._group_count(item, "status_paket"),
+				}
+				for item in paket_breakdown
+				if item.get("status_paket")
+			],
+			"kontrak_breakdown": [
+				{
+					"label": dict(Kontrak._fields["status_kontrak"].selection).get(
+						item["status_kontrak"], item["status_kontrak"]
+					),
+					"count": self._group_count(item, "status_kontrak"),
+				}
+				for item in kontrak_breakdown
+				if item.get("status_kontrak")
+			],
+		}
+
+	@http.route("/sadaya_langsung", type="http", auth="user", website=True)
+	def dashboard(self, **kwargs):
+		return request.render(
+			"sadaya_langsung.frontend_dashboard",
+			{"active_page": "dashboard", **self._get_dashboard_payload()},
+		)
+
+	@http.route("/sadaya_langsung/paket", type="http", auth="user", website=True)
+	def paket_page(self, **kwargs):
+		Paket = request.env["sadaya_langsung.paket"].sudo()
+		return request.render(
+			"sadaya_langsung.frontend_paket_page",
+			{
+				"active_page": "paket",
+				"notice_success": kwargs.get("success"),
+				"notice_error": kwargs.get("error"),
+				"paket_cards": self._build_paket_cards(
+					Paket.search([], order="tanggal desc, id desc")
+				),
+				"total_paket": Paket.search_count([]),
+				"jenis_pengadaan_options": self._selection_options(
+					Paket, "jenis_pengadaan"
+				),
+				"status_paket_options": self._selection_options(Paket, "status_paket"),
+				"vendor_options": self._vendor_options(),
+			},
+		)
+
+	@http.route(
+		"/sadaya_langsung/paket/create",
+		type="http",
+		auth="user",
+		website=True,
+		methods=["POST"],
+	)
+	def create_paket(self, **post):
+		Paket = request.env["sadaya_langsung.paket"].sudo()
+		jenis_options = self._selection_options(Paket, "jenis_pengadaan")
+		values = {
+			"name": post.get("name") or "Paket Baru",
+			"unit_pengusul": post.get("unit_pengusul") or False,
+			"jenis_pengadaan": self._safe_selection(
+				post.get("jenis_pengadaan"), jenis_options
+			),
+			"nilai_hps": self._safe_float(post.get("nilai_hps")),
+			"tanggal": post.get("tanggal") or False,
+			"keterangan": post.get("keterangan") or False,
+			"tanggal_mulai": post.get("tanggal_mulai") or False,
+			"tanggal_selesai": post.get("tanggal_selesai") or False,
+		}
+		new = Paket.create(values)
+		# Handle file uploads: dokumen_kak, dokumen_rab
+		if request.httprequest.files:
+			f_kak = request.httprequest.files.get("dokumen_kak")
+			f_rab = request.httprequest.files.get("dokumen_rab")
+			write_vals = {}
+			if f_kak:
+				data = f_kak.read()
+				if data:
+					write_vals["dokumen_kak"] = base64.b64encode(data).decode("utf-8")
+					write_vals["filename_kak"] = getattr(f_kak, "filename", None)
+			if f_rab:
+				data = f_rab.read()
+				if data:
+					write_vals["dokumen_rab"] = base64.b64encode(data).decode("utf-8")
+					write_vals["filename_rab"] = getattr(f_rab, "filename", None)
+			if write_vals:
+				try:
+					new.sudo().write(write_vals)
+				except Exception:
+					pass
+		return self._redirect_with_message(
+			"/sadaya_langsung/paket", success="Paket berhasil ditambahkan"
+		)
+
+	@http.route(
+		"/sadaya_langsung/paket/<int:paket_id>/update",
+		type="http",
+		auth="user",
+		website=True,
+		methods=["POST"],
+	)
+	def update_paket(self, paket_id, **post):
+		Paket = request.env["sadaya_langsung.paket"].sudo()
+		record = Paket.browse(paket_id)
+		if not record.exists():
+			return self._redirect_with_message(
+				"/sadaya_langsung/paket", error="Paket tidak ditemukan"
+			)
+
+		jenis_options = self._selection_options(Paket, "jenis_pengadaan")
+		status_options = self._selection_options(Paket, "status_paket")
+		values = {
+			"name": post.get("name") or record.name,
+			"unit_pengusul": post.get("unit_pengusul") or False,
+			"jenis_pengadaan": self._safe_selection(post.get("jenis_pengadaan"), jenis_options),
+			"nilai_hps": self._safe_float(post.get("nilai_hps")),
+			"tanggal": post.get("tanggal") or False,
+			"tanggal_mulai": post.get("tanggal_mulai") or False,
+			"tanggal_selesai": post.get("tanggal_selesai") or False,
+			"keterangan": post.get("keterangan") or False,
+		}
+		status_input = self._safe_selection(post.get("status_paket"), status_options)
+		if status_input:
+			values["status_paket"] = status_input
+
+		vendor_id = self._safe_int(post.get("vendor_pemenang_id"))
+		values["vendor_pemenang_id"] = vendor_id or False
+
+		try:
+			record.write(values)
+		except Exception as exc:
+			return self._redirect_with_message("/sadaya_langsung/paket", error=str(exc))
+
+		# Handle file uploads on update
+		if request.httprequest.files:
+			f_kak = request.httprequest.files.get("dokumen_kak")
+			f_rab = request.httprequest.files.get("dokumen_rab")
+			write_vals = {}
+			if f_kak:
+				data = f_kak.read()
+				if data:
+					write_vals["dokumen_kak"] = base64.b64encode(data).decode("utf-8")
+					write_vals["filename_kak"] = getattr(f_kak, "filename", None)
+			if f_rab:
+				data = f_rab.read()
+				if data:
+					write_vals["dokumen_rab"] = base64.b64encode(data).decode("utf-8")
+					write_vals["filename_rab"] = getattr(f_rab, "filename", None)
+			if write_vals:
+				try:
+					record.sudo().write(write_vals)
+				except Exception:
+					pass
+
+		return self._redirect_with_message(
+			"/sadaya_langsung/paket", success="Paket berhasil diperbarui"
+		)
+
+	@http.route(
+		"/sadaya_langsung/paket/<int:paket_id>/penawaran/create",
+		type="http",
+		auth="user",
+		website=True,
+		methods=["POST"],
+	)
+	def create_penawaran(self, paket_id, **post):
+		paket = request.env["sadaya_langsung.paket"].sudo().browse(paket_id)
+		if not paket.exists():
+			return self._redirect_with_message(
+				"/sadaya_langsung/paket", error="Paket tidak ditemukan"
+			)
+
+		vendor_id = self._safe_int(post.get("vendor_id"))
+		if not vendor_id:
+			return self._redirect_with_message(
+				"/sadaya_langsung/paket", error="Vendor wajib dipilih"
+			)
+
+		values = {
+			"paket_id": paket.id,
+			"vendor_id": vendor_id,
+			"harga_penawaran": self._safe_float(post.get("harga_penawaran")),
+			"tanggal": post.get("tanggal") or False,
+			"catatan": post.get("catatan") or False,
+		}
+		# Handle optional dokumen_penawaran file
+		penawaran = None
+		try:
+			penawaran = request.env["sadaya_langsung.penawaran"].sudo().create(values)
+		except Exception as exc:
+			return self._redirect_with_message("/sadaya_langsung/paket", error=str(exc))
+		if penawaran and request.httprequest.files:
+			f_doc = request.httprequest.files.get("dokumen_penawaran")
+			if f_doc:
+				data = f_doc.read()
+				if data:
+					try:
+						penawaran.sudo().write({
+							"dokumen_penawaran": base64.b64encode(data).decode("utf-8"),
+							"dokumen_filename": getattr(f_doc, "filename", None),
+						})
+					except Exception:
+						pass
+
+		return self._redirect_with_message(
+			"/sadaya_langsung/paket", success="Penawaran vendor berhasil ditambahkan"
+		)
+
+	@http.route(
+		"/sadaya_langsung/penawaran/<int:penawaran_id>/evaluate",
+		type="http",
+		auth="user",
+		website=True,
+		methods=["POST"],
+	)
+	def evaluate_penawaran(self, penawaran_id, **post):
+		Penawaran = request.env["sadaya_langsung.penawaran"].sudo()
+		record = Penawaran.browse(penawaran_id)
+		if not record.exists():
+			return self._redirect_with_message(
+				"/sadaya_langsung/paket", error="Penawaran tidak ditemukan"
+			)
+
+		eval_options = self._selection_options(Penawaran, "evaluasi_administrasi")
+		values = {
+			"evaluasi_administrasi": self._safe_selection(
+				post.get("evaluasi_administrasi"), eval_options
+			),
+			"evaluasi_teknis": self._safe_selection(post.get("evaluasi_teknis"), eval_options),
+			"evaluasi_harga": self._safe_selection(post.get("evaluasi_harga"), eval_options),
+		}
+		try:
+			record.write(values)
+		except Exception as exc:
+			return self._redirect_with_message("/sadaya_langsung/paket", error=str(exc))
+
+		return self._redirect_with_message(
+			"/sadaya_langsung/paket", success="Evaluasi penawaran diperbarui"
+		)
+
+	@http.route(
+		"/sadaya_langsung/penawaran/<int:penawaran_id>/action",
+		type="http",
+		auth="user",
+		website=True,
+		methods=["POST"],
+	)
+	def penawaran_action(self, penawaran_id, **post):
+		action_map = {
+			"pilih": "action_pilih_pemenang",
+			"tolak": "action_tolak",
+			"reset": "action_reset_masuk",
+		}
+		record = request.env["sadaya_langsung.penawaran"].sudo().browse(penawaran_id)
+		if not record.exists():
+			return self._redirect_with_message(
+				"/sadaya_langsung/paket", error="Penawaran tidak ditemukan"
+			)
+		action_key = post.get("action")
+		method_name = action_map.get(action_key)
+		if not method_name:
+			return self._redirect_with_message(
+				"/sadaya_langsung/paket", error="Aksi penawaran tidak valid"
+			)
+
+		try:
+			getattr(record, method_name)()
+		except Exception as exc:
+			return self._redirect_with_message("/sadaya_langsung/paket", error=str(exc))
+
+		return self._redirect_with_message(
+			"/sadaya_langsung/paket", success="Aksi penawaran berhasil diproses"
+		)
+
+	@http.route(
+		"/sadaya_langsung/paket/<int:paket_id>/workflow",
+		type="http",
+		auth="user",
+		website=True,
+		methods=["POST"],
+	)
+	def paket_workflow(self, paket_id, **post):
+		action_map = {
+			"kirim_undangan": "action_kirim_undangan",
+			"tunggu_penawaran": "action_tunggu_penawaran",
+			"evaluasi": "action_evaluasi",
+			"negosiasi": "action_negosiasi",
+			"tetapkan_pemenang": "action_tetapkan_pemenang",
+			"buat_kontrak": "action_buat_kontrak",
+			"selesai": "action_selesai",
+			"batal": "action_batal",
+			"reset_draft": "action_reset_draft",
+		}
+		record = request.env["sadaya_langsung.paket"].sudo().browse(paket_id)
+		if not record.exists():
+			return self._redirect_with_message(
+				"/sadaya_langsung/paket", error="Paket tidak ditemukan"
+			)
+		action_key = post.get("action")
+		method_name = action_map.get(action_key)
+		if not method_name:
+			return self._redirect_with_message(
+				"/sadaya_langsung/paket", error="Aksi paket tidak valid"
+			)
+
+		try:
+			getattr(record, method_name)()
+		except Exception as exc:
+			return self._redirect_with_message("/sadaya_langsung/paket", error=str(exc))
+
+		return self._redirect_with_message(
+			"/sadaya_langsung/paket", success="Status paket berhasil diperbarui"
+		)
+
+	@http.route(
+		"/sadaya_langsung/paket/<int:paket_id>/item/create",
+		type="http",
+		auth="user",
+		website=True,
+		methods=["POST"],
+	)
+	def paket_item_create(self, paket_id, **post):
+		Paket = request.env["sadaya_langsung.paket"].sudo()
+		paket = Paket.browse(paket_id)
+		if not paket.exists():
+			return self._redirect_with_message(
+				"/sadaya_langsung/paket", error="Paket tidak ditemukan"
+			)
+		values = {
+			"paket_id": paket.id,
+			"name": post.get("name") or "Item",
+			"deskripsi": post.get("deskripsi") or False,
+			"qty": self._safe_float(post.get("qty")) or 0.0,
+			"satuan": post.get("satuan") or False,
+			"harga_satuan": self._safe_float(post.get("harga_satuan")) or 0.0,
+		}
+		try:
+			request.env["sadaya_langsung.paket.line"].sudo().create(values)
+		except Exception as exc:
+			return self._redirect_with_message("/sadaya_langsung/paket", error=str(exc))
+		return self._redirect_with_message("/sadaya_langsung/paket", success="Item berhasil ditambahkan")
+
+	@http.route(
+		"/sadaya_langsung/paket/<int:paket_id>/item/<int:item_id>/update",
+		type="http",
+		auth="user",
+		website=True,
+		methods=["POST"],
+	)
+	def paket_item_update(self, paket_id, item_id, **post):
+		item = request.env["sadaya_langsung.paket.line"].sudo().browse(item_id)
+		if not item.exists() or item.paket_id.id != paket_id:
+			return self._redirect_with_message("/sadaya_langsung/paket", error="Item tidak ditemukan")
+		values = {
+			"name": post.get("name") or item.name,
+			"deskripsi": post.get("deskripsi") or False,
+			"qty": self._safe_float(post.get("qty")) or 0.0,
+			"satuan": post.get("satuan") or item.satuan,
+			"harga_satuan": self._safe_float(post.get("harga_satuan")) or 0.0,
+		}
+		try:
+			item.write(values)
+		except Exception as exc:
+			return self._redirect_with_message("/sadaya_langsung/paket", error=str(exc))
+		return self._redirect_with_message("/sadaya_langsung/paket", success="Item berhasil diperbarui")
+
+	@http.route(
+		"/sadaya_langsung/paket/<int:paket_id>/item/<int:item_id>/delete",
+		type="http",
+		auth="user",
+		website=True,
+		methods=["POST"],
+	)
+	def paket_item_delete(self, paket_id, item_id, **post):
+		item = request.env["sadaya_langsung.paket.line"].sudo().browse(item_id)
+		if not item.exists() or item.paket_id.id != paket_id:
+			return self._redirect_with_message("/sadaya_langsung/paket", error="Item tidak ditemukan")
+		try:
+			item.unlink()
+		except Exception as exc:
+			return self._redirect_with_message("/sadaya_langsung/paket", error=str(exc))
+		return self._redirect_with_message("/sadaya_langsung/paket", success="Item berhasil dihapus")
+
+	@http.route("/sadaya_langsung/kontrak", type="http", auth="user", website=True)
+	def kontrak_page(self, **kwargs):
+		Kontrak = request.env["sadaya_langsung.kontrak"].sudo()
+		Paket = request.env["sadaya_langsung.paket"].sudo()
+		return request.render(
+			"sadaya_langsung.frontend_kontrak_page",
+			{
+				"active_page": "kontrak",
+				"notice_success": kwargs.get("success"),
+				"notice_error": kwargs.get("error"),
+				"kontrak_cards": self._build_kontrak_cards(
+					Kontrak.search([], order="tanggal desc, id desc")
+				),
+				"total_kontrak": Kontrak.search_count([]),
+				"paket_options": [
+					{"id": paket.id, "name": paket.name}
+					for paket in Paket.search([], order="tanggal desc, id desc")
+				],
+				"jenis_pengadaan_options": self._selection_options(
+					Kontrak, "jenis_pengadaan"
+				),
+				"status_kontrak_options": self._selection_options(Kontrak, "status_kontrak"),
+			},
+		)
+
+	@http.route(
+		"/sadaya_langsung/kontrak/create",
+		type="http",
+		auth="user",
+		website=True,
+		methods=["POST"],
+	)
+	def create_kontrak(self, **post):
+		paket_id = self._safe_int(post.get("paket_id"))
+		paket = False
+		if paket_id:
+			paket = request.env["sadaya_langsung.paket"].sudo().browse(paket_id)
+			if not paket.exists():
+				paket = False
+
+		Kontrak = request.env["sadaya_langsung.kontrak"].sudo()
+		jenis_options = self._selection_options(Kontrak, "jenis_pengadaan")
+
+		values = {
+			"name": post.get("name") or (paket.name if paket else "Kontrak Baru"),
+			"paket_id": paket.id if paket else False,
+			"pejabat_pembuat": post.get("pejabat_pembuat") or request.env.user.name,
+			"penyedia": post.get("penyedia") or (paket.vendor_pemenang_id.name if paket and paket.vendor_pemenang_id else False),
+			"jenis_pengadaan": self._safe_selection(post.get("jenis_pengadaan"), jenis_options) or (paket.jenis_pengadaan if paket else False),
+			"nilai_hps": self._safe_float(post.get("nilai_hps") or (paket.nilai_hps if paket else 0.0)),
+			"tanggal": post.get("tanggal") or False,
+			"tanggal_mulai": post.get("tanggal_mulai") or (paket.tanggal_mulai if paket else False),
+			"tanggal_selesai": post.get("tanggal_selesai") or (paket.tanggal_selesai if paket else False),
+			"status_kontrak": "persiapan_kontrak",
+			"keterangan": post.get("keterangan") or False,
+		}
+		Kontrak.create(values)
+		return self._redirect_with_message(
+			"/sadaya_langsung/kontrak", success="Kontrak berhasil ditambahkan"
+		)
+
+	@http.route(
+		"/sadaya_langsung/kontrak/<int:kontrak_id>/update",
+		type="http",
+		auth="user",
+		website=True,
+		methods=["POST"],
+	)
+	def update_kontrak(self, kontrak_id, **post):
+		Kontrak = request.env["sadaya_langsung.kontrak"].sudo()
+		record = Kontrak.browse(kontrak_id)
+		if not record.exists():
+			return self._redirect_with_message(
+				"/sadaya_langsung/kontrak", error="Kontrak tidak ditemukan"
+			)
+
+		jenis_options = self._selection_options(Kontrak, "jenis_pengadaan")
+		status_options = self._selection_options(Kontrak, "status_kontrak")
+		paket_id = self._safe_int(post.get("paket_id"))
+		values = {
+			"name": post.get("name") or record.name,
+			"paket_id": paket_id or False,
+			"pejabat_pembuat": post.get("pejabat_pembuat") or False,
+			"penyedia": post.get("penyedia") or False,
+			"jenis_pengadaan": self._safe_selection(post.get("jenis_pengadaan"), jenis_options),
+			"nilai_hps": self._safe_float(post.get("nilai_hps")),
+			"tanggal": post.get("tanggal") or False,
+			"tanggal_mulai": post.get("tanggal_mulai") or False,
+			"tanggal_selesai": post.get("tanggal_selesai") or False,
+			"keterangan": post.get("keterangan") or False,
+		}
+		status_input = self._safe_selection(post.get("status_kontrak"), status_options)
+		if status_input:
+			values["status_kontrak"] = status_input
+
+		try:
+			record.write(values)
+		except Exception as exc:
+			return self._redirect_with_message("/sadaya_langsung/kontrak", error=str(exc))
+
+		return self._redirect_with_message(
+			"/sadaya_langsung/kontrak", success="Kontrak berhasil diperbarui"
+		)
+
+	@http.route(
+		"/sadaya_langsung/kontrak/<int:kontrak_id>/workflow",
+		type="http",
+		auth="user",
+		website=True,
+		methods=["POST"],
+	)
+	def kontrak_workflow(self, kontrak_id, **post):
+		action_map = {
+			"proses_kontrak": "action_proses_kontrak",
+			"selesai_kontrak": "action_selesai_kontrak",
+			"revisi": "action_revisi",
+			"addendum": "action_addendum",
+		}
+		record = request.env["sadaya_langsung.kontrak"].sudo().browse(kontrak_id)
+		if not record.exists():
+			return self._redirect_with_message(
+				"/sadaya_langsung/kontrak", error="Kontrak tidak ditemukan"
+			)
+		action_key = post.get("action")
+		method_name = action_map.get(action_key)
+		if not method_name:
+			return self._redirect_with_message(
+				"/sadaya_langsung/kontrak", error="Aksi kontrak tidak valid"
+			)
+
+		try:
+			getattr(record, method_name)()
+		except Exception as exc:
+			return self._redirect_with_message("/sadaya_langsung/kontrak", error=str(exc))
+
+		return self._redirect_with_message(
+			"/sadaya_langsung/kontrak", success="Status kontrak berhasil diperbarui"
+		)
 

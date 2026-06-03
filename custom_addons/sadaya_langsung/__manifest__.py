@@ -15,15 +15,22 @@
     "depends": [
         "base",
         "mail",
+        "website",
         "sadaya_mitra",
     ],
     "data": [
         "security/ir.model.access.csv",
         "security/sadaya_langsung_groups.xml",
+        "views/frontend_templates.xml",
         "views/paket_views.xml",
         "views/kontrak_views.xml",
         "views/menu.xml",
     ],
+    "assets": {
+        "web.assets_frontend": [
+            "sadaya_langsung/static/src/scss/frontend.scss",
+        ],
+    },
     "demo": [],
     "application": True,
     "installable": True,
