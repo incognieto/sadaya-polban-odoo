@@ -4,6 +4,22 @@
         <t t-call="website.layout">
             <div class="container mt-5">
                 <h2 class="mb-4">Portal Pengadaan - Sadaya Tawar</h2>
+                <form method="get" action="/sadaya_tawar/paket" class="row g-2 mb-3">
+                    <div class="col-md-6">
+                        <input type="text" name="search" class="form-control" placeholder="Cari nama atau kode paket" t-att-value="search or ''"/>
+                    </div>
+                    <div class="col-md-4">
+                        <select name="metode" class="form-select">
+                            <option value="">Semua Metode</option>
+                            <option value="e_purchasing" t-att-selected="metode == 'e_purchasing'">E-Purchasing</option>
+                            <option value="pengadaan_langsung" t-att-selected="metode == 'pengadaan_langsung'">Pengadaan Langsung</option>
+                            <option value="tender" t-att-selected="metode == 'tender'">Tender</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary w-100" type="submit">Cari</button>
+                    </div>
+                </form>
                 <table class="table table-striped table-hover border">
                     <thead class="table-dark">
                         <tr>
@@ -39,6 +55,9 @@
         <t t-call="website.layout">
             <div class="container mt-5 mb-5">
                 <a href="/sadaya_tawar/paket" class="btn btn-outline-secondary mb-3">&amp;larr; Kembali ke Daftar</a>
+                <div t-if="daftar == 'success'" class="alert alert-success">Pendaftaran berhasil. Tim akan memverifikasi data vendor Anda.</div>
+                <div t-if="error == 'not_verified'" class="alert alert-warning">Akun vendor belum terverifikasi. Silakan lengkapi data di Sadaya Mitra.</div>
+                <div t-if="error == 'already_registered'" class="alert alert-info">Vendor sudah terdaftar pada paket ini.</div>
                 <div class="card shadow">
                     <div class="card-header bg-primary text-white">
                         <h4 class="mb-0"><t t-esc="paket.name"/></h4>
@@ -57,9 +76,37 @@
                         <div class="alert alert-info">
                             <strong>Batas Pendaftaran:</strong> <t t-esc="paket.batas_pendaftaran or 'Belum ditentukan'"/>
                         </div>
-                        
+                        <div class="mt-4">
+                            <h5>Dokumen Addendum</h5>
+                            <t t-if="paket.addendum_ids">
+                                <ul class="list-group">
+                                    <t t-foreach="paket.addendum_ids" t-as="doc">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <span>
+                                                <t t-esc="doc.name"/>
+                                                <t t-if="doc.dokumen_filename">(<t t-esc="doc.dokumen_filename"/>)</t>
+                                            </span>
+                                            <a t-attf-href="/web/content/sadaya_tawar.addendum/#{doc.id}/dokumen?download=true" class="btn btn-sm btn-outline-primary">Unduh</a>
+                                        </li>
+                                    </t>
+                                </ul>
+                            </t>
+                            <div t-if="not paket.addendum_ids" class="text-muted">Belum ada addendum.</div>
+                        </div>
+
                         <div class="mt-4 text-end">
-                            <button class="btn btn-success btn-lg">Nyatakan Minat / Daftar</button>
+                            <t t-if="can_register and not is_registered">
+                                <form method="post" t-attf-action="/sadaya_tawar/paket/#{paket.id}/daftar">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <button class="btn btn-success btn-lg" type="submit">Daftar Sebagai Peserta</button>
+                                </form>
+                            </t>
+                            <t t-if="is_registered">
+                                <span class="badge bg-success">Sudah Terdaftar</span>
+                            </t>
+                            <t t-if="not can_register">
+                                <div class="alert alert-warning mt-2">Harap login sebagai vendor terdaftar untuk mendaftar.</div>
+                            </t>
                         </div>
                     </div>
                 </div>

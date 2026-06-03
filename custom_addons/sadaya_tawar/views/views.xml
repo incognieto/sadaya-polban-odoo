@@ -30,6 +30,7 @@
             <form>
                 <header>
                     <button name="action_publikasikan" string="Publikasikan ke Sadaya Tawar" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_set_eval" string="Masuk Evaluasi" type="object" class="oe_highlight" invisible="state != 'published'"/>
                     <button name="action_route_paket" string="Kirim ke Modul Eksekusi (Otomatis)" type="object" class="oe_highlight" invisible="state != 'eval'"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,published,eval,routed" options="{'clickable': '1'}"/>
                 </header>
@@ -48,6 +49,43 @@
                             <field name="batas_pendaftaran"/>
                         </group>
                     </group>
+                    <notebook>
+                        <page string="Peserta">
+                            <field name="peserta_ids">
+                                <list editable="bottom">
+                                    <field name="vendor_id"/>
+                                    <field name="tanggal_daftar"/>
+                                    <field name="status"/>
+                                </list>
+                                <form>
+                                    <group>
+                                        <field name="vendor_id"/>
+                                        <field name="tanggal_daftar"/>
+                                        <field name="status"/>
+                                        <field name="catatan"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Addendum">
+                            <field name="addendum_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="tanggal"/>
+                                    <field name="dokumen" filename="dokumen_filename" widget="binary"/>
+                                    <field name="dokumen_filename" column_invisible="1"/>
+                                </list>
+                                <form>
+                                    <group>
+                                        <field name="name"/>
+                                        <field name="tanggal"/>
+                                        <field name="dokumen" filename="dokumen_filename"/>
+                                        <field name="keterangan"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
