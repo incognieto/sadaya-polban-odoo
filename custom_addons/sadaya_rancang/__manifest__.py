@@ -12,9 +12,13 @@ Modul ini bertindak sebagai Hulu pengadaan:
     'version': '1.0',
     'depends': ['base', 'sadaya_tawar', 'mail', 'website', 'portal'],
     'data': [
+        'security/security.xml',
         'security/ir.model.access.csv',
         'wizard/wizard_catatan_views.xml',
         'views/usulan_views.xml',
+        'views/rup_views.xml',
+        'views/hps_views.xml',
+        'views/dashboard_views.xml',
         'views/templates.xml',
     ],
     'application': True,

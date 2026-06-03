@@ -23,6 +23,7 @@ class RancangUsulan(models.Model):
     rab = fields.Float(string='Anggaran (RAB)', required=True, tracking=True)
     kak = fields.Binary(string='Kerangka Acuan Kerja (KAK)', required=True, attachment=True)
     kak_filename = fields.Char(string='Nama File KAK')
+    attachment_ids = fields.Many2many('ir.attachment', string='Dokumen Pendukung', tracking=True)
     
     klasifikasi = fields.Selection([
         ('operasional', 'Belanja Operasional Cepat'),
@@ -90,13 +91,15 @@ class RancangUsulan(models.Model):
         }
 
     def action_publish_rup(self):
-        # Create record in sadaya-tawar (sadaya_tawar.paket)
-        paket_obj = self.env['sadaya_tawar.paket']
+        # Create record in rancang.rup
+        rup_obj = self.env['rancang.rup']
         for record in self:
             if record.state == 'approved':
-                paket_obj.create({
+                rup_obj.create({
                     'name': record.name,
-                    'nilai_hps': record.rab,
+                    'usulan_id': record.id,
+                    'jenis_pengadaan': record.jenis_kebutuhan,
+                    'nilai_pagu': record.rab,
                     'state': 'draft',
                 })
                 record.state = 'published'
