@@ -3,7 +3,7 @@ restart.bat
 docker_down.bat
 docker_up.bat
 # Python
-# Python bytecode
+# Python bytecodee
 *.pyc
 *.pyo
 *.pyd
