@@ -348,7 +348,18 @@ class PendaftaranDPT(models.Model):
     _name = "sadaya_mitra.pendaftaran.dpt"
 
     penyedia_id = fields.Many2one("sadaya_mitra.penyedia", required=True)
-    kategori_id = fields.Many2one("sadaya_mitra.kategori.dpt", required=True)
+    kategori_id = fields.Selection(
+        [
+            ('barang', 'Barang'),
+            ('jasa', 'Jasa'),
+            ('pekerjaan_konstruksi', 'Pekerjaan Konstruksi'),
+            ('jasa_konsultasi', 'Jasa Konsultasi'),
+            ('barang_printil', 'Barang Printil'),
+            ('jasa_lainnya', 'Jasa Lainnya'),
+        ],
+        string='Kategori DPT',
+        required=True
+    )
 
     tanggal_daftar = fields.Datetime()
 
@@ -366,6 +377,19 @@ class PendaftaranDPT(models.Model):
     hasil_akhir = fields.Selection([("terpilih", "Terpilih"), ("tidak", "Tidak")])
 
     catatan_perbaikan = fields.Text()
+
+    @api.model
+    def _auto_init(self):
+        """Drop old foreign key constraint before column type conversion."""
+        cr = self.env.cr
+        try:
+            cr.execute("""
+                ALTER TABLE sadaya_mitra_pendaftaran_dpt 
+                DROP CONSTRAINT IF EXISTS sadaya_mitra_pendaftaran_dpt_kategori_id_fkey
+            """)
+        except Exception:
+            pass
+        return super()._auto_init()
 
 
 class PengajuanTTE(models.Model):
