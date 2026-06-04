@@ -121,7 +121,7 @@ class SadayaMitraPenyedia(models.Model):
             or "Penyedia",
             "email": vals.get("email") or self.email,
             "phone": vals.get("nomor_telepon") or self.nomor_telepon,
-            "mobile": vals.get("nomor_whatsapp") or self.nomor_whatsapp,
+            # "mobile": vals.get("nomor_whatsapp") or self.nomor_whatsapp,
             "street": vals.get("alamat") or self.alamat,
             "is_company": jenis_penyedia == "badan_usaha",
             "is_sadaya_mitra_vendor": True,
