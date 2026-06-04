@@ -8,50 +8,46 @@ _logger = logging.getLogger(__name__)
 
 
 class SadayaRegistration(models.Model):
-    """
-    Model pendaftaran Sadaya.
-    Mendukung dua tipe: Badan Usaha dan Perorangan.
-    """
-    _name = 'sadaya.registration'
+    _name        = 'sadaya.registration'
     _description = 'Sadaya Registration'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
-    _rec_name = 'nama_lengkap'
-    _order = 'create_date desc'
+    _inherit     = ['mail.thread', 'mail.activity.mixin']
+    _rec_name    = 'nama_lengkap'
+    _order       = 'create_date desc'
 
-    # ── Umum ──────────────────────────────────────────
+    # ── Umum
     tipe_pendaftar = fields.Selection([
         ('badan_usaha', 'Badan Usaha'),
-        ('perorangan', 'Perorangan'),
+        ('perorangan',  'Perorangan'),
     ], string='Tipe Pendaftar', required=True, default='perorangan', tracking=True)
 
     state = fields.Selection([
-        ('draft', 'Draft'),
-        ('pending', 'Menunggu Verifikasi'),
+        ('draft',    'Draft'),
+        ('pending',  'Menunggu Verifikasi'),
         ('approved', 'Disetujui'),
         ('rejected', 'Ditolak'),
     ], string='Status', default='draft', tracking=True)
 
-    # ── Badan Usaha ────────────────────────────────────
-    nama_badan_usaha = fields.Char(string='Nama Badan Usaha')
+    # ── Badan Usaha
+    nama_badan_usaha    = fields.Char(string='Nama Badan Usaha')
     telepon_badan_usaha = fields.Char(string='Telepon Badan Usaha')
-    npwp_perusahaan = fields.Char(string='Nomor NPWP Perusahaan')
-    bukti_npwp = fields.Binary(string='Bukti NPWP', attachment=True)
+    npwp_perusahaan     = fields.Char(string='Nomor NPWP Perusahaan')
+    bukti_npwp          = fields.Binary(string='Bukti NPWP', attachment=True)
     bukti_npwp_filename = fields.Char(string='Nama File NPWP')
 
-    # ── Narahubung / Perorangan ────────────────────────
-    nama_lengkap = fields.Char(string='Nama Lengkap Narahubung', required=True)
-    email = fields.Char(string='Email', required=True)
-    whatsapp_narahubung = fields.Char(string='Nomor WhatsApp', required=True)
-    nik_narahubung = fields.Char(string='Nomor NIK', required=True)
-    swafoto_ktp = fields.Binary(string='Swafoto Memegang KTP', attachment=True)
+    # ── Narahubung / Perorangan
+    nama_lengkap         = fields.Char(string='Nama Lengkap Narahubung', required=True)
+    email                = fields.Char(string='Email', required=True)
+    whatsapp_narahubung  = fields.Char(string='Nomor WhatsApp', required=True)
+    nik_narahubung       = fields.Char(string='Nomor NIK', required=True)
+    swafoto_ktp          = fields.Binary(string='Swafoto Memegang KTP', attachment=True)
     swafoto_ktp_filename = fields.Char(string='Nama File Swafoto')
 
-    # ── Password (disimpan sementara, dihapus setelah user dibuat) ──
+    # ── Password sementara (disimpan sementara sampai approve)
     password = fields.Char(string='Kata Sandi', groups='base.group_system')
 
-    # ── Relasi ────────────────────────────────────────
-    user_id = fields.Many2one('res.users', string='User Terkait',
-                              readonly=True, ondelete='set null')
+    # ── Relasi
+    user_id          = fields.Many2one('res.users', string='User Terkait',
+                                       readonly=True, ondelete='set null')
     rejection_reason = fields.Text(string='Alasan Penolakan')
 
     # ══════════════════════════════════════════════════
@@ -68,7 +64,7 @@ class SadayaRegistration(models.Model):
                 raise ValidationError(_('Format email tidak valid: %s') % rec.email)
             existing = self.search([
                 ('email', '=', rec.email),
-                ('id', '!=', rec.id),
+                ('id',    '!=', rec.id),
                 ('state', 'not in', ['rejected']),
             ])
             if existing:
@@ -105,7 +101,6 @@ class SadayaRegistration(models.Model):
 
     @staticmethod
     def validate_password(password):
-        """Return list of error strings; empty = valid."""
         errors = []
         if len(password) < 8:
             errors.append('Minimal 8 karakter')
@@ -129,31 +124,50 @@ class SadayaRegistration(models.Model):
     def action_approve(self):
         for rec in self:
             if rec.state != 'pending':
-                raise UserError(_('Hanya registrasi berstatus Menunggu Verifikasi yang dapat disetujui.'))
+                raise UserError(
+                    _('Hanya registrasi berstatus Menunggu Verifikasi yang dapat disetujui.'))
 
-            display_name = rec.nama_badan_usaha if rec.tipe_pendaftar == 'badan_usaha' else rec.nama_lengkap
+            plain_password = rec.password or ''
+
+            display_name = (rec.nama_badan_usaha
+                            if rec.tipe_pendaftar == 'badan_usaha'
+                            else rec.nama_lengkap)
+
+            # Buat user baru — TANPA groups_id (tidak ada di Odoo 17+)
             user_vals = {
-                'name': display_name,
-                'login': rec.email,
-                'email': rec.email,
-                'groups_id': [(6, 0, [self.env.ref('base.group_portal').id])],
-                'active': True,
+                'name':                   display_name,
+                'login':                  rec.email,
+                'email':                  rec.email,
+                'password':               plain_password,
+                'active':                 True,
+                'sadaya_tipe':            rec.tipe_pendaftar,
+                'sadaya_verified':        True,
+                'sadaya_registration_id': rec.id,
             }
+
             user = self.env['res.users'].sudo().create(user_vals)
-            if rec.password:
-                user.sudo().write({'password': rec.password})
+
+            # ── Assign group portal (Odoo 17/18/19 compatible) ──────────
+            # Gunakan write pada user.groups_id bukan pada group.users
+            portal_group = self.env.ref('base.group_portal')
+            # Pastikan hanya group_portal, hapus internal jika ada
+            user.sudo().write({
+                'groups_id': [(6, 0, [portal_group.id])],
+            })
 
             rec.write({
-                'state': 'approved',
-                'user_id': user.id,
-                'password': False,          # hapus password plaintext
+                'state':    'approved',
+                'user_id':  user.id,
+                'password': False,   # hapus password plain setelah dipakai
             })
-            rec.message_post(body=_('Registrasi disetujui. Akun pengguna telah dibuat.'))
+            rec.message_post(
+                body=_('Registrasi disetujui. Akun dibuat untuk %s.') % rec.email)
 
     def action_reject(self):
         for rec in self:
             rec.state = 'rejected'
-            rec.message_post(body=_('Registrasi ditolak. Alasan: %s') % (rec.rejection_reason or '-'))
+            rec.message_post(
+                body=_('Registrasi ditolak. Alasan: %s') % (rec.rejection_reason or '-'))
 
     def action_reset_draft(self):
         self.write({'state': 'draft'})
