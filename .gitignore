@@ -3,9 +3,11 @@ restart.bat
 docker_down.bat
 docker_up.bat
 # Python
+# Python bytecode
+*.pyc
+*.pyo
+*.pyd
 __pycache__/
-*.py[cod]
-*$py.class
 
 # OS Files
 .DS_Store
