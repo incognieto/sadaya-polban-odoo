@@ -95,7 +95,6 @@ class SadayaTawarPaket(models.Model):
     def action_route_paket(self):
         self.ensure_one()
         
-        # Validasi state: Hanya bisa di-route jika sedang dalam tahap pengumuman/evaluasi
         if self.state not in ['published', 'eval']:
             raise UserError("Paket hanya dapat diteruskan ke modul eksekusi jika sudah dipublikasikan atau dievaluasi.")
 
@@ -104,34 +103,35 @@ class SadayaTawarPaket(models.Model):
             module_label = 'Sadaya Rutin'
             vals = {
                 'name': self.name,
-                # procurement_type WAJIB dikirim karena di sadaya_rutin diset required=True
-                'procurement_type': 'goods', 
-                
-                # ==== DIKOMENTARI SEMENTARA KARENA BELUM KOMUNIKASI ====
-                # 'status': 'draft',
-                # 'nilai_anggaran': self.nilai_hps, 
+                'item_name': self.name,
+                'procurement_type': 'goods',
+                'amount_total': self.nilai_hps,
+                'request_notes': self.deskripsi,
+                'status': 'draft',
             }
         elif 50000000 <= self.nilai_hps <= 200000000:
             model_name = 'sadaya_langsung.paket'
             module_label = 'Sadaya Langsung'
             vals = {
                 'name': self.name,
-                
-                # ==== DIKOMENTARI SEMENTARA KARENA BELUM KOMUNIKASI ====
-                # 'nilai_hps': self.nilai_hps, 
-                # 'status_paket': 'draft',
-                # 'jenis_pengadaan': 'barang',
+                'nilai_hps': self.nilai_hps,
+                'keterangan': self.deskripsi,
+                'dokumen_kak': self.dokumen_kak,
+                'filename_kak': self.filename_kak, # Tambahan Wajib: Nama File KAK
+                'dokumen_rab': self.dokumen_rab,
+                'filename_rab': self.filename_rab, # Tambahan Wajib: Nama File RAB
+                'status_paket': 'draft',
             }
         else:
             model_name = 'sadaya_lelang.paket'
             module_label = 'Sadaya Lelang'
             vals = {
                 'name': self.name,
-                
-                # ==== DIKOMENTARI SEMENTARA KARENA BELUM KOMUNIKASI ====
-                # 'hps': self.nilai_hps,
-                # 'status': 'draft',
-                # 'metode_pemilihan': 'tender',
+                'hps': self.nilai_hps,
+                'description': self.deskripsi,
+                'file_kebutuhan': self.dokumen_kak,
+                'status': 'draft',
+                'metode_pemilihan': 'tender',
             }
 
         try:
@@ -141,22 +141,20 @@ class SadayaTawarPaket(models.Model):
                 "Modul %s belum terpasang. Install modulnya terlebih dahulu sebelum routing." % module_label
             ) from exc
 
-        # 1. Buat record di modul tujuan dengan atribut paling minimal (Safe Create)
-        new_record = target_model.sudo().create(vals)
+        target_model.sudo().create(vals)
         
-        # 2. Ubah state paket Tawar saat ini menjadi routed
         self.state = 'routed'
 
-        # 3. Redirect browser pengguna ke dokumen yang baru dibuat
         return {
-            'type': 'ir.actions.act_window',
-            'name': f'Eksekusi {module_label}',
-            'res_model': model_name,
-            'res_id': new_record.id,
-            'view_mode': 'form',
-            'target': 'current',
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Berhasil Diteruskan!',
+                'message': f'Paket "{self.name}" beserta dokumen terkait berhasil dikirim ke modul {module_label}.',
+                'type': 'success',
+                'sticky': False,
+            }
         }
-
     # =========================================================
     # BLOK VALIDASI LOGIKA METODE PEMILIHAN VS HPS
     # =========================================================
