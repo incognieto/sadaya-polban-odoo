@@ -468,16 +468,16 @@ class SadayaMitraWebsite(http.Controller):
 			elif field_def.get('nik'):
 				if not re.match(r'^\d{16}$', raw):
 					errors.append(
-						'%s harus berisi 16 digit angka (saat ini: "%s").'
-						% (field_def['label'], raw)
+						'%s wajib diisi dan harus tepat 16 digit angka.'
+						% field_def['label']
 					)
 			elif field_def.get('npwp'):
 				if not re.match(r'^(\d{15}|\d{16})$', raw):
 					errors.append(
-						'%s harus berisi 15 atau 16 digit angka (saat ini: "%s").'
-						% (field_def['label'], raw)
+						'%s wajib diisi dan harus tepat 15 atau 16 digit angka.'
+						% field_def['label']
 					)
-
+					
 		# ── Validasi kata sandi ────────────────────────────────────────────
 		password = (post.get('kata_sandi') or '').strip()
 		password_confirm = (post.get('kata_sandi_confirm') or '').strip()

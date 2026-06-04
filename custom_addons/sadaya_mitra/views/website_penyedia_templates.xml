@@ -47,43 +47,152 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Nomor Telepon</label>
-                                    <input type="text" class="form-control" name="nomor_telepon" t-att-value="values.get('nomor_telepon')"/>
+                                    <input type="text" class="form-control" name="nomor_telepon" required="required" t-att-value="values.get('nomor_telepon')"/>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Nomor WhatsApp</label>
-                                    <input type="text" class="form-control" name="nomor_whatsapp" t-att-value="values.get('nomor_whatsapp')"/>
+                                    <input type="text" class="form-control" name="nomor_whatsapp" required="required" t-att-value="values.get('nomor_whatsapp')"/>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Nama Narahubung</label>
-                                    <input type="text" class="form-control" name="narahubung" t-att-value="values.get('narahubung')"/>
+                                    <input type="text" class="form-control" name="narahubung" required="required" t-att-value="values.get('narahubung')"/>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Nomor NIK Narahubung</label>
-                                    <input type="text" class="form-control" name="nomor_nik_narahubung" t-att-value="values.get('nomor_nik_narahubung')"/>
+                                    <input type="text"
+                                        class="form-control"
+                                        name="nomor_nik_narahubung"
+                                        required="required"
+                                        maxlength="16"
+                                        inputmode="numeric"
+                                        t-att-value="values.get('nomor_nik_narahubung')"
+                                        oninput="this.value=this.value.replace(/[^0-9]/g,'')"/>
+                                    <div class="form-text text-muted">NIK harus diisi tepat 16 angka</div>
+                                    <div class="invalid-feedback">
+                                        NIK wajib diisi dan harus tepat 16 digit angka
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Swafoto Narahubung (Memegang KTP)</label>
-                                    <input type="file" class="form-control" name="swafoto_narahubung"/>
+                                    <input type="file" class="form-control" name="swafoto_narahubung" required="required"/>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Alamat</label>
-                                    <textarea class="form-control" name="alamat" rows="3"><t t-esc="values.get('alamat')"/></textarea>
+                                    <textarea class="form-control" name="alamat" required="required" rows="3"><t t-esc="values.get('alamat')"/></textarea>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Nomor NPWP Perusahaan</label>
-                                    <input type="text" class="form-control" name="nomor_npwp_perusahaan" t-att-value="values.get('nomor_npwp_perusahaan')"/>
+                                    <input type="text"
+                                        class="form-control"
+                                        name="nomor_npwp_perusahaan"
+                                        required="required"
+                                        maxlength="16"
+                                        inputmode="numeric"
+                                        t-att-value="values.get('nomor_npwp_perusahaan')"
+                                        oninput="this.value=this.value.replace(/[^0-9]/g,'')"/>
+                                    <div class="form-text text-muted">NPWP harus diisi 15 atau 16 angka</div>
+                                    <div class="invalid-feedback">
+                                        NPWP wajib diisi dan harus tepat 15 atau 16 digit angka
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Bukti NPWP</label>
-                                    <input type="file" class="form-control" name="bukti_npwp"/>
+                                    <input type="file" class="form-control" name="bukti_npwp" required="required"/>
                                 </div>
-                                
+                                <div class="mt-4 d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary">Kirim Pendaftaran</button>
+                                </div>
                             </div>
+                            </form>
 
-                            <div class="mt-4 d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary">Kirim Pendaftaran</button>
-                            </div>
-                        </form>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var form = document.querySelector('.o_website_form');
+                                var inputs = form.querySelectorAll('input, select, textarea');
+
+                                inputs.forEach(function(input) {
+                                    if (!input.parentElement.querySelector('.invalid-feedback')) {
+                                        var feedback = document.createElement('div');
+                                        feedback.className = 'invalid-feedback';
+                                        input.parentElement.appendChild(feedback);
+                                    }
+                                });
+
+                                function validateField(input) {
+                                    var val = input.value.trim();
+                                    var hasError = false;
+                                    var errorMsg = '';
+
+                                    if (input.hasAttribute('required') &amp;&amp; !val) {
+                                        hasError = true;
+                                        errorMsg = 'Field harus diisi';
+                                    } else if (input.name === 'nomor_nik_narahubung' &amp;&amp; val) {
+                                        if (!/^\d{16}$/.test(val)) {
+                                            hasError = true;
+                                            errorMsg = 'NIK wajib diisi dan harus tepat 16 digit angka';
+                                        }
+                                    } else if (input.name === 'nomor_npwp_perusahaan' &amp;&amp; val) {
+                                        if (!/^\d{15,16}$/.test(val)) {
+                                            hasError = true;
+                                            errorMsg = 'NPWP wajib diisi dan harus tepat 15 atau 16 digit angka';
+                                        }
+                                    } else if (input.name === 'kata_sandi_confirm' &amp;&amp; val) {
+                                        var pw = form.querySelector('input[name="kata_sandi"]').value;
+                                        if (val !== pw) {
+                                            hasError = true;
+                                            errorMsg = 'Kata sandi dan konfirmasi kata sandi harus sama';
+                                        }
+                                    }
+
+                                    var feedback = input.parentElement.querySelector('.invalid-feedback');
+                                    var formText = input.parentElement.querySelector('.form-text');
+
+                                    if (hasError) {
+                                        input.classList.add('is-invalid');
+                                        input.classList.remove('is-valid');
+                                        if (feedback) feedback.textContent = errorMsg;
+                                        if (formText) formText.style.display = 'none';
+                                    } else {
+                                        input.classList.remove('is-invalid');
+                                        if (val || input.hasAttribute('required')) {
+                                            input.classList.add('is-valid');
+                                        }
+                                        if (formText) formText.style.display = 'block';
+                                    }
+                                    return !hasError;
+                                }
+
+                                inputs.forEach(function(input) {
+                                    input.addEventListener('input', function() { validateField(this); });
+                                    input.addEventListener('change', function() { validateField(this); });
+                                    input.addEventListener('blur', function() { validateField(this); });
+                                });
+
+                                var pwInput = form.querySelector('input[name="kata_sandi"]');
+                                var pwConfirmInput = form.querySelector('input[name="kata_sandi_confirm"]');
+                                pwInput.addEventListener('input', function() {
+                                    if (pwConfirmInput.value) validateField(pwConfirmInput);
+                                });
+
+                                form.addEventListener('submit', function(e) {
+                                    var isFormValid = true;
+                                    var firstError = null;
+
+                                    inputs.forEach(function(input) {
+                                        if (!validateField(input)) {
+                                            isFormValid = false;
+                                            if (!firstError) firstError = input;
+                                        }
+                                    });
+
+                                    if (!isFormValid) {
+                                        e.preventDefault();
+                                        if (firstError) firstError.focus();
+                                    }
+                                });
+                            });
+                        </script>
+
                     </div>
                 </div>
             </section>
