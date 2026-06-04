@@ -1,10 +1,18 @@
-from odoo import fields, models
+import logging
+
+from odoo import api, fields, models
+
+_logger = logging.getLogger(__name__)
 
 
 class SadayaMitraPenyedia(models.Model):
     _name = 'sadaya_mitra.penyedia'
     _description = 'Penyedia / Vendor SI-DAPET'
     _inherit = ['mail.thread', 'mail.activity.mixin']
+
+    partner_id = fields.Many2one(
+        'res.partner', string='Partner', ondelete='set null', index=True
+    )
     jenis_penyedia = fields.Selection([
         ('badan_usaha', 'Badan Usaha'),
         ('perorangan', 'Perorangan')
@@ -100,6 +108,24 @@ class SadayaMitraPenyedia(models.Model):
             partner_vals["sadaya_mitra_penyedia_id"] = rec.id
             partner = rec.env["res.partner"].sudo().create(partner_vals)
             rec.sudo().write({"partner_id": partner.id})
+
+    def _prepare_partner_vals(self, vals=None):
+        self.ensure_one()
+        vals = vals or {}
+
+        jenis_penyedia = vals.get("jenis_penyedia") or self.jenis_penyedia
+        return {
+            "name": vals.get("nama_badan_usaha")
+            or self.nama_badan_usaha
+            or self.narahubung
+            or "Penyedia",
+            "email": vals.get("email") or self.email,
+            "phone": vals.get("nomor_telepon") or self.nomor_telepon,
+            "mobile": vals.get("nomor_whatsapp") or self.nomor_whatsapp,
+            "street": vals.get("alamat") or self.alamat,
+            "is_company": jenis_penyedia == "badan_usaha",
+            "is_sadaya_mitra_vendor": True,
+        }
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -394,14 +420,15 @@ class PendaftaranDPT(models.Model):
     def _auto_init(self):
         """Handle schema migration: drop the old foreign key constraint if it exists."""
         cr = self.env.cr
-        # Drop the old foreign key constraint if it exists
+        # Drop the old foreign key constraint if it exists.
         try:
-            cr.execute("""
-                ALTER TABLE sadaya_mitra_pendaftaran_dpt 
-                DROP CONSTRAINT IF EXISTS sadaya_mitra_pendaftaran_dpt_kategori_id_fkey
-            """)
+            with cr.savepoint():
+                cr.execute("""
+                    ALTER TABLE sadaya_mitra_pendaftaran_dpt
+                    DROP CONSTRAINT IF EXISTS sadaya_mitra_pendaftaran_dpt_kategori_id_fkey
+                """)
         except Exception:
-            pass
+            _logger.exception("Failed to drop old kategori_id foreign key")
         return super()._auto_init()
 
 
