@@ -74,7 +74,11 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Swafoto Narahubung (Memegang KTP)</label>
-                                    <input type="file" class="form-control" name="swafoto_narahubung" required="required"/>
+                                    <input type="file" class="form-control" name="swafoto_narahubung" required="required" accept="image/jpeg, image/png"/>
+                                    <div class="form-text text-muted">Format file harus .jpg, .jpeg, atau .png</div>
+                                    <div class="invalid-feedback">
+                                        Swafoto wajib diisi dengan format JPG/JPEG atau PNG
+                                    </div>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Alamat</label>
@@ -97,7 +101,11 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Bukti NPWP</label>
-                                    <input type="file" class="form-control" name="bukti_npwp" required="required"/>
+                                    <input type="file" class="form-control" name="bukti_npwp" required="required" accept="application/pdf"/>
+                                    <div class="form-text text-muted">Format file harus .pdf</div>
+                                    <div class="invalid-feedback">
+                                        Bukti NPWP wajib diisi dengan format PDF
+                                    </div>
                                 </div>
                                 <div class="mt-4 d-flex justify-content-end">
                                     <button type="submit" class="btn btn-primary">Kirim Pendaftaran</button>
@@ -141,6 +149,18 @@
                                         if (val !== pw) {
                                             hasError = true;
                                             errorMsg = 'Kata sandi dan konfirmasi kata sandi harus sama';
+                                        }
+                                    } else if (input.name === 'swafoto_narahubung' &amp;&amp; val) {
+                                        var ext = val.split('.').pop().toLowerCase();
+                                        if (ext !== 'jpg' &amp;&amp; ext !== 'jpeg' &amp;&amp; ext !== 'png') {
+                                            hasError = true;
+                                            errorMsg = 'Format file harus .jpg, .jpeg, atau .png';
+                                        }
+                                    } else if (input.name === 'bukti_npwp' &amp;&amp; val) {
+                                        var ext = val.split('.').pop().toLowerCase();
+                                        if (ext !== 'pdf') {
+                                            hasError = true;
+                                            errorMsg = 'Format file harus .pdf';
                                         }
                                     }
 
