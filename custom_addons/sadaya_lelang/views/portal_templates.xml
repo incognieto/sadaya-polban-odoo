@@ -4,11 +4,9 @@
     <!-- 0. BASE LAYOUT – SADAYA LELANG             -->
     <!-- ========================================== -->
     <template id="base_layout" name="Base Layout">
-        <html lang="id">
-            <head>
-                <meta charset="UTF-8"/>
-                <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-                <title>Sadaya Lelang - Portal SPSE</title>
+        <t t-call="website.layout">
+            <t t-set="title">Sadaya Lelang - Portal SPSE</t>
+            <t t-set="head">
                 <link rel="preconnect" href="https://fonts.googleapis.com"/>
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
                 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
@@ -450,10 +448,17 @@
                             padding: 2.5rem 0 1.5rem;
                         }
                     }
+
+                    /* ── Hide default website header and footer ── */
+                    .o_sadaya_lelang_frontend:has(.sl-app-shell) #wrapwrap > header,
+                    .o_sadaya_lelang_frontend:has(.sl-app-shell) #wrapwrap > footer,
+                    .o_sadaya_lelang_frontend:has(.sl-app-shell) header#top,
+                    .o_sadaya_lelang_frontend:has(.sl-app-shell) footer#bottom {
+                        display: none !important;
+                    }
                 </style>
-            </head>
-            <body>
-                <div id="wrap" class="sl-app-shell">
+            </t>
+            <div id="wrap" class="o_sadaya_lelang_frontend sl-app-shell">
                     <!-- ── HEADER ── -->
                     <header class="sl-app-header">
                         <div class="container sl-app-header__inner">
@@ -493,8 +498,7 @@
                 </div>
 
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-            </body>
-        </html>
+        </t>
     </template>
 
     <!-- ========================================== -->
