@@ -150,6 +150,21 @@ class SadayaRegistration(models.Model):
             })
             rec.message_post(body=_('Registrasi disetujui. Akun pengguna telah dibuat.'))
 
+            # ── Auto-buat sadaya_mitra.penyedia jika modul tersedia ───────
+            try:
+                PenyediaModel = self.env.get('sadaya_mitra.penyedia')
+                if PenyediaModel is not None:
+                    existing = PenyediaModel.sudo().search([('email', '=', rec.email)], limit=1)
+                    if not existing:
+                        penyedia_vals = {
+                            'registration_id': rec.id,
+                        }
+                        PenyediaModel.sudo().create(penyedia_vals)
+                        rec.message_post(body=_('Data penyedia (sadaya_mitra) otomatis dibuat.'))
+            except Exception as e:
+                _logger.warning('Gagal membuat sadaya_mitra.penyedia: %s', e)
+
+
     def action_reject(self):
         for rec in self:
             rec.state = 'rejected'

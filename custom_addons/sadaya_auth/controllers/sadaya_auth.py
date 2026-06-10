@@ -100,7 +100,7 @@ class SadayaAuthController(http.Controller):
             try:
                 credential = {'login': vals['email'], 'password': vals['password'], 'type': 'password'}
                 request.session.authenticate(request.env, credential)
-                return request.redirect('/sadaya/dashboard')
+                return request.redirect('/sadaya-mitra')
             except AccessDenied:
                 return request.redirect('/sadaya/login?success=registered')
 
@@ -160,7 +160,7 @@ class SadayaAuthController(http.Controller):
             credential = {'login': email, 'password': password, 'type': 'password'}
             auth_info = request.session.authenticate(request.env, credential)
             if auth_info and auth_info.get('uid'):
-                return request.redirect(redirect)
+                return request.redirect('/sadaya-mitra')
             else:
                 return request.render('sadaya_auth.sadaya_login', {
                     'error': {'general': 'Email atau kata sandi tidak valid.'},
