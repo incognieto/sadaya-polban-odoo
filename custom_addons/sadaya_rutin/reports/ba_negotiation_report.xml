@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_report_ba_negotiation" model="ir.actions.report">
+            <field name="name">Berita Acara Negosiasi</field>
+            <field name="model">sadaya_rutin.procurement_package</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">sadaya_rutin.report_ba_negotiation_template</field>
+            <field name="report_file">sadaya_rutin.report_ba_negotiation_template</field>
+            <field name="print_report_name">'BA_Negosiasi_%s' % (object.code or object.name)</field>
+            <field name="binding_model_id" ref="model_sadaya_rutin_procurement_package"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <template id="report_ba_negotiation_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <div class="text-center mb-4">
+                                <h3><strong>BERITA ACARA HASIL NEGOSIASI</strong></h3>
+                                <h4><strong>Nomor: <span t-field="doc.code"/></strong></h4>
+                            </div>
+
+                            <p>
+                                Pada hari ini, telah diselesaikan proses negosiasi pengadaan barang/jasa untuk paket pekerjaan berikut:
+                            </p>
+
+                            <table class="table table-bordered mb-4">
+                                <tbody>
+                                    <tr>
+                                        <td style="width: 30%"><strong>Nama Paket</strong></td>
+                                        <td><span t-field="doc.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Unit Pengusul</strong></td>
+                                        <td><span t-field="doc.proposing_unit"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Nama Vendor</strong></td>
+                                        <td><span t-field="doc.vendor_id.name"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h5><strong>Rincian Negosiasi</strong></h5>
+                            <table class="table table-bordered mb-4">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Barang</th>
+                                        <th>Jumlah</th>
+                                        <th>Estimasi Anggaran</th>
+                                        <th>Harga Kesepakatan Final</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span t-field="doc.item_name"/></td>
+                                        <td><span t-field="doc.item_qty"/></td>
+                                        <td><span t-field="doc.estimated_budget" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                        <td><strong><span t-field="doc.negotiation_price" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></strong></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <p>
+                                Demikian Berita Acara ini dibuat dan disetujui bersama oleh Pejabat Pengadaan / PPK dan Pihak Penyedia Barang/Jasa (Vendor).
+                            </p>
+
+                            <div class="row mt-5">
+                                <div class="col-6 text-center">
+                                    <p><strong>Pihak Penyedia (Vendor)</strong></p>
+                                    <br/><br/><br/>
+                                    <p>(..........................................)</p>
+                                    <p><span t-field="doc.vendor_id.name"/></p>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <p><strong>Pejabat Pengadaan / PPK</strong></p>
+                                    <br/><br/><br/>
+                                    <p>(..........................................)</p>
+                                    <p>Politeknik Negeri Bandung</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

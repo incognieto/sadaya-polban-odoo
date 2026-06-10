@@ -32,12 +32,16 @@ class SadayaLangsungKontrak(models.Model):
 
     # === Status Kontrak ===
     status_kontrak = fields.Selection([
+        ('pam', 'Pre-Award Meeting (PAM)'),
         ('persiapan_kontrak', 'Persiapan Kontrak'),
-        ('proses_kontrak', 'Proses Kontrak'),
+        ('proses_tte', 'Proses Kontrak (TTE)'),
+        ('pelaksanaan', 'Pelaksanaan Pekerjaan'),
+        ('pemeriksaan', 'Pemeriksaan PPHP'),
         ('selesai_kontrak', 'Selesai Kontrak'),
-        ('revisi', 'Revisi'),
         ('addendum_kontrak', 'Addendum Kontrak'),
-    ], string='Status Kontrak', default='persiapan_kontrak', tracking=True)
+        ('revisi', 'Revisi'),
+        ('batal', 'Batal'),
+    ], string='Status Kontrak', default='pam', tracking=True)
 
     # === Keuangan ===
     nilai_hps = fields.Float(
@@ -74,8 +78,17 @@ class SadayaLangsungKontrak(models.Model):
     # ------------------------------------------------------------------
     # Workflow buttons
     # ------------------------------------------------------------------
-    def action_proses_kontrak(self):
-        self.write({'status_kontrak': 'proses_kontrak'})
+    def action_persiapan_kontrak(self):
+        self.write({'status_kontrak': 'persiapan_kontrak'})
+
+    def action_proses_tte(self):
+        self.write({'status_kontrak': 'proses_tte'})
+
+    def action_pelaksanaan(self):
+        self.write({'status_kontrak': 'pelaksanaan'})
+
+    def action_pemeriksaan(self):
+        self.write({'status_kontrak': 'pemeriksaan'})
 
     def action_selesai_kontrak(self):
         self.write({'status_kontrak': 'selesai_kontrak'})
@@ -85,3 +98,6 @@ class SadayaLangsungKontrak(models.Model):
 
     def action_addendum(self):
         self.write({'status_kontrak': 'addendum_kontrak'})
+
+    def action_batal(self):
+        self.write({'status_kontrak': 'batal'})

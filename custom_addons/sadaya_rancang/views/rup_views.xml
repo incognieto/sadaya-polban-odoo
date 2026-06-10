@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Search View -->
+    <record id="view_rancang_rup_search" model="ir.ui.view">
+        <field name="name">rancang.rup.search</field>
+        <field name="model">rancang.rup</field>
+        <field name="arch" type="xml">
+            <search string="Pencarian RUP">
+                <field name="name"/>
+                <field name="usulan_id"/>
+                <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                <filter string="Aktif" name="active" domain="[('state','=','active')]"/>
+                <separator/>
+                <filter string="Berdasarkan Jenis Pengadaan" name="group_by_jenis" context="{'group_by':'jenis_pengadaan'}"/>
+                <filter string="Berdasarkan Status" name="group_by_state" context="{'group_by':'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_rancang_rup_tree" model="ir.ui.view">
+        <field name="name">rancang.rup.tree</field>
+        <field name="model">rancang.rup</field>
+        <field name="arch" type="xml">
+            <list string="Daftar RUP">
+                <field name="name"/>
+                <field name="jenis_pengadaan"/>
+                <field name="metode_pemilihan"/>
+                <field name="nilai_pagu"/>
+                <field name="tgl_mulai"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'active'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_rancang_rup_form" model="ir.ui.view">
+        <field name="name">rancang.rup.form</field>
+        <field name="model">rancang.rup</field>
+        <field name="arch" type="xml">
+            <form string="Detail RUP">
+                <header>
+                    <button name="action_sahkan_rup" string="Sahkan sebagai RUP" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="state != 'draft'" placeholder="Nama Paket"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Informasi Utama">
+                            <field name="usulan_id"/>
+                            <field name="jenis_pengadaan" readonly="state != 'draft'"/>
+                            <field name="metode_pemilihan" readonly="state != 'draft'"/>
+                            <field name="nilai_pagu" readonly="state != 'draft'"/>
+                        </group>
+                        <group string="Informasi Anggaran &amp; Lokasi">
+                            <field name="sumber_dana" readonly="state != 'draft'"/>
+                            <field name="kode_anggaran" readonly="state != 'draft'"/>
+                            <field name="lokasi" readonly="state != 'draft'"/>
+                            <field name="tgl_mulai" readonly="state != 'draft'"/>
+                            <field name="tgl_selesai" readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+                    <!-- Sub-tabs will be added in Phase 3 -->
+                    <notebook>
+                        <page string="Harga Perkiraan Sendiri (HPS)">
+                            <field name="hps_ids" readonly="state != 'draft'">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="total_hps"/>
+                                </list>
+                                <form>
+                                    <header>
+                                        <button name="action_delegate" string="Delegasikan" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                                        <button name="action_approve_hps" string="Setujui HPS" type="object" class="oe_highlight" invisible="state != 'in_review'"/>
+                                        <field name="state" widget="statusbar" statusbar_visible="draft,delegated,in_review,approved"/>
+                                    </header>
+                                    <sheet>
+                                        <group>
+                                            <group>
+                                                <field name="name"/>
+                                                <field name="tim_teknis_id"/>
+                                            </group>
+                                            <group>
+                                                <field name="total_hps" readonly="1"/>
+                                            </group>
+                                        </group>
+                                        <field name="line_ids" readonly="state not in ('draft', 'in_review')">
+                                            <list editable="bottom">
+                                                <field name="name"/>
+                                                <field name="satuan"/>
+                                                <field name="volume"/>
+                                                <field name="harga_satuan"/>
+                                                <field name="total" readonly="1" force_save="1"/>
+                                            </list>
+                                        </field>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Dokumen Persiapan">
+                            <field name="dokumen_persiapan_ids" widget="many2many_binary" readonly="state != 'draft'"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_rancang_rup" model="ir.actions.act_window">
+        <field name="name">Perencanaan PPK (RUP)</field>
+        <field name="res_model">rancang.rup</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_rancang_rup" name="Perencanaan PPK" parent="menu_rancang_root" action="action_rancang_rup" sequence="30"/>
+
+</odoo>
