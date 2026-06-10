@@ -9,7 +9,7 @@ class RancangUsulan(models.Model):
     def _compute_access_url(self):
         super(RancangUsulan, self)._compute_access_url()
         for record in self:
-            record.access_url = f'/sadaya_rancang/pengajuan/{record.id}'
+            record.access_url = f'/sadaya-rancang/pengajuan/{record.id}'
 
     name = fields.Char(string='Judul Usulan', required=True, tracking=True)
     pemohon = fields.Char(string='Unit Kerja / Pemohon', required=True, tracking=True)

@@ -47,14 +47,38 @@ class RancangRup(models.Model):
             self.nilai_pagu = self.usulan_id.rab
 
     def action_sahkan_rup(self):
-        paket_obj = self.env['sadaya_tawar.paket']
+        paket_obj = self.env['sadaya_tawar.paket'].sudo()
+        created_paket_ids = []
+
         for record in self:
-            if record.state == 'draft':
-                # Menggunakan total HPS jika ada, jika tidak gunakan nilai pagu
-                total_hps = sum(hps.total_hps for hps in record.hps_ids) if record.hps_ids else record.nilai_pagu
-                paket_obj.create({
-                    'name': record.name,
-                    'nilai_hps': total_hps,
-                    'state': 'draft',
-                })
-                record.state = 'active'
+            if record.state != 'draft':
+                continue
+
+            # Jika ada HPS, pakai total HPS; jika tidak, pakai nilai pagu
+            total_hps = sum(record.hps_ids.mapped('total_hps')) if record.hps_ids else record.nilai_pagu
+
+            paket = paket_obj.create({
+                'name': record.name,
+                'nilai_hps': total_hps,
+                'metode_pemilihan': record.metode_pemilihan or 'e_purchasing',
+                'deskripsi': record.name or '',
+                'state': 'draft',
+            })
+
+            created_paket_ids.append(paket.id)
+
+            # Setelah sah, status RUP jadi aktif
+            record.write({'state': 'active'})
+
+        if not created_paket_ids:
+            return True
+
+        # Biar langsung terlihat setelah klik tombol
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Sadaya Tawar',
+            'res_model': 'sadaya_tawar.paket',
+            'view_mode': 'list,form',
+            'domain': [('id', 'in', created_paket_ids)],
+            'target': 'current',
+        }
