@@ -9,11 +9,11 @@
                     <div class="container sl-app-header__inner">
                         <div>
                             <p class="sl-app-eyebrow">Sistem Informasi Mitra</p>
-                            <a href="/sadaya_mitra/lanjutan" class="sl-app-brand">Sadaya Mitra</a>
+                            <a href="/sadaya-mitra" class="sl-app-brand">Sadaya Mitra</a>
                         </div>
                         <nav class="sl-app-nav" aria-label="Navigasi utama">
-                            <a href="/sadaya_mitra/lanjutan" class="active">Data Lanjutan</a>
-                            <a href="/sadaya_mitra/profil">Profil &amp; Status</a>
+                            <a href="/sadaya-mitra" class="active">Data Lanjutan</a>
+                            <a href="/sadaya-mitra/profil">Profil &amp; Status</a>
                         </nav>
                     </div>
                 </header>
@@ -72,7 +72,7 @@
                         </div>
                         
                         <div class="mt-4 d-flex justify-content-end">
-                            <a href="/sadaya_mitra/status" class="btn btn-primary sl-submit">
+                            <a href="/sadaya-mitra/status" class="btn btn-primary sl-submit">
                                 Simpan Pendaftaran
                             </a>
                         </div>
@@ -101,11 +101,11 @@
                     <div class="container sl-app-header__inner">
                         <div>
                             <p class="sl-app-eyebrow">Sistem Informasi Mitra</p>
-                            <a href="/sadaya_mitra/lanjutan" class="sl-app-brand">Sadaya Mitra</a>
+                            <a href="/sadaya-mitra" class="sl-app-brand">Sadaya Mitra</a>
                         </div>
                         <nav class="sl-app-nav" aria-label="Navigasi utama">
-                            <a href="/sadaya_mitra/lanjutan" class="active">Data Lanjutan</a>
-                            <a href="/sadaya_mitra/profil">Profil &amp; Status</a>
+                            <a href="/sadaya-mitra" class="active">Data Lanjutan</a>
+                            <a href="/sadaya-mitra/profil">Profil &amp; Status</a>
                         </nav>
                     </div>
                 </header>
@@ -131,7 +131,7 @@
                         </t>
 
                         <article class="sl-card sl-card--detail">
-                            <form t-att-action="'/sadaya_mitra/lanjutan/%s/submit' % config['key']" method="post" enctype="multipart/form-data" class="sl-form o_website_form" novalidate="novalidate">
+                            <form t-att-action="'/sadaya-mitra/%s/submit' % config['key']" method="post" enctype="multipart/form-data" class="sl-form o_website_form" novalidate="novalidate">
                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
 
                                 <div class="row g-3">
@@ -203,7 +203,7 @@
                                 </div>
 
                                 <div class="mt-4 d-flex justify-content-between">
-                                    <a class="btn btn-outline-secondary" href="/sadaya_mitra/lanjutan">Kembali</a>
+                                    <a class="btn btn-outline-secondary" href="/sadaya-mitra">Kembali</a>
                                     <button type="submit" class="btn btn-primary sl-submit">Simpan</button>
                                 </div>
                             </form>
@@ -300,11 +300,11 @@
                     <div class="container sl-app-header__inner">
                         <div>
                             <p class="sl-app-eyebrow">Sistem Informasi Mitra</p>
-                            <a href="/sadaya_mitra/lanjutan" class="sl-app-brand">Sadaya Mitra</a>
+                            <a href="/sadaya-mitra" class="sl-app-brand">Sadaya Mitra</a>
                         </div>
                         <nav class="sl-app-nav" aria-label="Navigasi utama">
-                            <a href="/sadaya_mitra/lanjutan" class="active">Data Lanjutan</a>
-                            <a href="/sadaya_mitra/profil">Profil &amp; Status</a>
+                            <a href="/sadaya-mitra" class="active">Data Lanjutan</a>
+                            <a href="/sadaya-mitra/profil">Profil &amp; Status</a>
                         </nav>
                     </div>
                 </header>
@@ -318,7 +318,7 @@
                                 <p class="sl-lead">Data <strong><t t-esc="config['title']"/></strong> Anda telah berhasil disimpan ke dalam sistem.</p>
                             </div>
                             <div class="sl-hero__actions">
-                                <a class="btn btn-primary" href="/sadaya_mitra/lanjutan">Kembali ke Data Lanjutan</a>
+                                <a class="btn btn-primary" href="/sadaya-mitra">Kembali ke Data Lanjutan</a>
                             </div>
                         </div>
                     </div>
@@ -346,11 +346,11 @@
                     <div class="container sl-app-header__inner">
                         <div>
                             <p class="sl-app-eyebrow">Sistem Informasi Mitra</p>
-                            <a href="/sadaya_mitra/lanjutan" class="sl-app-brand">Sadaya Mitra</a>
+                            <a href="/sadaya-mitra" class="sl-app-brand">Sadaya Mitra</a>
                         </div>
                         <nav class="sl-app-nav" aria-label="Navigasi utama">
-                            <a href="/sadaya_mitra/lanjutan">Data Lanjutan</a>
-                            <a href="/sadaya_mitra/profil">Profil &amp; Status</a>
+                            <a href="/sadaya-mitra">Data Lanjutan</a>
+                            <a href="/sadaya-mitra/profil">Profil &amp; Status</a>
                         </nav>
                     </div>
                 </header>
@@ -381,7 +381,7 @@
                                 </div>
                                 <p class="mt-3 text-muted">Anda akan menerima notifikasi lebih lanjut melalui email jika proses verifikasi telah selesai.</p>
                                 <div class="mt-4">
-                                    <a href="/sadaya_mitra/lanjutan" class="btn btn-outline-secondary">Kembali ke Data Lanjutan</a>
+                                    <a href="/sadaya-mitra" class="btn btn-outline-secondary">Kembali ke Data Lanjutan</a>
                                 </div>
                             </article>
                         </t>
@@ -392,7 +392,7 @@
                                 </div>
                                 <p class="mt-3 text-muted">Harap segera melakukan pengisian data yang tersisa agar proses pendaftaran dapat dilanjutkan ke tahap verifikasi.</p>
                                 <div class="mt-4">
-                                    <a href="/sadaya_mitra/lanjutan" class="btn btn-primary sl-submit">Lengkapi Data Sekarang</a>
+                                    <a href="/sadaya-mitra" class="btn btn-primary sl-submit">Lengkapi Data Sekarang</a>
                                 </div>
                             </article>
                         </t>

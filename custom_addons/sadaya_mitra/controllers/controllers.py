@@ -297,7 +297,7 @@ def _build_form_config(form_key):
 
 
 class SadayaMitraWebsite(http.Controller):
-	@http.route('/sadaya_mitra/lanjutan', auth='user', website=True, methods=['GET'])
+	@http.route('/sadaya-mitra', auth='user', website=True, methods=['GET'])
 	def lanjutan_landing(self, **kwargs):
 		user = request.env.user
 		email = user.email or user.login
@@ -336,7 +336,7 @@ class SadayaMitraWebsite(http.Controller):
 				'key': key,
 				'title': config.get('title', key),
 				'description': config.get('description', ''),
-				'url': '/sadaya_mitra/lanjutan/%s' % key,
+				'url': '/sadaya-mitra/%s' % key,
 				'is_completed': is_completed,
 			})
 			
@@ -351,21 +351,21 @@ class SadayaMitraWebsite(http.Controller):
 			'progress_percent': progress_percent,
 		})
 
-	@http.route('/sadaya_mitra/lanjutan/set_email', auth='public', website=True, methods=['POST'], csrf=True)
+	@http.route('/sadaya-mitra/set_email', auth='public', website=True, methods=['POST'], csrf=True)
 	def lanjutan_set_email(self, **post):
 		email = post.get('email')
 		if email:
 			request.session['penyedia_email'] = email
-		return request.redirect('/sadaya_mitra/lanjutan')
+		return request.redirect('/sadaya-mitra')
 
-	@http.route('/sadaya_mitra/status', auth='user', website=True, methods=['GET'])
+	@http.route('/sadaya-mitra/status', auth='user', website=True, methods=['GET'])
 	def status_pendaftaran(self, **kwargs):
 		user = request.env.user
 		email = user.email or user.login
 		
 		penyedia = request.env['sadaya_mitra.penyedia'].sudo().search([('email', '=', email)], limit=1)
 		if not penyedia:
-			return request.redirect('/sadaya_mitra/penyedia')
+			return request.redirect('/sadaya-mitra/penyedia')
 
 		completed_count = 0
 		for key in FORM_ORDER:
@@ -384,7 +384,7 @@ class SadayaMitraWebsite(http.Controller):
 			'total_forms': len(FORM_ORDER)
 		})
 
-	@http.route('/sadaya_mitra/lanjutan/<string:form_key>', auth='user', website=True, methods=['GET'])
+	@http.route('/sadaya-mitra/<string:form_key>', auth='user', website=True, methods=['GET'])
 	def lanjutan_form(self, form_key, **kwargs):
 		config = _build_form_config(form_key)
 		if not config:
@@ -398,7 +398,7 @@ class SadayaMitraWebsite(http.Controller):
 			'session_email': session_email,
 		})
 
-	@http.route('/sadaya_mitra/lanjutan/<string:form_key>/submit', auth='user', website=True, methods=['POST'], csrf=True)
+	@http.route('/sadaya-mitra/<string:form_key>/submit', auth='user', website=True, methods=['POST'], csrf=True)
 	def lanjutan_submit(self, form_key, **post):
 		config = _build_form_config(form_key)
 		if not config:
@@ -461,21 +461,21 @@ class SadayaMitraWebsite(http.Controller):
 			'record': record,
 			'config': config,
 		})
-	@http.route('/sadaya_mitra/profil', auth='user', website=True, methods=['GET'])
+	@http.route('/sadaya-mitra/profil', auth='user', website=True, methods=['GET'])
 	def profil(self, **kwargs):
 		user = request.env.user
 		email = user.email or user.login
 		
 		penyedia = request.env['sadaya_mitra.penyedia'].sudo().search([('email', '=', email)], limit=1)
 		if not penyedia:
-			return request.redirect('/sadaya_mitra/penyedia')
+			return request.redirect('/sadaya-mitra/penyedia')
 			
 		return request.render('sadaya_mitra.sadaya_mitra_profil', {
 			'penyedia': penyedia,
 		})
 
-	@http.route(['/sadaya_mitra/penyedia', '/sadaya_mitra/penyedia/submit'], auth='user', website=True, methods=['GET', 'POST'], csrf=False)
+	@http.route(['/sadaya-mitra/penyedia', '/sadaya-mitra/penyedia/submit'], auth='user', website=True, methods=['GET', 'POST'], csrf=False)
 	def penyedia_redirect(self, **kwargs):
 		"""Form pendaftaran penyedia sudah dipindah ke sadaya_auth.
 		Route ini diarahkan langsung ke halaman Data Lanjutan."""
-		return request.redirect('/sadaya_mitra/lanjutan')
+		return request.redirect('/sadaya-mitra')

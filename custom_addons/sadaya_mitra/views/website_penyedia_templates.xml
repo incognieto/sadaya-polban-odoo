@@ -9,11 +9,11 @@
                     <div class="container sl-app-header__inner">
                         <div>
                             <p class="sl-app-eyebrow">Sistem Informasi Mitra</p>
-                            <a href="/sadaya_mitra/lanjutan" class="sl-app-brand">Sadaya Mitra</a>
+                            <a href="/sadaya-mitra" class="sl-app-brand">Sadaya Mitra</a>
                         </div>
                         <nav class="sl-app-nav" aria-label="Navigasi utama">
-                            <a href="/sadaya_mitra/lanjutan">Data Lanjutan</a>
-                            <a href="/sadaya_mitra/profil">Profil &amp; Status</a>
+                            <a href="/sadaya-mitra">Data Lanjutan</a>
+                            <a href="/sadaya-mitra/profil">Profil &amp; Status</a>
                         </nav>
                     </div>
                 </header>
@@ -39,7 +39,7 @@
                         </t>
 
                         <article class="sl-card sl-card--detail">
-                            <form action="/sadaya_mitra/penyedia/submit" method="post" enctype="multipart/form-data" class="sl-form o_website_form">
+                            <form action="/sadaya-mitra/penyedia/submit" method="post" enctype="multipart/form-data" class="sl-form o_website_form">
                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
 
                                 <div class="row g-2">
@@ -252,11 +252,11 @@
                     <div class="container sl-app-header__inner">
                         <div>
                             <p class="sl-app-eyebrow">Sistem Informasi Mitra</p>
-                            <a href="/sadaya_mitra/lanjutan" class="sl-app-brand">Sadaya Mitra</a>
+                            <a href="/sadaya-mitra" class="sl-app-brand">Sadaya Mitra</a>
                         </div>
                         <nav class="sl-app-nav" aria-label="Navigasi utama">
-                            <a href="/sadaya_mitra/lanjutan">Data Lanjutan</a>
-                            <a href="/sadaya_mitra/profil">Profil &amp; Status</a>
+                            <a href="/sadaya-mitra">Data Lanjutan</a>
+                            <a href="/sadaya-mitra/profil">Profil &amp; Status</a>
                         </nav>
                     </div>
                 </header>
@@ -272,7 +272,7 @@
                                 </p>
                             </div>
                             <div class="sl-hero__actions">
-                                <a class="btn btn-primary" href="/sadaya_mitra/lanjutan">Ke Data Lanjutan</a>
+                                <a class="btn btn-primary" href="/sadaya-mitra">Ke Data Lanjutan</a>
                             </div>
                         </div>
                     </div>
@@ -300,11 +300,11 @@
                     <div class="container sl-app-header__inner">
                         <div>
                             <p class="sl-app-eyebrow">Sistem Informasi Mitra</p>
-                            <a href="/sadaya_mitra/lanjutan" class="sl-app-brand">Sadaya Mitra</a>
+                            <a href="/sadaya-mitra" class="sl-app-brand">Sadaya Mitra</a>
                         </div>
                         <nav class="sl-app-nav" aria-label="Navigasi utama">
-                            <a href="/sadaya_mitra/lanjutan">Data Lanjutan</a>
-                            <a href="/sadaya_mitra/profil" class="active">Profil &amp; Status</a>
+                            <a href="/sadaya-mitra">Data Lanjutan</a>
+                            <a href="/sadaya-mitra/profil" class="active">Profil &amp; Status</a>
                         </nav>
                     </div>
                 </header>
@@ -393,7 +393,7 @@
                                         <span class="sl-field-label d-block mb-2">Kelengkapan Data Lanjutan</span>
                                         <div class="d-flex justify-content-between align-items-center mb-1">
                                             <strong><t t-esc="penyedia.data_lengkap_count"/></strong>
-                                            <a href="/sadaya_mitra/lanjutan" class="text-decoration-none">
+                                            <a href="/sadaya-mitra" class="text-decoration-none">
                                                 Lengkapi
                                             </a>
                                         </div>
