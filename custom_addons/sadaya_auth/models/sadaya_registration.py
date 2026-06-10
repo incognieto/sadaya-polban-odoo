@@ -136,7 +136,7 @@ class SadayaRegistration(models.Model):
                 'name': display_name,
                 'login': rec.email,
                 'email': rec.email,
-                'groups_id': [(6, 0, [self.env.ref('base.group_portal').id])],
+                'group_ids': [(6, 0, [self.env.ref('base.group_portal').id])],
                 'active': True,
             }
             user = self.env['res.users'].sudo().create(user_vals)
