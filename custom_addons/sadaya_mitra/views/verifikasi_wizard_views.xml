@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Wizard Form -->
+        <record id="view_verifikasi_wizard_form" model="ir.ui.view">
+            <field name="name">sadaya_mitra.verifikasi.wizard.form</field>
+            <field name="model">sadaya_mitra.verifikasi.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Verifikasi Penyedia">
+                    <group>
+                        <field name="penyedia_id" readonly="1"/>
+                        <field name="action_type" readonly="1"/>
+                        <field name="catatan" placeholder="Masukkan alasan penolakan..."/>
+                    </group>
+                    <footer>
+                        <button name="action_confirm" string="Simpan" type="object" class="oe_highlight"/>
+                        <button string="Batal" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!-- Wizard Action -->
+        <record id="action_verifikasi_wizard" model="ir.actions.act_window">
+            <field name="name">Verifikasi Penyedia</field>
+            <field name="res_model">sadaya_mitra.verifikasi.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

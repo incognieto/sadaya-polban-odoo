@@ -30,25 +30,19 @@ class SadayaLangsungPaket(models.Model):
         tracking=True,
     )
 
-    # === Status Workflow (sesuai SOP Pengadaan Polban & SPSE) ===
-    # 1. draft         = Persiapan Pengadaan (Draft HPS & Syarat)
-    # 2. undangan      = Undangan/Permintaan Penawaran ke Penyedia
-    # 3. penawaran     = Menunggu Penawaran Vendor
-    # 4. evaluasi      = Evaluasi Administrasi, Kualifikasi, Teknis, dan Harga
-    # 5. negosiasi     = Klarifikasi dan Negosiasi Teknis & Harga
-    # 6. sppbj         = Penetapan / Surat Penunjukan Penyedia Barang/Jasa
-    # 7. kontrak       = Penandatanganan SPK/Kontrak
-    # 8. selesai       = Selesai
     status_paket = fields.Selection(
         [
             ("draft", "Draft / Persiapan"),
-            ("undangan", "Kirim Undangan"),
-            ("penawaran", "Menunggu Penawaran"),
-            ("evaluasi", "Evaluasi"),
+            ("menunggu_persetujuan", "Menunggu Persetujuan"),
+            ("pengumuman", "Pengumuman"),
+            ("pendaftaran_peserta", "Pendaftaran Peserta"),
+            ("pemasukan_penawaran", "Pemasukan Penawaran"),
+            ("pembukaan_penawaran", "Pembukaan Penawaran"),
+            ("evaluasi", "Evaluasi (A, K, T, H)"),
+            ("pembuktian_kualifikasi", "Pembuktian Kualifikasi"),
             ("negosiasi", "Klarifikasi & Negosiasi"),
-            ("sppbj", "Penetapan Penyedia (SPPBJ)"),
-            ("kontrak", "Kontrak / SPK"),
-            ("selesai", "Selesai"),
+            ("penetapan", "Penetapan Pemenang"),
+            ("spk_dibuat", "SPK Diterbitkan (Selesai)"),
             ("batal", "Batal"),
         ],
         string="Status Paket",
@@ -178,14 +172,17 @@ class SadayaLangsungPaket(models.Model):
 
     def _get_allowed_status_transitions(self):
         return {
-            "draft": ["undangan", "batal"],
-            "undangan": ["penawaran", "batal"],
-            "penawaran": ["evaluasi", "batal"],
-            "evaluasi": ["negosiasi", "batal"],
-            "negosiasi": ["sppbj", "batal"],
-            "sppbj": ["kontrak", "batal"],
-            "kontrak": ["selesai", "batal"],
-            "selesai": [],
+            "draft": ["menunggu_persetujuan", "batal"],
+            "menunggu_persetujuan": ["pengumuman", "batal"],
+            "pengumuman": ["pendaftaran_peserta", "batal"],
+            "pendaftaran_peserta": ["pemasukan_penawaran", "batal"],
+            "pemasukan_penawaran": ["pembukaan_penawaran", "batal"],
+            "pembukaan_penawaran": ["evaluasi", "batal"],
+            "evaluasi": ["pembuktian_kualifikasi", "negosiasi", "batal"],
+            "pembuktian_kualifikasi": ["negosiasi", "batal"],
+            "negosiasi": ["penetapan", "batal"],
+            "penetapan": ["spk_dibuat", "batal"],
+            "spk_dibuat": [],
             "batal": ["draft"],
         }
 
@@ -231,43 +228,63 @@ class SadayaLangsungPaket(models.Model):
             if rec.kontrak_ids:
                 raise ValidationError("Kontrak sudah dibuat untuk paket ini.")
 
-    def action_kirim_undangan(self):
-        """Step 1→2: Draft → Kirim Undangan"""
-        self._ensure_status_transition_allowed("undangan")
-        self._ensure_ready_for_undangan()
-        self.write({"status_paket": "undangan"})
+    def action_ajukan(self):
+        """Step 1→2: Draft → Menunggu Persetujuan"""
+        self._ensure_status_transition_allowed("menunggu_persetujuan")
+        self.write({"status_paket": "menunggu_persetujuan"})
 
-    def action_tunggu_penawaran(self):
-        """Step 2→3: Kirim Undangan → Menunggu Penawaran"""
-        self._ensure_status_transition_allowed("penawaran")
-        self.write({"status_paket": "penawaran"})
+    def action_pengumuman(self):
+        """Step 2→3: Menunggu Persetujuan → Pengumuman"""
+        self._ensure_status_transition_allowed("pengumuman")
+        self._ensure_ready_for_undangan()
+        self.write({"status_paket": "pengumuman"})
+
+    def action_pendaftaran(self):
+        """Step 3→4: Pengumuman → Pendaftaran Peserta"""
+        self._ensure_status_transition_allowed("pendaftaran_peserta")
+        self.write({"status_paket": "pendaftaran_peserta"})
+
+    def action_pemasukan_penawaran(self):
+        """Step 4→6: Pendaftaran Peserta → Pemasukan Penawaran"""
+        self._ensure_status_transition_allowed("pemasukan_penawaran")
+        self.write({"status_paket": "pemasukan_penawaran"})
+
+    def action_pembukaan_penawaran(self):
+        """Step 4→5: Pemasukan Penawaran → Pembukaan Penawaran"""
+        self._ensure_status_transition_allowed("pembukaan_penawaran")
+        self.write({"status_paket": "pembukaan_penawaran"})
 
     def action_evaluasi(self):
-        """Step 3→4: Penawaran → Evaluasi"""
+        """Step 5→6: Pembukaan Penawaran → Evaluasi"""
         self._ensure_status_transition_allowed("evaluasi")
         self.write({"status_paket": "evaluasi"})
 
+    def action_pembuktian_kualifikasi(self):
+        """Step 6→7: Evaluasi → Pembuktian Kualifikasi"""
+        self._ensure_status_transition_allowed("pembuktian_kualifikasi")
+        self.write({"status_paket": "pembuktian_kualifikasi"})
+
     def action_negosiasi(self):
-        """Step 4→5: Evaluasi → Klarifikasi & Negosiasi"""
+        """Step 7→8: Pembuktian Kualifikasi / Evaluasi → Klarifikasi & Negosiasi"""
         self._ensure_status_transition_allowed("negosiasi")
         self.write({"status_paket": "negosiasi"})
 
     def action_tetapkan_pemenang(self):
-        """Step 5→6: Negosiasi → SPPBJ (Penetapan)"""
-        self._ensure_status_transition_allowed("sppbj")
+        """Step 8→9: Negosiasi → Penetapan Pemenang"""
+        self._ensure_status_transition_allowed("penetapan")
         self._ensure_vendor_pemenang()
-        self.write({"status_paket": "sppbj"})
+        self.write({"status_paket": "penetapan"})
 
-    def action_buat_kontrak(self):
-        """Step 6→7: SPPBJ → Kontrak/SPK"""
-        self._ensure_status_transition_allowed("kontrak")
+    def action_buat_spk(self):
+        """Step 9: Penetapan Pemenang → Buat SPK"""
+        self._ensure_status_transition_allowed("spk_dibuat")
         self._ensure_vendor_pemenang()
         self._ensure_contract_not_exists()
-        self.write({"status_paket": "kontrak"})
+        self.write({"status_paket": "spk_dibuat"})
 
     def _create_contract_if_needed(self):
         for rec in self:
-            if rec.status_paket == "kontrak" and not rec.kontrak_ids:
+            if rec.status_paket == "spk_dibuat" and not rec.kontrak_ids:
                 if not rec.vendor_pemenang_id:
                     raise ValidationError(
                         "Vendor pemenang harus diisi sebelum membuat kontrak."
@@ -282,21 +299,21 @@ class SadayaLangsungPaket(models.Model):
                         "nilai_hps": rec.nilai_hps,
                         "tanggal_mulai": rec.tanggal_mulai,
                         "tanggal_selesai": rec.tanggal_selesai,
-                        "status_kontrak": "persiapan_kontrak",
+                        "status_kontrak": "pam",
                     }
                 )
 
     def write(self, vals):
         if vals.get("status_paket"):
             self._ensure_status_transition_allowed(vals.get("status_paket"))
-            if vals.get("status_paket") == "undangan":
+            if vals.get("status_paket") == "pengumuman":
                 self._ensure_ready_for_undangan(vals)
-            if vals.get("status_paket") == "kontrak":
+            if vals.get("status_paket") == "spk_dibuat":
                 self._ensure_vendor_pemenang()
                 if any(rec.kontrak_ids for rec in self):
                     raise ValidationError("Kontrak sudah dibuat untuk paket ini.")
         res = super(SadayaLangsungPaket, self).write(vals)
-        if vals.get("status_paket") == "kontrak":
+        if vals.get("status_paket") == "spk_dibuat":
             self._create_contract_if_needed()
 
         # Backfill unit_pengusul on any write, but never override explicit edits.
