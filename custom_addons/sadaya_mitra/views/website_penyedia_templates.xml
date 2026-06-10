@@ -9,10 +9,9 @@
                     <div class="container sl-app-header__inner">
                         <div>
                             <p class="sl-app-eyebrow">Sistem Informasi Mitra</p>
-                            <a href="/sadaya_mitra/penyedia" class="sl-app-brand">Sadaya Mitra</a>
+                            <a href="/sadaya_mitra/lanjutan" class="sl-app-brand">Sadaya Mitra</a>
                         </div>
                         <nav class="sl-app-nav" aria-label="Navigasi utama">
-                            <a href="/sadaya_mitra/penyedia" class="active">Pendaftaran</a>
                             <a href="/sadaya_mitra/lanjutan">Data Lanjutan</a>
                             <a href="/sadaya_mitra/profil">Profil &amp; Status</a>
                         </nav>
@@ -253,10 +252,9 @@
                     <div class="container sl-app-header__inner">
                         <div>
                             <p class="sl-app-eyebrow">Sistem Informasi Mitra</p>
-                            <a href="/sadaya_mitra/penyedia" class="sl-app-brand">Sadaya Mitra</a>
+                            <a href="/sadaya_mitra/lanjutan" class="sl-app-brand">Sadaya Mitra</a>
                         </div>
                         <nav class="sl-app-nav" aria-label="Navigasi utama">
-                            <a href="/sadaya_mitra/penyedia">Pendaftaran</a>
                             <a href="/sadaya_mitra/lanjutan">Data Lanjutan</a>
                             <a href="/sadaya_mitra/profil">Profil &amp; Status</a>
                         </nav>
@@ -302,10 +300,9 @@
                     <div class="container sl-app-header__inner">
                         <div>
                             <p class="sl-app-eyebrow">Sistem Informasi Mitra</p>
-                            <a href="/sadaya_mitra/penyedia" class="sl-app-brand">Sadaya Mitra</a>
+                            <a href="/sadaya_mitra/lanjutan" class="sl-app-brand">Sadaya Mitra</a>
                         </div>
                         <nav class="sl-app-nav" aria-label="Navigasi utama">
-                            <a href="/sadaya_mitra/penyedia">Pendaftaran</a>
                             <a href="/sadaya_mitra/lanjutan">Data Lanjutan</a>
                             <a href="/sadaya_mitra/profil" class="active">Profil &amp; Status</a>
                         </nav>
@@ -359,11 +356,6 @@
                                             <dd><t t-esc="penyedia.alamat"/></dd>
                                         </div>
                                     </dl>
-                                    <div class="mt-4">
-                                        <a href="/sadaya_mitra/penyedia" class="btn btn-primary sl-submit">
-                                            Edit Data
-                                        </a>
-                                    </div>
                                 </article>
                             </div>
 
