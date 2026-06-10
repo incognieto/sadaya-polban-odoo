@@ -153,6 +153,9 @@
                         <t t-if="error == 'not_verified'">
                             <div class="alert alert-danger sl-notice">Akses Ditolak: Anda belum terdaftar sebagai vendor yang valid di Sadaya Mitra.</div>
                         </t>
+                        <t t-if="error == 'kbli_mismatch'">
+                            <div class="alert alert-danger sl-notice">Akses Ditolak: Kualifikasi Bidang (KBLI) perusahaan Anda tidak memenuhi persyaratan paket ini.</div>
+                        </t>
                         <t t-if="error == 'already_registered'">
                             <div class="alert alert-warning sl-notice">Anda sudah terdaftar sebagai peserta pada paket ini.</div>
                         </t>
@@ -167,6 +170,10 @@
                                 <div><dt>Metode Pemilihan</dt><dd><t t-esc="paket.metode_pemilihan.replace('_', ' ').title()"/></dd></div>
                                 <div><dt>Jenis Kontrak</dt><dd><t t-esc="paket.jenis_kontrak.replace('_', ' ').title()"/></dd></div>
                                 <div><dt>Batas Pendaftaran</dt><dd><t t-esc="paket.batas_pendaftaran or 'Belum ditentukan'"/></dd></div>
+                                
+                                <!-- Tampilan Persyaratan Kualifikasi -->
+                                <div><dt>Kualifikasi Bidang (KBLI)</dt><dd><t t-esc="paket.syarat_kbli or 'Tidak ada syarat khusus'"/></dd></div>
+                                <div><dt>Dokumen Disyaratkan</dt><dd><t t-esc="paket.syarat_dokumen or 'Tidak ada syarat khusus'"/></dd></div>
                             </dl>
 
                             <div class="sl-subsection">
@@ -229,6 +236,39 @@
                                 <t t-if="not can_register">
                                     <div class="sl-empty">Harap <a href="/web/login">login</a> menggunakan akun vendor yang telah tervalidasi untuk mengikuti paket ini.</div>
                                 </t>
+                            </div>
+                            <div class="sl-subsection mt-4" t-if="paket.jadwal_ids">
+                                <h4>Jadwal Tahapan Pengadaan</h4>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-striped border align-middle">
+                                        <thead class="table-dark small">
+                                            <tr>
+                                                <th>Tahapan</th>
+                                                <th>Waktu Mulai</th>
+                                                <th>Waktu Selesai</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="small">
+                                            <t t-foreach="paket.jadwal_ids" t-as="jadwal">
+                                                <tr>
+                                                    <td class="fw-bold"><t t-esc="jadwal.name"/></td>
+                                                    <td>
+                                                        <t t-if="jadwal.start_date">
+                                                            <t t-esc="jadwal.start_date.strftime('%d-%m-%Y %H:%M')"/>
+                                                        </t>
+                                                        <t t-else="">-</t>
+                                                    </td>
+                                                    <td>
+                                                        <t t-if="jadwal.end_date">
+                                                            <t t-esc="jadwal.end_date.strftime('%d-%m-%Y %H:%M')"/>
+                                                        </t>
+                                                        <t t-else="">-</t>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </article>
                     </div>

@@ -99,6 +99,23 @@ class SadayaTawarPortal(http.Controller):
         if not self._is_vendor_eligible(partner):
             return request.redirect('/sadaya-tawar/%s?error=not_verified' % paket.id)
 
+        # === BLOK VALIDASI KBLI ===
+        if paket.syarat_kbli and partner.sadaya_mitra_penyedia_id:
+            penyedia_id = partner.sadaya_mitra_penyedia_id.id
+            # Ekstrak semua kode_kbli milik vendor dari model Sadaya Mitra
+            vendor_kblis = request.env['sadaya_mitra.kbli'].sudo().search([
+                ('izin_id.penyedia_id', '=', penyedia_id)
+            ]).mapped('kode_kbli')
+            
+            # Parsing KBLI yang disyaratkan paket menjadi list (menghapus spasi)
+            syarat_list = [k.strip() for k in paket.syarat_kbli.split(',') if k.strip()]
+            
+            # Cek kecocokan minimal 1 KBLI
+            has_matching_kbli = any(kbli in vendor_kblis for kbli in syarat_list)
+            if not has_matching_kbli:
+                return request.redirect('/sadaya-tawar/%s?error=kbli_mismatch' % paket.id)
+        # ==========================
+
         peserta_env = request.env['sadaya_tawar.peserta'].sudo()
         existing = peserta_env.search([
             ('paket_id', '=', paket.id),

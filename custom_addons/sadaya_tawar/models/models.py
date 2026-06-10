@@ -9,6 +9,16 @@ class SadayaTawarPaket(models.Model):
     name = fields.Char(string='Nama Paket', required=True)
     nilai_hps = fields.Float(string='Nilai HPS (Rp)', required=True)
     
+    # === TAMBAHAN PERSYARATAN VENDOR ===
+    syarat_kbli = fields.Char(string='Persyaratan KBLI', help='Pisahkan dengan koma, contoh: 6201, 6202, 6203')
+    syarat_dokumen = fields.Text(string='Dokumen yang Harus Disiapkan')
+
+    jadwal_ids = fields.One2many(
+        'sadaya_tawar.jadwal',
+        'paket_id',
+        string='Jadwal Tahapan Pengadaan'
+    )
+
     jenis_kontrak = fields.Selection([
         ('lumsum', 'Lumsum'),
         ('harga_satuan', 'Harga Satuan'),
@@ -20,6 +30,13 @@ class SadayaTawarPaket(models.Model):
         ('pengadaan_langsung', 'Pengadaan Langsung'),
         ('tender', 'Tender')
     ], string='Metode Pemilihan', default='e_purchasing')
+
+    jenis_pengadaan = fields.Selection([
+        ('barang', 'Barang'),
+        ('jasa', 'Jasa Lainnya'),
+        ('konstruksi', 'Konstruksi'),
+        ('konsultansi', 'Jasa Konsultansi')
+    ], string='Jenis Pengadaan', default='barang', required=True)
 
     batas_pendaftaran = fields.Datetime(string='Batas Pendaftaran')
 
@@ -244,3 +261,18 @@ class SadayaTawarAddendum(models.Model):
     dokumen = fields.Binary(string='File Addendum (PDF)', required=True, attachment=True)
     dokumen_filename = fields.Char(string='Nama File')
     keterangan = fields.Text(string='Keterangan')
+
+class SadayaTawarJadwal(models.Model):
+    _name = 'sadaya_tawar.jadwal'
+    _description = 'Jadwal Tahapan Pengadaan'
+    _order = 'start_date asc'
+
+    paket_id = fields.Many2one(
+        'sadaya_tawar.paket', 
+        string='Paket RUP', 
+        required=True, 
+        ondelete='cascade'
+    )
+    name = fields.Char(string='Nama Tahapan', required=True)
+    start_date = fields.Datetime(string='Waktu Mulai', required=True)
+    end_date = fields.Datetime(string='Waktu Selesai', required=True)
