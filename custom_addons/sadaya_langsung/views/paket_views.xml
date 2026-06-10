@@ -237,13 +237,13 @@
     <!-- ========== ACTION ========== -->
     <record model="ir.actions.act_url" id="action_sadaya_langsung_dashboard_url">
       <field name="name">Dashboard</field>
-      <field name="url">/sadaya_langsung</field>
+      <field name="url">/sadaya-langsung</field>
       <field name="target">self</field>
     </record>
 
     <record model="ir.actions.act_url" id="action_sadaya_langsung_paket_url">
       <field name="name">Paket Sadaya Langsung</field>
-      <field name="url">/sadaya_langsung/paket</field>
+      <field name="url">/sadaya-langsung/paket</field>
       <field name="target">self</field>
     </record>
 

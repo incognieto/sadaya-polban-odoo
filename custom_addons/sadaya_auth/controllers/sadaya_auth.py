@@ -98,14 +98,17 @@ class SadayaAuthController(http.Controller):
             reg.sudo().action_approve()
 
             try:
-                request.session.authenticate(request.session.db, vals['email'], vals['password'])
+                credential = {'login': vals['email'], 'password': vals['password'], 'type': 'password'}
+                request.session.authenticate(request.env, credential)
                 return request.redirect('/sadaya/dashboard')
             except AccessDenied:
                 return request.redirect('/sadaya/login?success=registered')
 
         except ValidationError as e:
+            request.env.cr.rollback()
             errors['general'] = str(e.args[0]) if e.args else 'Kesalahan validasi.'
         except Exception as e:
+            request.env.cr.rollback()
             _logger.exception("Sadaya register error: %s", e)
             errors['general'] = 'Terjadi kesalahan sistem. Silakan coba lagi.'
 
@@ -154,9 +157,9 @@ class SadayaAuthController(http.Controller):
             })
 
         try:
-            uid = request.session.authenticate(request.session.db, email, password)
-            if uid:
-                request.session.uid = uid
+            credential = {'login': email, 'password': password, 'type': 'password'}
+            auth_info = request.session.authenticate(request.env, credential)
+            if auth_info and auth_info.get('uid'):
                 return request.redirect(redirect)
             else:
                 return request.render('sadaya_auth.sadaya_login', {

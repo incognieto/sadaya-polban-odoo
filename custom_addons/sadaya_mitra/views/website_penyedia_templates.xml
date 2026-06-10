@@ -166,6 +166,18 @@
                                             hasError = true;
                                             errorMsg = 'Kata sandi dan konfirmasi kata sandi harus sama';
                                         }
+                                    } else if (input.name === 'swafoto_narahubung' &amp;&amp; val) {
+                                        var ext = val.split('.').pop().toLowerCase();
+                                        if (ext !== 'jpg' &amp;&amp; ext !== 'jpeg' &amp;&amp; ext !== 'png') {
+                                            hasError = true;
+                                            errorMsg = 'Format file harus .jpg, .jpeg, atau .png';
+                                        }
+                                    } else if (input.name === 'bukti_npwp' &amp;&amp; val) {
+                                        var ext = val.split('.').pop().toLowerCase();
+                                        if (ext !== 'pdf') {
+                                            hasError = true;
+                                            errorMsg = 'Format file harus .pdf';
+                                        }
                                     }
 
                                     var feedback = input.parentElement.querySelector('.invalid-feedback');
