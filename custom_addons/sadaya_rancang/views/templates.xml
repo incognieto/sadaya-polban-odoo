@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Landing Page Portal -->
+    <template id="portal_rancang_index" name="Portal Sadaya Rancang">
+        <t t-call="website.layout">
+            <div class="container mt-5">
+                <h2 class="mb-4">Portal Sadaya Rancang</h2>
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow h-100">
+                            <div class="card-body text-center p-5">
+                                <h4 class="card-title mb-3">Pengajuan Kebutuhan</h4>
+                                <p class="text-muted mb-4">Lihat daftar usulan kebutuhan yang diajukan oleh unit kerja.</p>
+                                <a href="/sadaya_rancang/pengajuan" class="btn btn-primary btn-lg w-100">Masuk ke Pengajuan</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow h-100">
+                            <div class="card-body text-center p-5">
+                                <h4 class="card-title mb-3">Persetujuan Manajemen</h4>
+                                <p class="text-muted mb-4">Lihat daftar usulan yang menunggu persetujuan dari pihak manajemen.</p>
+                                <a href="/sadaya_rancang/persetujuan_manajemen" class="btn btn-success btn-lg w-100">Masuk ke Persetujuan</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Halaman Pengajuan -->
+    <template id="portal_rancang_pengajuan" name="Daftar Pengajuan Kebutuhan">
+        <t t-call="website.layout">
+            <div class="container mt-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Daftar Pengajuan Kebutuhan</h2>
+                    <div>
+                        <a href="/sadaya_rancang/pengajuan/baru" class="btn btn-primary me-2">Buat Pengajuan Baru</a>
+                        <a href="/sadaya_rancang" class="btn btn-outline-secondary">Kembali ke Portal</a>
+                    </div>
+                </div>
+                <table class="table table-striped table-hover border">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Judul Usulan</th>
+                            <th>Pemohon</th>
+                            <th>Jenis Kebutuhan</th>
+                            <th>Anggaran (RAB)</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="usulans" t-as="u">
+                            <tr>
+                                <td><strong><t t-esc="u.name"/></strong></td>
+                                <td><t t-esc="u.pemohon"/></td>
+                                <td class="text-uppercase"><t t-esc="u.jenis_kebutuhan.replace('_', ' ')"/></td>
+                                <td>Rp <t t-esc="'{:,}'.format(u.rab)"/></td>
+                                <td>
+                                    <span t-attf-class="badge #{'bg-secondary' if u.state == 'draft' else 'bg-warning text-dark' if u.state == 'submitted' else 'bg-success' if u.state in ('approved', 'published') else 'bg-danger'}">
+                                        <t t-if="u.state == 'draft'">Draft</t>
+                                        <t t-if="u.state == 'submitted'">Menunggu Persetujuan</t>
+                                        <t t-if="u.state == 'returned'">Dikembalikan (Revisi)</t>
+                                        <t t-if="u.state == 'rejected'">Ditolak</t>
+                                        <t t-if="u.state == 'approved'">Disetujui</t>
+                                        <t t-if="u.state == 'published'">Dipublikasi ke RUP</t>
+                                    </span>
+                                </td>
+                                <td>
+                                    <a t-attf-href="/sadaya_rancang/pengajuan/#{u.id}" class="btn btn-sm btn-info">Lihat Detail</a>
+                                </td>
+                            </tr>
+                        </t>
+                        <tr t-if="not usulans">
+                            <td colspan="6" class="text-center text-muted">Belum ada pengajuan kebutuhan.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <!-- Halaman Persetujuan Manajemen -->
+    <template id="portal_rancang_persetujuan" name="Daftar Persetujuan Manajemen">
+        <t t-call="website.layout">
+            <div class="container mt-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Daftar Persetujuan Manajemen</h2>
+                    <a href="/sadaya_rancang" class="btn btn-outline-secondary">Kembali ke Portal</a>
+                </div>
+                <div class="alert alert-info">
+                    Hanya menampilkan usulan yang berstatus <strong>Menunggu Persetujuan</strong>.
+                </div>
+                <table class="table table-striped table-hover border">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Judul Usulan</th>
+                            <th>Pemohon</th>
+                            <th>Jenis Kebutuhan</th>
+                            <th>Anggaran (RAB)</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="usulans" t-as="u">
+                            <tr>
+                                <td><strong><t t-esc="u.name"/></strong></td>
+                                <td><t t-esc="u.pemohon"/></td>
+                                <td class="text-uppercase"><t t-esc="u.jenis_kebutuhan.replace('_', ' ')"/></td>
+                                <td>Rp <t t-esc="'{:,}'.format(u.rab)"/></td>
+                                <td>
+                                    <span class="badge bg-warning text-dark">Menunggu Persetujuan</span>
+                                </td>
+                                <td>
+                                    <a t-attf-href="/sadaya_rancang/pengajuan/#{u.id}" class="btn btn-sm btn-info">Lihat Detail</a>
+                                </td>
+                            </tr>
+                        </t>
+                        <tr t-if="not usulans">
+                            <td colspan="6" class="text-center text-muted">Belum ada usulan yang menunggu persetujuan.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <!-- Halaman Form Pengajuan -->
+    <template id="portal_rancang_form" name="Buat Pengajuan Baru">
+        <t t-call="website.layout">
+            <div class="container mt-5 mb-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Buat Pengajuan Baru</h2>
+                    <a href="/sadaya_rancang/pengajuan" class="btn btn-outline-secondary">Kembali ke Daftar</a>
+                </div>
+                <div class="card shadow">
+                    <div class="card-body p-4">
+                        <form action="/sadaya_rancang/pengajuan/baru" method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Judul Usulan</label>
+                                <input type="text" class="form-control" id="name" name="name" required="1"/>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="pemohon" class="form-label">Unit Kerja / Pemohon</label>
+                                    <input type="text" class="form-control" id="pemohon" name="pemohon" required="1"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="jenis_kebutuhan" class="form-label">Jenis Kebutuhan</label>
+                                    <select class="form-select" id="jenis_kebutuhan" name="jenis_kebutuhan" required="1">
+                                        <option value="barang">Barang</option>
+                                        <option value="jasa_lainnya">Jasa Lainnya</option>
+                                        <option value="konstruksi">Konstruksi</option>
+                                        <option value="konsultansi">Konsultansi</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="rab" class="form-label">Anggaran (RAB)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp</span>
+                                    <input type="number" class="form-control" id="rab" name="rab" required="1"/>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="deskripsi_kebutuhan" class="form-label">Deskripsi Kebutuhan</label>
+                                <textarea class="form-control" id="deskripsi_kebutuhan" name="deskripsi_kebutuhan" rows="3"></textarea>
+                            </div>
+                            <div class="mb-4">
+                                <label for="kak" class="form-label">File KAK (Hanya PDF)</label>
+                                <input class="form-control" type="file" id="kak" name="kak" accept="application/pdf" required="1"/>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary">Simpan Pengajuan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Halaman Detail Pengajuan -->
+    <template id="portal_rancang_detail" name="Detail Pengajuan">
+        <t t-call="website.layout">
+            <div class="container mt-5 mb-5">
+                <a href="/sadaya_rancang/pengajuan" class="btn btn-outline-secondary mb-3">&amp;larr; Kembali ke Daftar</a>
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0"><t t-esc="usulan.name"/></h4>
+                        <span t-attf-class="badge #{'bg-secondary' if usulan.state == 'draft' else 'bg-warning text-dark' if usulan.state == 'submitted' else 'bg-success' if usulan.state in ('approved', 'published') else 'bg-danger'}">
+                            <t t-if="usulan.state == 'draft'">Draft</t>
+                            <t t-if="usulan.state == 'submitted'">Menunggu Persetujuan</t>
+                            <t t-if="usulan.state == 'returned'">Dikembalikan (Revisi)</t>
+                            <t t-if="usulan.state == 'rejected'">Ditolak</t>
+                            <t t-if="usulan.state == 'approved'">Disetujui</t>
+                            <t t-if="usulan.state == 'published'">Dipublikasi ke RUP</t>
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <p><strong>Pemohon:</strong> <t t-esc="usulan.pemohon"/></p>
+                                <p><strong>Jenis Kebutuhan:</strong> <t t-esc="usulan.jenis_kebutuhan.replace('_', ' ').title()"/></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Anggaran (RAB):</strong> Rp <t t-esc="'{:,}'.format(usulan.rab)"/></p>
+                                <p><strong>Klasifikasi:</strong> <t t-esc="usulan.klasifikasi.replace('_', ' ').title() if usulan.klasifikasi else '-'"/></p>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Deskripsi Kebutuhan:</strong>
+                            <p class="text-muted"><t t-esc="usulan.deskripsi_kebutuhan or 'Tidak ada deskripsi'"/></p>
+                        </div>
+                        <div class="mb-4">
+                            <strong>File KAK:</strong>
+                            <div t-if="usulan.kak">
+                                <a t-attf-href="/web/content/rancang.usulan/#{usulan.id}/kak" target="_blank" class="btn btn-outline-info btn-sm">Unduh <t t-esc="usulan.kak_filename"/></a>
+                            </div>
+                            <div t-else="">
+                                <span class="text-muted">Belum ada file</span>
+                            </div>
+                        </div>
+
+                        <!-- Aksi Revert, Submit, Approve, Reject & Delete -->
+                        <div class="mt-4 pt-3 border-top text-end">
+                            <!-- Aksi untuk User -->
+                            <t t-if="usulan.state in ['draft', 'returned']">
+                                <a t-attf-href="/sadaya_rancang/pengajuan/#{usulan.id}/submit" class="btn btn-primary me-2" onclick="return confirm('Ajukan usulan ini ke manajemen?');">Ajukan Pengajuan</a>
+                                <a t-attf-href="/sadaya_rancang/pengajuan/#{usulan.id}/delete" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus pengajuan ini?');">Hapus Pengajuan</a>
+                            </t>
+
+                            <!-- Aksi untuk Manajemen -->
+                            <t t-if="usulan.state == 'submitted'">
+                                <a t-attf-href="/sadaya_rancang/pengajuan/#{usulan.id}/approve" class="btn btn-success me-2" onclick="return confirm('Setujui pengajuan ini?');">Setujui</a>
+                                <button type="button" class="btn btn-danger me-2" data-bs-toggle="modal" data-bs-target="#rejectModal">Tolak</button>
+                            </t>
+
+                            <t t-if="usulan.state == 'approved'">
+                                <a t-attf-href="/sadaya_rancang/pengajuan/#{usulan.id}/publish" class="btn btn-primary me-2" onclick="return confirm('Publikasi usulan ini ke RUP (Rencana Umum Pengadaan)?');">Publikasi ke RUP</a>
+                            </t>
+
+                            <!-- Aksi Umum -->
+                            <t t-if="usulan.state in ['submitted', 'returned', 'rejected']">
+                                <a t-attf-href="/sadaya_rancang/pengajuan/#{usulan.id}/revert" class="btn btn-warning me-2" onclick="return confirm('Kembalikan pengajuan ini ke Draft?');">Kembali ke Draft (Revert)</a>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Reject -->
+                <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="rejectModalLabel">Alasan Penolakan</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form t-attf-action="/sadaya_rancang/pengajuan/#{usulan.id}/reject" method="POST">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="alasan" class="form-label">Berikan alasan menolak pengajuan ini:</label>
+                                        <textarea class="form-control" id="alasan" name="alasan" rows="3" required="1"></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-danger">Tolak Pengajuan</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chatter / Log Perubahan -->
+                <div class="mt-5">
+                    <h4>Log Perubahan &amp; Pesan</h4>
+                    <t t-call="portal.message_thread">
+                        <t t-set="object" t-value="usulan"/>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

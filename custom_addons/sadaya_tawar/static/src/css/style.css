@@ -1,0 +1,27 @@
+/* Pewarnaan Badge Metode Pemilihan Sadaya Tawar */
+.badge-rutin {
+    background-color: #28a745; /* Hijau untuk E-Purchasing */
+    color: #ffffff;
+    padding: 0.35em 0.65em;
+    border-radius: 0.25rem;
+    font-size: 0.85em;
+    font-weight: bold;
+}
+
+.badge-langsung {
+    background-color: #007bff; /* Biru untuk Pengadaan Langsung */
+    color: #ffffff;
+    padding: 0.35em 0.65em;
+    border-radius: 0.25rem;
+    font-size: 0.85em;
+    font-weight: bold;
+}
+
+.badge-lelang {
+    background-color: #dc3545; /* Merah untuk Tender */
+    color: #ffffff;
+    padding: 0.35em 0.65em;
+    border-radius: 0.25rem;
+    font-size: 0.85em;
+    font-weight: bold;
+}

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Graph View untuk Usulan -->
+    <record id="view_rancang_usulan_graph" model="ir.ui.view">
+        <field name="name">rancang.usulan.graph</field>
+        <field name="model">rancang.usulan</field>
+        <field name="arch" type="xml">
+            <graph string="Analitik Usulan Kebutuhan" type="bar">
+                <field name="pemohon" type="row"/>
+                <field name="state" type="col"/>
+                <field name="rab" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Pivot View untuk Usulan -->
+    <record id="view_rancang_usulan_pivot" model="ir.ui.view">
+        <field name="name">rancang.usulan.pivot</field>
+        <field name="model">rancang.usulan</field>
+        <field name="arch" type="xml">
+            <pivot string="Analitik Usulan Kebutuhan" display_quantity="true">
+                <field name="pemohon" type="row"/>
+                <field name="jenis_kebutuhan" type="col"/>
+                <field name="rab" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Action Dashboard -->
+    <record id="action_rancang_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboard</field>
+        <field name="res_model">rancang.usulan</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- Menu Dashboard -->
+    <menuitem id="menu_rancang_dashboard" name="Dashboard" parent="menu_rancang_root" action="action_rancang_dashboard" sequence="1"/>
+</odoo>
