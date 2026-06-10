@@ -687,7 +687,13 @@
 
             <section class="sl-section sl-section--form">
                 <div class="container">
-                    <t t-if="partner.vendor_status != 'verified'">
+                    <t t-if="not is_vendor">
+                        <div class="alert alert-warning sl-notice" role="alert">
+                            <i class="fa fa-exclamation-triangle me-2"></i>
+                            <strong>Perhatian!</strong> Akun Anda belum terverifikasi penuh sebagai Vendor. Anda tidak dapat mengikuti tender. Silakan hubungi admin.
+                        </div>
+                    </t>
+                    <t t-elif="partner.vendor_status != 'verified'">
                         <div class="alert alert-warning sl-notice" role="alert">
                             <i class="fa fa-exclamation-triangle me-2"></i>
                             <strong>Perhatian!</strong> Status verifikasi Anda saat ini: <b><t t-esc="partner.vendor_status"/></b>. Anda belum bisa mengajukan penawaran.
@@ -766,7 +772,10 @@
                             <article class="sl-card sl-card--detail">
                                 <h3 style="margin-bottom: 1.25rem;">Form Penawaran</h3>
 
-                                <div t-if="existing_bid" class="alert alert-info sl-notice" role="alert">
+                                <div t-if="not is_vendor" class="alert alert-danger sl-notice" role="alert">
+                                    <i class="fa fa-ban me-2"></i> Akun Anda belum terverifikasi sebagai Vendor. Anda tidak memiliki izin untuk mengirim penawaran.
+                                </div>
+                                <div t-elif="existing_bid" class="alert alert-info sl-notice" role="alert">
                                     <i class="fa fa-info-circle me-2"></i> Anda sudah pernah mengirimkan penawaran sebesar
                                     <strong><t t-esc="existing_bid.harga_penawaran" t-options="{'widget': 'monetary', 'display_currency': tender.currency_id}"/></strong>.
                                     Mengisi form ini akan menimpa data penawaran Anda sebelumnya.
@@ -812,7 +821,7 @@
                                         <div class="col-12" style="margin-top: 1.5rem; border-top: 1px dashed var(--sl-border); padding-top: 1.25rem;">
                                             <div style="display: flex; gap: 0.75rem; justify-content: flex-end; flex-wrap: wrap;">
                                                 <a t-attf-href="/sadaya-lelang/tender/#{tender.id}" class="btn btn-outline-primary" style="border-radius: 999px; padding: 0.65rem 1.5rem;">Batal</a>
-                                                <button type="submit" class="btn sl-submit">
+                                                <button type="submit" class="btn sl-submit" t-att-disabled="'disabled' if not is_vendor else None">
                                                     <i class="fa fa-paper-plane me-2"></i> Kirim Penawaran
                                                 </button>
                                             </div>

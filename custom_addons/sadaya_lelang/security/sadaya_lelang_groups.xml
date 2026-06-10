@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="1">
+    <data noupdate="0">
 
         <record id="module_category_sadaya_lelang" model="ir.module.category">
             <field name="name">Sadaya Lelang (SPSE)</field>
@@ -32,6 +32,17 @@
             <field name="name">Pejabat Pembuat Komitmen (PPK)</field>
             <field name="implied_ids" eval="[(4, ref('group_lelang_pokja'))]"/>
             <field name="comment">Akses penuh untuk pembuatan SPPBJ dan Kontrak.</field>
+        </record>
+
+        <!-- Admin otomatis mendapat semua hak akses Sadaya Lelang -->
+        <record id="base.group_system" model="res.groups">
+            <field name="implied_ids" eval="[
+                (4, ref('sadaya_lelang.group_lelang_user')),
+                (4, ref('sadaya_lelang.group_lelang_manajemen')),
+                (4, ref('sadaya_lelang.group_lelang_pphp')),
+                (4, ref('sadaya_lelang.group_lelang_pokja')),
+                (4, ref('sadaya_lelang.group_lelang_ppk'))
+            ]"/>
         </record>
 
         <!-- Record Rules -->
