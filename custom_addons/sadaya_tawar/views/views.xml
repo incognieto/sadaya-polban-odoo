@@ -47,6 +47,9 @@
                         <group>
                             <field name="metode_pemilihan"/>
                             <field name="batas_pendaftaran"/>
+                            <field name="unit_pengusul"/>
+                            <field name="tgl_mulai"/>
+                            <field name="tgl_selesai"/>
                         </group>
                     </group>
                     <notebook>
