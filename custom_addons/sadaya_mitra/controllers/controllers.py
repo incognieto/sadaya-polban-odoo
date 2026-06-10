@@ -449,11 +449,45 @@ class SadayaMitraWebsite(http.Controller):
 			'record': record,
 			'config': config,
 		})
+	@http.route('/sadaya_mitra/profil', auth='public', website=True, methods=['GET'])
+	def profil(self, **kwargs):
+		email = request.session.get('penyedia_email')
+		if not email:
+			return request.redirect('/sadaya_mitra/lanjutan')
+			
+		penyedia = request.env['sadaya_mitra.penyedia'].sudo().search([('email', '=', email)], limit=1)
+		if not penyedia:
+			return request.redirect('/sadaya_mitra/lanjutan')
+			
+		return request.render('sadaya_mitra.sadaya_mitra_profil', {
+			'penyedia': penyedia,
+		})
+
 	@http.route('/sadaya_mitra/penyedia', auth='public', website=True, methods=['GET'])
 	def penyedia_form(self, **kwargs):
+		email = request.session.get('penyedia_email')
+		values = dict(kwargs)
+		is_edit = False
+		if email and not kwargs:
+			penyedia = request.env['sadaya_mitra.penyedia'].sudo().search([('email', '=', email)], limit=1)
+			if penyedia:
+				is_edit = True
+				values.update({
+					'jenis_penyedia': penyedia.jenis_penyedia,
+					'nama_badan_usaha': penyedia.nama_badan_usaha,
+					'email': penyedia.email,
+					'nomor_telepon': penyedia.nomor_telepon,
+					'nomor_whatsapp': penyedia.nomor_whatsapp,
+					'narahubung': penyedia.narahubung,
+					'nomor_nik_narahubung': penyedia.nomor_nik_narahubung,
+					'alamat': penyedia.alamat,
+					'nomor_npwp_perusahaan': penyedia.nomor_npwp_perusahaan,
+				})
+				
 		return request.render('sadaya_mitra.sadaya_mitra_penyedia_form', {
-			'values': kwargs,
+			'values': values,
 			'errors': [],
+			'is_edit': is_edit,
 		})
 
 	@http.route('/sadaya_mitra/penyedia/submit', auth='public', website=True, methods=['POST'], csrf=True)
@@ -478,13 +512,19 @@ class SadayaMitraWebsite(http.Controller):
 						% field_def['label']
 					)
 					
+		session_email = request.session.get('penyedia_email')
+		existing_penyedia = False
+		if session_email:
+			existing_penyedia = request.env['sadaya_mitra.penyedia'].sudo().search([('email', '=', session_email)], limit=1)
+			
 		# ── Validasi kata sandi ────────────────────────────────────────────
 		password = (post.get('kata_sandi') or '').strip()
 		password_confirm = (post.get('kata_sandi_confirm') or '').strip()
-		if not password:
-			errors.append('Kata sandi wajib diisi.')
-		if not password_confirm:
-			errors.append('Konfirmasi kata sandi wajib diisi.')
+		if not existing_penyedia:
+			if not password:
+				errors.append('Kata sandi wajib diisi.')
+			if not password_confirm:
+				errors.append('Konfirmasi kata sandi wajib diisi.')
 		if password and password_confirm and password != password_confirm:
 			errors.append('Kata sandi dan konfirmasi kata sandi harus sama.')
 
@@ -493,27 +533,28 @@ class SadayaMitraWebsite(http.Controller):
 		for file_def in PENYEDIA_REQUIRED_FILES:
 			file_obj = request.httprequest.files.get(file_def['name'])
 			if not file_obj or not file_obj.filename:
-				errors.append('%s wajib diunggah.' % file_def['label'])
-			elif file_def.get('accept'):
-				accepted = file_def['accept'] if isinstance(file_def['accept'], list) else [a.strip() for a in file_def['accept'].split(',')]
-				if file_obj.mimetype not in accepted:
-					errors.append('%s harus berformat %s (diunggah: %s).' % (
-						file_def['label'], ', '.join(accepted), file_obj.mimetype
-					))
+				if not existing_penyedia:
+					errors.append('%s wajib diunggah.' % file_def['label'])
+			else:
+				if file_def.get('accept'):
+					accepted = file_def['accept'] if isinstance(file_def['accept'], list) else [a.strip() for a in file_def['accept'].split(',')]
+					if file_obj.mimetype not in accepted:
+						errors.append('%s harus berformat %s (diunggah: %s).' % (
+							file_def['label'], ', '.join(accepted), file_obj.mimetype
+						))
+					else:
+						file_values[file_def['name']] = base64.b64encode(file_obj.read())
 				else:
 					file_values[file_def['name']] = base64.b64encode(file_obj.read())
-			else:
-				file_values[file_def['name']] = base64.b64encode(file_obj.read())
 				
 		# ── Kembalikan form jika ada error ─────────────────────────────────
 		if errors:
 			return request.render('sadaya_mitra.sadaya_mitra_penyedia_form', {
 				'values': post,
 				'errors': errors,
+				'is_edit': bool(existing_penyedia),
 			})
 
-		# ── Simpan password untuk user creation ────────────────────────────
-		password = post.get('kata_sandi')
 		email = post.get('email')
 
 		# ── Simpan data penyedia (tanpa password) ──────────────────────────
@@ -530,15 +571,25 @@ class SadayaMitraWebsite(http.Controller):
 		}
 		values.update(file_values)
 
-		penyedia = request.env['sadaya_mitra.penyedia'].sudo().create(values)
+		if existing_penyedia:
+			existing_penyedia.write(values)
+			# Update password if provided
+			if password:
+				user = request.env['res.users'].sudo().search([('login', '=', session_email)], limit=1)
+				if user:
+					user.write({'password': password})
+			request.session['penyedia_email'] = email
+			return request.redirect('/sadaya_mitra/profil')
+		else:
+			penyedia = request.env['sadaya_mitra.penyedia'].sudo().create(values)
 
-		# ── Buat user account dengan password ───────────────────────────────
-		request.env['res.users'].sudo().create({
-			'name': post.get('narahubung') or post.get('nama_badan_usaha'),
-			'login': email,
-			'password': password,
-			'email': email,
-		})
+			# ── Buat user account dengan password ───────────────────────────────
+			request.env['res.users'].sudo().create({
+				'name': post.get('narahubung') or post.get('nama_badan_usaha'),
+				'login': email,
+				'password': password,
+				'email': email,
+			})
 
-		request.session['penyedia_email'] = email
-		return request.redirect('/sadaya_mitra/lanjutan')
+			request.session['penyedia_email'] = email
+			return request.redirect('/sadaya_mitra/lanjutan')

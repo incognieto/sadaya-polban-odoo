@@ -14,6 +14,7 @@
                         <nav class="sl-app-nav" aria-label="Navigasi utama">
                             <a href="/sadaya_mitra/penyedia">Pendaftaran</a>
                             <a href="/sadaya_mitra/lanjutan" class="active">Data Lanjutan</a>
+                            <a href="/sadaya_mitra/profil">Profil &amp; Status</a>
                         </nav>
                     </div>
                 </header>
@@ -41,7 +42,7 @@
                                             <input type="email" name="email" class="form-control sl-input" required="required"/>
                                         </div>
                                         <div class="col-auto">
-                                            <button type="submit" class="btn btn-dark sl-submit">Cek Progres</button>
+                                            <button type="submit" class="btn btn-primary sl-submit">Cek Progres</button>
                                         </div>
                                     </div>
                                 </form>
@@ -82,10 +83,10 @@
                                         <div class="sl-actions mt-auto">
                                             <t t-if="penyedia_email">
                                                 <t t-if="form.get('is_completed')">
-                                                    <a class="btn btn-sm btn-outline-dark" t-att-href="form['url']">Ubah Data</a>
+                                                    <a class="btn btn-sm btn-outline-primary" t-att-href="form['url']">Ubah Data</a>
                                                 </t>
                                                 <t t-else="">
-                                                    <a class="btn btn-sm btn-dark" t-att-href="form['url']">Isi Data</a>
+                                                    <a class="btn btn-sm btn-primary" t-att-href="form['url']">Isi Data</a>
                                                 </t>
                                             </t>
                                             <t t-else="">
@@ -99,7 +100,7 @@
                         
                         <t t-if="penyedia_email">
                             <div class="mt-4 d-flex justify-content-end">
-                                <a href="/sadaya_mitra/status" class="btn btn-dark">
+                                <a href="/sadaya_mitra/status" class="btn btn-primary sl-submit">
                                     Simpan Pendaftaran
                                 </a>
                             </div>
@@ -134,6 +135,7 @@
                         <nav class="sl-app-nav" aria-label="Navigasi utama">
                             <a href="/sadaya_mitra/penyedia">Pendaftaran</a>
                             <a href="/sadaya_mitra/lanjutan" class="active">Data Lanjutan</a>
+                            <a href="/sadaya_mitra/profil">Profil &amp; Status</a>
                         </nav>
                     </div>
                 </header>
@@ -231,8 +233,8 @@
                                 </div>
 
                                 <div class="mt-4 d-flex justify-content-between">
-                                    <a class="btn btn-outline-dark" href="/sadaya_mitra/lanjutan">Kembali</a>
-                                    <button type="submit" class="btn btn-dark sl-submit">Simpan</button>
+                                    <a class="btn btn-outline-secondary" href="/sadaya_mitra/lanjutan">Kembali</a>
+                                    <button type="submit" class="btn btn-primary sl-submit">Simpan</button>
                                 </div>
                             </form>
                         </article>
@@ -333,6 +335,7 @@
                         <nav class="sl-app-nav" aria-label="Navigasi utama">
                             <a href="/sadaya_mitra/penyedia">Pendaftaran</a>
                             <a href="/sadaya_mitra/lanjutan" class="active">Data Lanjutan</a>
+                            <a href="/sadaya_mitra/profil">Profil &amp; Status</a>
                         </nav>
                     </div>
                 </header>
@@ -379,6 +382,7 @@
                         <nav class="sl-app-nav" aria-label="Navigasi utama">
                             <a href="/sadaya_mitra/penyedia">Pendaftaran</a>
                             <a href="/sadaya_mitra/lanjutan">Data Lanjutan</a>
+                            <a href="/sadaya_mitra/profil">Profil &amp; Status</a>
                         </nav>
                     </div>
                 </header>
@@ -409,7 +413,7 @@
                                 </div>
                                 <p class="mt-3 text-muted">Anda akan menerima notifikasi lebih lanjut melalui email jika proses verifikasi telah selesai.</p>
                                 <div class="mt-4">
-                                    <a href="/sadaya_mitra/lanjutan" class="btn btn-dark">Kembali ke Data Lanjutan</a>
+                                    <a href="/sadaya_mitra/lanjutan" class="btn btn-outline-secondary">Kembali ke Data Lanjutan</a>
                                 </div>
                             </article>
                         </t>
@@ -420,7 +424,7 @@
                                 </div>
                                 <p class="mt-3 text-muted">Harap segera melakukan pengisian data yang tersisa agar proses pendaftaran dapat dilanjutkan ke tahap verifikasi.</p>
                                 <div class="mt-4">
-                                    <a href="/sadaya_mitra/lanjutan" class="btn btn-dark">Lengkapi Data Sekarang</a>
+                                    <a href="/sadaya_mitra/lanjutan" class="btn btn-primary sl-submit">Lengkapi Data Sekarang</a>
                                 </div>
                             </article>
                         </t>
