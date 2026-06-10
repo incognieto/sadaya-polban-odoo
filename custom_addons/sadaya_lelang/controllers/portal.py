@@ -4,20 +4,20 @@ from odoo.http import request
 
 class TenderPortal(http.Controller):
 
-    @http.route('/tender-portal/tenders', type='http', auth='public', website=False)
+    @http.route('/sadaya-lelang/tender', type='http', auth='public', website=False)
     def tender_list(self, **kwargs):
         tenders = request.env['sadaya_lelang.paket'].sudo().search([('status', 'not in', ['draft', 'menunggu_persetujuan'])])
         return request.render('sadaya_lelang.portal_tender_list', {
             'tenders': tenders
         })
 
-    @http.route(['/tenders/<model("sadaya_lelang.paket"):tender>'], type='http', auth='public', website=False)
+    @http.route(['/sadaya-lelang/tender/<model("sadaya_lelang.paket"):tender>'], type='http', auth='public', website=False)
     def tender_detail(self, tender, **kwargs):
         return request.render('sadaya_lelang.portal_tender_detail', {
             'tender': tender
         })
 
-    @http.route('/tender-portal/dashboard', type='http', auth='user', website=False)
+    @http.route('/sadaya-lelang/dashboard', type='http', auth='user', website=False)
     def my_tenders(self, **kwargs):
         partner = request.env.user.partner_id
         if not partner.is_vendor_tender:
@@ -30,7 +30,7 @@ class TenderPortal(http.Controller):
             'partner': partner
         })
 
-    @http.route(['/tenders/<model("sadaya_lelang.paket"):tender>/submit_bid'], type='http', auth='user', website=False)
+    @http.route(['/sadaya-lelang/tender/<model("sadaya_lelang.paket"):tender>/submit_bid'], type='http', auth='user', website=False)
     def submit_bid(self, tender, **kwargs):
         partner = request.env.user.partner_id
         if not getattr(partner, 'is_vendor_tender', True):
@@ -47,7 +47,7 @@ class TenderPortal(http.Controller):
             'existing_bid': existing_bid
         })
 
-    @http.route(['/tenders/<model("sadaya_lelang.paket"):tender>/process_bid'], type='http', auth='user', methods=['POST'], website=False, csrf=False)
+    @http.route(['/sadaya-lelang/tender/<model("sadaya_lelang.paket"):tender>/process_bid'], type='http', auth='user', methods=['POST'], website=False, csrf=False)
     def process_bid(self, tender, **post):
         import base64
         partner = request.env.user.partner_id
@@ -77,4 +77,4 @@ class TenderPortal(http.Controller):
         else:
             request.env['sadaya_lelang.penawaran'].sudo().create(vals)
             
-        return request.redirect('/tender-portal/dashboard')
+        return request.redirect('/sadaya-lelang/dashboard')
