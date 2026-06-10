@@ -1,5 +1,5 @@
 {
-    'name': "sadaya-rancang",
+    'name': "Sadaya Rancang",
     'summary': "Modul untuk menginput usulan kebutuhan barang/jasa (RAB dan KAK) secara internal.",
     'description': """
 Modul ini bertindak sebagai Hulu pengadaan:
