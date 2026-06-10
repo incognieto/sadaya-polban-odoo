@@ -50,30 +50,50 @@ class RancangRup(models.Model):
         paket_obj = self.env['sadaya_tawar.paket'].sudo()
         created_paket_ids = []
 
+        jenis_map = {
+            'barang': 'barang',
+            'jasa_lainnya': 'jasa',
+            'konstruksi': 'konstruksi',
+            'konsultansi': 'konsultansi',
+        }
+
         for record in self:
             if record.state != 'draft':
                 continue
 
-            # Jika ada HPS, pakai total HPS; jika tidak, pakai nilai pagu
-            total_hps = sum(record.hps_ids.mapped('total_hps')) if record.hps_ids else record.nilai_pagu
+            total_hps = (
+                sum(record.hps_ids.mapped('total_hps'))
+                if record.hps_ids
+                else record.nilai_pagu
+            )
+
+            deskripsi_lines = [
+                f"Sumber Dana: {record.sumber_dana or '-'}",
+                f"Kode Anggaran: {record.kode_anggaran or '-'}",
+                f"Lokasi: {record.lokasi or '-'}",
+                f"Tanggal Mulai: {record.tgl_mulai or '-'}",
+                f"Tanggal Selesai: {record.tgl_selesai or '-'}",
+            ]
+
+            if record.usulan_id:
+                unit_pemohon = getattr(record.usulan_id, 'pemohon', False) or getattr(record.usulan_id, 'name', False)
+                if unit_pemohon:
+                    deskripsi_lines.insert(0, f"Unit Pemohon: {unit_pemohon}")
 
             paket = paket_obj.create({
                 'name': record.name,
                 'nilai_hps': total_hps,
-                'metode_pemilihan': record.metode_pemilihan or 'e_purchasing',
-                'deskripsi': record.name or '',
+                'jenis_pengadaan': jenis_map.get(record.jenis_pengadaan, 'barang'),
+                'deskripsi': '\n'.join(deskripsi_lines),
                 'state': 'draft',
             })
 
             created_paket_ids.append(paket.id)
-
-            # Setelah sah, status RUP jadi aktif
             record.write({'state': 'active'})
 
         if not created_paket_ids:
             return True
 
-        # Biar langsung terlihat setelah klik tombol
         return {
             'type': 'ir.actions.act_window',
             'name': 'Sadaya Tawar',

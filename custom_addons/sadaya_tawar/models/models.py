@@ -110,68 +110,82 @@ class SadayaTawarPaket(models.Model):
             record.state = 'eval'
 
     def action_route_paket(self):
-        self.ensure_one()
-        
-        if self.state not in ['published', 'eval']:
-            raise UserError("Paket hanya dapat diteruskan ke modul eksekusi jika sudah dipublikasikan atau dievaluasi.")
+        for rec in self:
+            rup = self.env['rancang.rup'].sudo().search([
+                ('name', '=', rec.name),
+                ('nilai_pagu', '=', rec.nilai_hps),
+            ], order='id desc', limit=1)
 
-        if self.nilai_hps < 50000000:
-            model_name = 'sadaya_rutin.procurement_package'
-            module_label = 'Sadaya Rutin'
-            vals = {
-                'name': self.name,
-                'item_name': self.name,
-                'procurement_type': 'goods',
-                'amount_total': self.nilai_hps,
-                'request_notes': self.deskripsi,
-                'status': 'draft',
-            }
-        elif 50000000 <= self.nilai_hps <= 200000000:
-            model_name = 'sadaya_langsung.paket'
-            module_label = 'Sadaya Langsung'
-            vals = {
-                'name': self.name,
-                'nilai_hps': self.nilai_hps,
-                'keterangan': self.deskripsi,
-                'dokumen_kak': self.dokumen_kak,
-                'filename_kak': self.filename_kak, # Tambahan Wajib: Nama File KAK
-                'dokumen_rab': self.dokumen_rab,
-                'filename_rab': self.filename_rab, # Tambahan Wajib: Nama File RAB
-                'status_paket': 'draft',
-            }
-        else:
-            model_name = 'sadaya_lelang.paket'
-            module_label = 'Sadaya Lelang'
-            vals = {
-                'name': self.name,
-                'hps': self.nilai_hps,
-                'description': self.deskripsi,
-                'file_kebutuhan': self.dokumen_kak,
-                'status': 'draft',
-                'metode_pemilihan': 'tender',
+            if not rup:
+                raise UserError(
+                    "Data sumber RUP tidak ditemukan untuk paket '%s'. "
+                    "Pastikan paket ini berasal dari Sadaya Rancang."
+                    % rec.name
+                )
+
+            unit_pemohon = False
+            if rup.usulan_id:
+                unit_pemohon = getattr(rup.usulan_id, 'pemohon', False) or getattr(rup.usulan_id, 'name', False)
+
+            jenis_langsung_map = {
+                'barang': 'barang',
+                'jasa': 'jasa_lainnya',
+                'konstruksi': 'konstruksi',
+                'konsultansi': 'jasa_konsultansi',
             }
 
-        try:
-            target_model = self.env[model_name]
-        except KeyError as exc:
-            raise UserError(
-                "Modul %s belum terpasang. Install modulnya terlebih dahulu sebelum routing." % module_label
-            ) from exc
-
-        target_model.sudo().create(vals)
-        
-        self.state = 'routed'
-
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': 'Berhasil Diteruskan!',
-                'message': f'Paket "{self.name}" beserta dokumen terkait berhasil dikirim ke modul {module_label}.',
-                'type': 'success',
-                'sticky': False,
+            jenis_rutin_map = {
+                'barang': 'goods',
+                'jasa': 'services',
+                'konstruksi': 'construction',
+                'konsultansi': 'consulting',
             }
-        }
+
+            info_rup = (
+                f"Unit Pemohon: {unit_pemohon or '-'}\n"
+                f"Sumber Dana: {rup.sumber_dana or '-'}\n"
+                f"Kode Anggaran: {rup.kode_anggaran or '-'}\n"
+                f"Lokasi: {rup.lokasi or '-'}\n"
+                f"Tanggal Mulai: {rup.tgl_mulai or '-'}\n"
+                f"Tanggal Selesai: {rup.tgl_selesai or '-'}"
+            )
+
+            if rec.metode_pemilihan == 'e_purchasing':
+                self.env['sadaya_rutin.procurement_package'].sudo().create({
+                    'name': rec.name,
+                    'proposing_unit': unit_pemohon,
+                    'procurement_type': jenis_rutin_map.get(rec.jenis_pengadaan, 'goods'),
+                    'amount_total': rec.nilai_hps,
+                    'request_notes': f"{rec.deskripsi or ''}\n\n{info_rup}".strip(),
+                    'start_date': rup.tgl_mulai,
+                    'end_date': rup.tgl_selesai,
+                    'status': 'draft',
+                })
+
+            elif rec.metode_pemilihan == 'pengadaan_langsung':
+                self.env['sadaya_langsung.paket'].sudo().create({
+                    'name': rec.name,
+                    'unit_pengusul': unit_pemohon,
+                    'jenis_pengadaan': jenis_langsung_map.get(rec.jenis_pengadaan, 'barang'),
+                    'nilai_hps': rec.nilai_hps,
+                    'tanggal_mulai': rup.tgl_mulai,
+                    'tanggal_selesai': rup.tgl_selesai,
+                    'dokumen_kak': rec.dokumen_kak,
+                    'filename_kak': rec.filename_kak,
+                    'dokumen_rab': rec.dokumen_rab,
+                    'filename_rab': rec.filename_rab,
+                    'keterangan': f"{rec.deskripsi or ''}\n\n{info_rup}".strip(),
+                    'status_paket': 'draft',
+                })
+
+            else:
+                raise UserError(
+                    "Routing untuk metode Tender belum diaktifkan di function ini."
+                )
+
+            rec.state = 'routed'
+
+        return True
     # =========================================================
     # BLOK VALIDASI LOGIKA METODE PEMILIHAN VS HPS
     # =========================================================
