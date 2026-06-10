@@ -9,11 +9,11 @@
             <t t-set="title">Dashboard</t>
 
             <!-- Header -->
-            <div class="sadaya-page-header">
-                <h1 class="sadaya-page-title">
+            <div class="mb-4">
+                <h2 class="fw-bold text-dark mb-1">
                     Selamat datang, <t t-esc="user.name"/> 👋
-                </h1>
-                <p class="sadaya-page-subtitle">
+                </h2>
+                <p class="text-muted">
                     Kelola pengadaan barang dan jasa Anda melalui platform Sadaya
                 </p>
             </div>
@@ -21,112 +21,130 @@
             <!-- Status Verifikasi -->
             <t t-if="registration">
                 <t t-if="registration.state == 'pending'">
-                    <div class="sadaya-alert sadaya-alert-info" style="margin-bottom:1.5rem;">
-                        🕐 <strong>Akun sedang diverifikasi.</strong>
-                        Proses verifikasi dokumen Anda sedang berlangsung. Biasanya membutuhkan 1-3 hari kerja.
-                        Kami akan menghubungi Anda melalui email <strong><t t-esc="user.email"/></strong>.
+                    <div class="alert alert-info d-flex align-items-center gap-2 mb-4">
+                        <span>🕐</span>
+                        <div>
+                            <strong>Akun sedang diverifikasi.</strong> Proses verifikasi dokumen Anda sedang berlangsung. Biasanya membutuhkan 1-3 hari kerja. Kami akan menghubungi Anda melalui email <strong><t t-esc="user.email"/></strong>.
+                        </div>
                     </div>
                 </t>
                 <t t-elif="registration.state == 'approved'">
-                    <div class="sadaya-alert sadaya-alert-success" style="margin-bottom:1.5rem;">
-                        ✅ <strong>Akun telah terverifikasi.</strong>
-                        Anda dapat menggunakan seluruh fitur platform Sadaya.
+                    <div class="alert alert-success d-flex align-items-center gap-2 mb-4">
+                        <span>✅</span>
+                        <div>
+                            <strong>Akun telah terverifikasi.</strong> Anda dapat menggunakan seluruh fitur platform Sadaya.
+                        </div>
                     </div>
                 </t>
                 <t t-elif="registration.state == 'rejected'">
-                    <div class="sadaya-alert sadaya-alert-error" style="margin-bottom:1.5rem;">
-                        ❌ <strong>Verifikasi ditolak.</strong>
-                        <t t-if="registration.rejection_reason">
-                            Alasan: <t t-esc="registration.rejection_reason"/>
-                        </t>
-                        Silakan hubungi <a href="mailto:support@sadaya.id">support@sadaya.id</a> untuk informasi lebih lanjut.
+                    <div class="alert alert-danger d-flex align-items-center gap-2 mb-4">
+                        <span>❌</span>
+                        <div>
+                            <strong>Verifikasi ditolak.</strong>
+                            <t t-if="registration.rejection_reason">
+                                Alasan: <t t-esc="registration.rejection_reason"/>
+                            </t>
+                            Silakan hubungi <a href="mailto:support@sadaya.id" class="alert-link text-decoration-none">support@sadaya.id</a> untuk informasi lebih lanjut.
+                        </div>
                     </div>
                 </t>
             </t>
 
             <!-- Stats Cards -->
-            <div class="sadaya-stats-grid">
-                <div class="sadaya-stat-card">
-                    <div class="sadaya-stat-label">Status Akun</div>
-                    <t t-if="registration">
-                        <t t-if="registration.state == 'approved'">
-                            <div class="sadaya-status sadaya-status-approved">Terverifikasi</div>
-                        </t>
-                        <t t-elif="registration.state == 'pending'">
-                            <div class="sadaya-status sadaya-status-pending">Menunggu</div>
-                        </t>
-                        <t t-elif="registration.state == 'rejected'">
-                            <div class="sadaya-status sadaya-status-rejected">Ditolak</div>
-                        </t>
-                        <t t-else="">
-                            <div class="sadaya-status sadaya-status-draft">Draft</div>
-                        </t>
-                    </t>
-                    <t t-else="">
-                        <div class="sadaya-status sadaya-status-draft">Belum Daftar</div>
-                    </t>
-                </div>
-
-                <div class="sadaya-stat-card">
-                    <div class="sadaya-stat-label">Tipe Akun</div>
-                    <div class="sadaya-stat-value" style="font-size:1.2rem;">
-                        <t t-if="tipe == 'badan_usaha'">🏢 Badan Usaha</t>
-                        <t t-else="">👤 Perorangan</t>
+            <div class="row g-3 mb-4">
+                <!-- Stat 1 -->
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card h-100 shadow-sm border rounded-3 bg-white">
+                        <div class="card-body">
+                            <div class="text-uppercase small text-muted mb-2 fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Status Akun</div>
+                            <div>
+                                <t t-if="registration">
+                                    <t t-if="registration.state == 'approved'">
+                                        <span class="badge bg-success">Terverifikasi</span>
+                                    </t>
+                                    <t t-elif="registration.state == 'pending'">
+                                        <span class="badge bg-warning text-dark">Menunggu</span>
+                                    </t>
+                                    <t t-elif="registration.state == 'rejected'">
+                                        <span class="badge bg-danger">Ditolak</span>
+                                    </t>
+                                    <t t-else="">
+                                        <span class="badge bg-secondary">Draft</span>
+                                    </t>
+                                </t>
+                                <t t-else="">
+                                    <span class="badge bg-secondary">Belum Daftar</span>
+                                </t>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="sadaya-stat-card">
-                    <div class="sadaya-stat-label">Pengadaan Aktif</div>
-                    <div class="sadaya-stat-value">0</div>
-                    <div class="sadaya-stat-badge sadaya-badge-info">Tidak ada</div>
+                <!-- Stat 2 -->
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card h-100 shadow-sm border rounded-3 bg-white">
+                        <div class="card-body">
+                            <div class="text-uppercase small text-muted mb-2 fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Tipe Akun</div>
+                            <div class="fw-bold text-dark h5 mb-0">
+                                <t t-if="tipe == 'badan_usaha'">🏢 Badan Usaha</t>
+                                <t t-else="">👤 Perorangan</t>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="sadaya-stat-card">
-                    <div class="sadaya-stat-label">Dokumen</div>
-                    <div class="sadaya-stat-value">
-                        <t t-if="registration">2</t>
-                        <t t-else="">0</t>
+                <!-- Stat 3 -->
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card h-100 shadow-sm border rounded-3 bg-white">
+                        <div class="card-body">
+                            <div class="text-uppercase small text-muted mb-2 fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Pengadaan Aktif</div>
+                            <div class="fw-bold text-dark h4 mb-0">0</div>
+                        </div>
                     </div>
-                    <div class="sadaya-stat-badge sadaya-badge-success">Diunggah</div>
+                </div>
+
+                <!-- Stat 4 -->
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card h-100 shadow-sm border rounded-3 bg-white">
+                        <div class="card-body">
+                            <div class="text-uppercase small text-muted mb-2 fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Dokumen</div>
+                            <div class="fw-bold text-dark h4 mb-0">
+                                <t t-if="registration">2</t>
+                                <t t-else="">0</t>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Profil Ringkasan -->
             <t t-if="registration">
-                <div class="sadaya-card" style="margin-bottom:1.5rem;">
-                    <div class="sadaya-card-header">
-                        <h3 class="sadaya-card-title">Informasi Akun</h3>
-                        <a href="/sadaya/profile" class="sadaya-btn sadaya-btn-outline sadaya-btn-sm">
+                <div class="card shadow-sm border rounded-3 mb-4 bg-white">
+                    <div class="card-header bg-light d-flex align-items-center justify-content-between py-3 border-0">
+                        <h5 class="card-title mb-0 fw-bold text-dark">Informasi Akun</h5>
+                        <a href="/sadaya/profile" class="btn btn-outline-primary btn-sm fw-bold">
                             Lihat Profil
                         </a>
                     </div>
-                    <div class="sadaya-card-body">
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
-                            <div>
-                                <div style="font-size:0.8rem; color:var(--sadaya-text-muted); margin-bottom:0.25rem;">Nama</div>
-                                <div style="font-weight:600;">
-                                    <t t-esc="registration.nama_lengkap"/>
-                                </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="text-muted small mb-1">Nama</div>
+                                <div class="fw-bold text-dark"><t t-esc="registration.nama_lengkap"/></div>
                             </div>
-                            <div>
-                                <div style="font-size:0.8rem; color:var(--sadaya-text-muted); margin-bottom:0.25rem;">Email</div>
-                                <div style="font-weight:600;">
-                                    <t t-esc="registration.email"/>
-                                </div>
+                            <div class="col-md-6">
+                                <div class="text-muted small mb-1">Email</div>
+                                <div class="fw-bold text-dark"><t t-esc="registration.email"/></div>
                             </div>
                             <t t-if="tipe == 'badan_usaha'">
-                                <div>
-                                    <div style="font-size:0.8rem; color:var(--sadaya-text-muted); margin-bottom:0.25rem;">Nama Badan Usaha</div>
-                                    <div style="font-weight:600;">
-                                        <t t-esc="registration.nama_badan_usaha"/>
-                                    </div>
+                                <div class="col-md-6">
+                                    <div class="text-muted small mb-1">Nama Badan Usaha</div>
+                                    <div class="fw-bold text-dark"><t t-esc="registration.nama_badan_usaha"/></div>
                                 </div>
                             </t>
-                            <div>
-                                <div style="font-size:0.8rem; color:var(--sadaya-text-muted); margin-bottom:0.25rem;">WhatsApp</div>
-                                <div style="font-weight:600;">
-                                    <t t-esc="registration.whatsapp_narahubung"/>
-                                </div>
+                            <div class="col-md-6">
+                                <div class="text-muted small mb-1">WhatsApp</div>
+                                <div class="fw-bold text-dark"><t t-esc="registration.whatsapp_narahubung"/></div>
                             </div>
                         </div>
                     </div>
@@ -134,28 +152,36 @@
             </t>
 
             <!-- Quick Actions -->
-            <div class="sadaya-card">
-                <div class="sadaya-card-header">
-                    <h3 class="sadaya-card-title">Menu Cepat</h3>
+            <div class="card shadow-sm border rounded-3 bg-white">
+                <div class="card-header bg-light py-3 border-0">
+                    <h5 class="card-title mb-0 fw-bold text-dark">Menu Cepat</h5>
                 </div>
-                <div class="sadaya-card-body">
-                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:0.75rem;">
-                        <a href="/sadaya/pengadaan" class="sadaya-btn sadaya-btn-secondary" style="flex-direction:column; gap:0.5rem; padding:1rem; height:auto;">
-                            <span style="font-size:1.5rem;">📋</span>
-                            <span>Pengadaan</span>
-                        </a>
-                        <a href="/sadaya/dokumen" class="sadaya-btn sadaya-btn-secondary" style="flex-direction:column; gap:0.5rem; padding:1rem; height:auto;">
-                            <span style="font-size:1.5rem;">📁</span>
-                            <span>Dokumen</span>
-                        </a>
-                        <a href="/sadaya/profile" class="sadaya-btn sadaya-btn-secondary" style="flex-direction:column; gap:0.5rem; padding:1rem; height:auto;">
-                            <span style="font-size:1.5rem;">👤</span>
-                            <span>Profil</span>
-                        </a>
-                        <a href="mailto:support@sadaya.id" class="sadaya-btn sadaya-btn-secondary" style="flex-direction:column; gap:0.5rem; padding:1rem; height:auto;">
-                            <span style="font-size:1.5rem;">💬</span>
-                            <span>Bantuan</span>
-                        </a>
+                <div class="card-body">
+                    <div class="row g-2">
+                        <div class="col-6 col-md-3">
+                            <a href="/sadaya/pengadaan" class="btn btn-light w-100 py-3 text-center border text-decoration-none">
+                                <div class="fs-2 mb-2">📋</div>
+                                <span class="fw-bold text-dark small">Pengadaan</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <a href="/sadaya/dokumen" class="btn btn-light w-100 py-3 text-center border text-decoration-none">
+                                <div class="fs-2 mb-2">📁</div>
+                                <span class="fw-bold text-dark small">Dokumen</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <a href="/sadaya/profile" class="btn btn-light w-100 py-3 text-center border text-decoration-none">
+                                <div class="fs-2 mb-2">👤</div>
+                                <span class="fw-bold text-dark small">Profil</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <a href="mailto:support@sadaya.id" class="btn btn-light w-100 py-3 text-center border text-decoration-none">
+                                <div class="fs-2 mb-2">💬</div>
+                                <span class="fw-bold text-dark small">Bantuan</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -169,53 +195,53 @@
         <t t-call="sadaya_auth.sadaya_layout_app">
             <t t-set="title">Profil Saya</t>
 
-            <div class="sadaya-page-header">
-                <h1 class="sadaya-page-title">Profil Saya</h1>
-                <p class="sadaya-page-subtitle">Informasi akun dan data registrasi Anda</p>
+            <div class="mb-4">
+                <h2 class="fw-bold text-dark mb-1">Profil Saya</h2>
+                <p class="text-muted">Informasi akun dan data registrasi Anda</p>
             </div>
 
             <t t-if="registration">
-                <div class="sadaya-card">
-                    <div class="sadaya-card-header">
-                        <h3 class="sadaya-card-title">Data Registrasi</h3>
+                <div class="card shadow-sm border rounded-3 bg-white">
+                    <div class="card-header bg-light d-flex align-items-center justify-content-between py-3 border-0">
+                        <h5 class="card-title mb-0 fw-bold text-dark">Data Registrasi</h5>
                         <t t-if="registration.state == 'approved'">
-                            <span class="sadaya-status sadaya-status-approved">Terverifikasi</span>
+                            <span class="badge bg-success">Terverifikasi</span>
                         </t>
                         <t t-elif="registration.state == 'pending'">
-                            <span class="sadaya-status sadaya-status-pending">Menunggu Verifikasi</span>
+                            <span class="badge bg-warning text-dark">Menunggu Verifikasi</span>
                         </t>
                         <t t-else="">
-                            <span class="sadaya-status sadaya-status-draft">
+                            <span class="badge bg-secondary text-capitalize">
                                 <t t-esc="registration.state"/>
                             </span>
                         </t>
                     </div>
-                    <div class="sadaya-card-body">
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem;">
-                            <div>
-                                <div style="font-size:0.8rem; color:var(--sadaya-text-muted); margin-bottom:0.3rem; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">Nama Lengkap</div>
-                                <div><t t-esc="registration.nama_lengkap"/></div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="text-uppercase small text-muted fw-bold mb-1" style="font-size: 0.75rem; letter-spacing: 0.04em;">Nama Lengkap</div>
+                                <div class="fw-bold text-dark"><t t-esc="registration.nama_lengkap"/></div>
                             </div>
-                            <div>
-                                <div style="font-size:0.8rem; color:var(--sadaya-text-muted); margin-bottom:0.3rem; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">Email</div>
-                                <div><t t-esc="registration.email"/></div>
+                            <div class="col-md-6">
+                                <div class="text-uppercase small text-muted fw-bold mb-1" style="font-size: 0.75rem; letter-spacing: 0.04em;">Email</div>
+                                <div class="fw-bold text-dark"><t t-esc="registration.email"/></div>
                             </div>
-                            <div>
-                                <div style="font-size:0.8rem; color:var(--sadaya-text-muted); margin-bottom:0.3rem; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">WhatsApp</div>
-                                <div><t t-esc="registration.whatsapp_narahubung"/></div>
+                            <div class="col-md-6">
+                                <div class="text-uppercase small text-muted fw-bold mb-1" style="font-size: 0.75rem; letter-spacing: 0.04em;">WhatsApp</div>
+                                <div class="fw-bold text-dark"><t t-esc="registration.whatsapp_narahubung"/></div>
                             </div>
-                            <div>
-                                <div style="font-size:0.8rem; color:var(--sadaya-text-muted); margin-bottom:0.3rem; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">NIK</div>
-                                <div><t t-esc="registration.nik_narahubung"/></div>
+                            <div class="col-md-6">
+                                <div class="text-uppercase small text-muted fw-bold mb-1" style="font-size: 0.75rem; letter-spacing: 0.04em;">NIK</div>
+                                <div class="fw-bold text-dark"><t t-esc="registration.nik_narahubung"/></div>
                             </div>
                             <t t-if="registration.tipe_pendaftar == 'badan_usaha'">
-                                <div>
-                                    <div style="font-size:0.8rem; color:var(--sadaya-text-muted); margin-bottom:0.3rem; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">Nama Badan Usaha</div>
-                                    <div><t t-esc="registration.nama_badan_usaha"/></div>
+                                <div class="col-md-6">
+                                    <div class="text-uppercase small text-muted fw-bold mb-1" style="font-size: 0.75rem; letter-spacing: 0.04em;">Nama Badan Usaha</div>
+                                    <div class="fw-bold text-dark"><t t-esc="registration.nama_badan_usaha"/></div>
                                 </div>
-                                <div>
-                                    <div style="font-size:0.8rem; color:var(--sadaya-text-muted); margin-bottom:0.3rem; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">Telepon Badan Usaha</div>
-                                    <div><t t-esc="registration.telepon_badan_usaha"/></div>
+                                <div class="col-md-6">
+                                    <div class="text-uppercase small text-muted fw-bold mb-1" style="font-size: 0.75rem; letter-spacing: 0.04em;">Telepon Badan Usaha</div>
+                                    <div class="fw-bold text-dark"><t t-esc="registration.telepon_badan_usaha"/></div>
                                 </div>
                             </t>
                         </div>
@@ -223,7 +249,7 @@
                 </div>
             </t>
             <t t-else="">
-                <div class="sadaya-alert sadaya-alert-info">
+                <div class="alert alert-info">
                     Data registrasi tidak ditemukan. Silakan hubungi admin.
                 </div>
             </t>

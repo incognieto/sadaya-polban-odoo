@@ -1,3 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_rancang_usulan,rancang.usulan,model_rancang_usulan,,1,1,1,1
-access_rancang_wizard_catatan,rancang.wizard.catatan,model_rancang_wizard_catatan,,1,1,1,1
+access_rancang_usulan,rancang.usulan,model_rancang_usulan,base.group_user,1,1,1,1
+access_rancang_wizard_catatan,rancang.wizard.catatan,model_rancang_wizard_catatan,base.group_user,1,1,1,1
+access_rancang_rup,rancang.rup,model_rancang_rup,base.group_user,1,1,1,1
+access_rancang_hps,rancang.hps,model_rancang_hps,base.group_user,1,1,1,1
+access_rancang_hps_line,rancang.hps.line,model_rancang_hps_line,base.group_user,1,1,1,1

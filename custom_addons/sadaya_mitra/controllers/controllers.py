@@ -1,4 +1,5 @@
 import base64
+import re
 
 from odoo import http
 from odoo.http import request
@@ -34,9 +35,9 @@ FORM_CONFIG = {
 					{'value': 'komisaris', 'label': 'Komisaris'},
 				],
 			},
-			{'name': 'nama_lengkap', 'label': 'Nama Lengkap', 'type': 'text'},
-			{'name': 'nomor_hp', 'label': 'Nomor HP', 'type': 'text'},
-			{'name': 'nik', 'label': 'NIK', 'type': 'text'},
+			{'name': 'nama_lengkap', 'label': 'Nama Lengkap', 'type': 'text', 'required': True},
+			{'name': 'nomor_hp', 'label': 'Nomor HP', 'type': 'text', 'required': True},
+			{'name': 'nik', 'label': 'NIK', 'type': 'text', 'required': True, 'pattern': r'^\d{16}$', 'maxlength': 16, 'placeholder': '16 digit angka', 'invalid_feedback': 'NIK wajib diisi dan harus tepat 16 digit angka.'},
 			{'name': 'scan_ktp', 'label': 'Scan KTP', 'type': 'binary', 'full_width': True},
 		],
 	},
@@ -75,13 +76,13 @@ FORM_CONFIG = {
 		'model': 'sadaya_mitra.saham',
 		'fields': [
 			{'name': 'susunan', 'label': 'Susunan', 'type': 'text'},
-			{'name': 'nik', 'label': 'NIK', 'type': 'text'},
+			{'name': 'nik', 'label': 'NIK', 'type': 'text', 'required': True, 'pattern': r'^\d{16}$', 'maxlength': 16, 'placeholder': '16 digit angka', 'invalid_feedback': 'NIK wajib diisi dan harus tepat 16 digit angka.'},
 			{'name': 'posisi', 'label': 'Posisi', 'type': 'text'},
 		],
 	},
 	'personalia': {
 		'title': 'Personalia',
-		'description': 'Tenaga ahli dan pendukung.',
+		'description': 'Tenaga ahli dan pendukung beserta pengalaman & sertifikat.',
 		'model': 'sadaya_mitra.personalia',
 		'fields': [
 			{
@@ -94,7 +95,7 @@ FORM_CONFIG = {
 				],
 			},
 			{'name': 'tenaga_ahli', 'label': 'Tenaga Ahli', 'type': 'text'},
-			{'name': 'nik', 'label': 'NIK', 'type': 'text'},
+			{'name': 'nik', 'label': 'NIK', 'type': 'text', 'required': True, 'pattern': r'^\d{16}$', 'maxlength': 16, 'placeholder': '16 digit angka', 'invalid_feedback': 'NIK wajib diisi dan harus tepat 16 digit angka.'},
 			{'name': 'tempat_lahir', 'label': 'Tempat Lahir', 'type': 'text'},
 			{'name': 'tanggal_lahir', 'label': 'Tanggal Lahir', 'type': 'date'},
 			{'name': 'jenjang_pendidikan', 'label': 'Jenjang Pendidikan', 'type': 'text'},
@@ -104,24 +105,10 @@ FORM_CONFIG = {
 			{'name': 'scan_ijazah', 'label': 'Scan Ijazah', 'type': 'binary', 'full_width': True},
 			{'name': 'cv_pdf', 'label': 'CV (PDF)', 'type': 'binary', 'full_width': True},
 			{'name': 'cv_tanggal', 'label': 'Tanggal CV', 'type': 'date'},
-		],
-	},
-	'pengalaman_personalia': {
-		'title': 'Pengalaman Personalia',
-		'description': 'Pengalaman tenaga ahli/personalia.',
-		'model': 'sadaya_mitra.pengalaman.personalia',
-		'fields': [
 			{'name': 'pengalaman', 'label': 'Pengalaman', 'type': 'text'},
-			{'name': 'bukti_pengalaman', 'label': 'Bukti Pengalaman', 'type': 'binary', 'full_width': True},
-		],
-	},
-	'sertifikat_personalia': {
-		'title': 'Sertifikat Personalia',
-		'description': 'Sertifikat tenaga ahli/personalia.',
-		'model': 'sadaya_mitra.sertifikat.personalia',
-		'fields': [
+			{'name': 'bukti_pengalaman', 'label': 'Bukti Pengalaman (PDF)', 'type': 'binary', 'full_width': True},
 			{'name': 'nama_sertifikat', 'label': 'Nama Sertifikat', 'type': 'text'},
-			{'name': 'bukti_sertifikat', 'label': 'Bukti Sertifikat', 'type': 'binary', 'full_width': True},
+			{'name': 'bukti_sertifikat', 'label': 'Bukti Sertifikat (PDF)', 'type': 'binary', 'full_width': True},
 		],
 	},
 	'kantor': {
@@ -170,7 +157,7 @@ FORM_CONFIG = {
 		'description': 'Dokumen pajak dan NPWP.',
 		'model': 'sadaya_mitra.pajak',
 		'fields': [
-			{'name': 'npwp', 'label': 'NPWP', 'type': 'text'},
+			{'name': 'npwp', 'label': 'NPWP', 'type': 'text', 'required': True, 'pattern': r'^(\d{15}|\d{16})$', 'maxlength': 16, 'placeholder': '15 atau 16 digit angka', 'invalid_feedback': 'NPWP wajib diisi dan harus tepat 15 atau 16 digit angka.'},
 			{'name': 'bukti_kswp', 'label': 'Bukti KSWP', 'type': 'binary', 'full_width': True},
 			{'name': 'bukti_spt', 'label': 'Bukti SPT', 'type': 'binary', 'full_width': True},
 			{'name': 'bukti_bebas_pph23', 'label': 'Bukti Bebas PPh23', 'type': 'binary', 'full_width': True},
@@ -183,7 +170,20 @@ FORM_CONFIG = {
 		'description': 'Status dan kategori pendaftaran DPT.',
 		'model': 'sadaya_mitra.pendaftaran.dpt',
 		'fields': [
-			{'name': 'kategori_id', 'label': 'Kategori DPT', 'type': 'many2one', 'required': True, 'options': []},
+			{
+				'name': 'kategori_id',
+				'label': 'Kategori DPT',
+				'type': 'selection',
+				'required': True,
+				'options': [
+					{'value': 'barang', 'label': 'Barang'},
+					{'value': 'jasa', 'label': 'Jasa'},
+					{'value': 'pekerjaan_konstruksi', 'label': 'Pekerjaan Konstruksi'},
+					{'value': 'jasa_konsultasi', 'label': 'Jasa Konsultasi'},
+					{'value': 'barang_printil', 'label': 'Barang Printil'},
+					{'value': 'jasa_lainnya', 'label': 'Jasa Lainnya'},
+				],
+			},
 			{
 				'name': 'status_proses',
 				'label': 'Status Proses',
@@ -240,8 +240,6 @@ FORM_ORDER = [
 	'sertifikat_perusahaan',
 	'saham',
 	'personalia',
-	'pengalaman_personalia',
-	'sertifikat_personalia',
 	'kantor',
 	'fasilitas',
 	'pengalaman_perusahaan',
@@ -251,6 +249,24 @@ FORM_ORDER = [
 	'tte',
 ]
 
+# Daftar field teks wajib di form pendaftaran penyedia
+PENYEDIA_REQUIRED_FIELDS = [
+    {'name': 'jenis_penyedia',         'label': 'Jenis Penyedia'},
+    {'name': 'nama_badan_usaha',       'label': 'Nama Badan Usaha'},
+    {'name': 'email',                  'label': 'Email'},
+    {'name': 'nomor_telepon',          'label': 'Nomor Telepon'},
+    {'name': 'nomor_whatsapp',         'label': 'Nomor WhatsApp'},
+    {'name': 'narahubung',             'label': 'Nama Narahubung'},
+    {'name': 'nomor_nik_narahubung',   'label': 'NIK Narahubung', 'nik': True},
+    {'name': 'alamat',                 'label': 'Alamat'},
+    {'name': 'nomor_npwp_perusahaan',  'label': 'Nomor NPWP Perusahaan', 'npwp': True},
+]
+
+# Daftar file wajib di form pendaftaran penyedia
+PENYEDIA_REQUIRED_FILES = [
+    {'name': 'swafoto_narahubung', 'label': 'Swafoto Narahubung', 'accept': 'image/png, image/jpeg'},
+    {'name': 'bukti_npwp',         'label': 'Bukti NPWP', 'accept': 'application/pdf'},
+]
 
 def _normalize_datetime(value):
 	if not value:
@@ -268,65 +284,135 @@ def _build_form_config(form_key):
 		return None
 	config = dict(base_config)
 	config['key'] = form_key
-	config['fields'] = [dict(field) for field in base_config['fields']]
-	if form_key == 'pendaftaran_dpt':
-		categories = request.env['sadaya_mitra.kategori.dpt'].sudo().search([])
-		options = [
-			{'id': cat.id, 'label': cat.nama_kategori or ('Kategori %s' % cat.id)}
-			for cat in categories
-		]
-		for field in config['fields']:
-			if field['name'] == 'kategori_id':
-				field['options'] = options
+	
+	# Make all fields required dynamically to match penyedia form validation
+	config['fields'] = []
+	for field in base_config['fields']:
+		new_field = dict(field)
+		new_field['required'] = True
+		config['fields'].append(new_field)
+
+
 	return config
 
 
 class SadayaMitraWebsite(http.Controller):
-	@http.route('/sadaya_mitra/lanjutan', auth='public', website=True, methods=['GET'])
+	@http.route('/sadaya-mitra', auth='user', website=True, methods=['GET'])
 	def lanjutan_landing(self, **kwargs):
+		user = request.env.user
+		email = user.email or user.login
+
+		# Set session agar endpoint lain masih bisa pakai (backward compat)
+		request.session['penyedia_email'] = email
+
+		penyedia = request.env['sadaya_mitra.penyedia'].sudo().search([('email', '=', email)], limit=1)
+
+		# ── Auto-buat penyedia dari data sadaya.registration jika belum ada ─
+		if not penyedia:
+			reg = request.env['sadaya.registration'].sudo().search(
+				[('email', '=', email), ('state', '=', 'approved')], limit=1
+			)
+			if reg:
+				penyedia = request.env['sadaya_mitra.penyedia'].sudo().create({
+					'registration_id': reg.id,
+				})
+		
 		forms = []
+		completed_count = 0
 		for key in FORM_ORDER:
 			config = FORM_CONFIG.get(key)
 			if not config:
 				continue
+				
+			is_completed = False
+			if penyedia:
+				model = request.env[config['model']].sudo()
+				count = model.search_count([('penyedia_id', '=', penyedia.id)])
+				is_completed = count > 0
+				if is_completed:
+					completed_count += 1
+					
 			forms.append({
 				'key': key,
 				'title': config.get('title', key),
 				'description': config.get('description', ''),
-				'url': '/sadaya_mitra/lanjutan/%s' % key,
+				'url': '/sadaya-mitra/%s' % key,
+				'is_completed': is_completed,
 			})
+			
+		total_forms = len(FORM_ORDER)
+		progress_percent = int((completed_count / total_forms) * 100) if total_forms > 0 else 0
+
 		return request.render('sadaya_mitra.sadaya_mitra_lanjutan_landing', {
 			'forms': forms,
+			'penyedia_email': email,
+			'completed_count': completed_count,
+			'total_forms': total_forms,
+			'progress_percent': progress_percent,
 		})
 
-	@http.route('/sadaya_mitra/lanjutan/<string:form_key>', auth='public', website=True, methods=['GET'])
+	@http.route('/sadaya-mitra/set_email', auth='public', website=True, methods=['POST'], csrf=True)
+	def lanjutan_set_email(self, **post):
+		email = post.get('email')
+		if email:
+			request.session['penyedia_email'] = email
+		return request.redirect('/sadaya-mitra')
+
+	@http.route('/sadaya-mitra/status', auth='user', website=True, methods=['GET'])
+	def status_pendaftaran(self, **kwargs):
+		user = request.env.user
+		email = user.email or user.login
+		
+		penyedia = request.env['sadaya_mitra.penyedia'].sudo().search([('email', '=', email)], limit=1)
+		if not penyedia:
+			return request.redirect('/sadaya-mitra/penyedia')
+
+		completed_count = 0
+		for key in FORM_ORDER:
+			config = FORM_CONFIG.get(key)
+			if config:
+				model = request.env[config['model']].sudo()
+				if model.search_count([('penyedia_id', '=', penyedia.id)]) > 0:
+					completed_count += 1
+					
+		is_complete = completed_count == len(FORM_ORDER)
+		
+		return request.render('sadaya_mitra.sadaya_mitra_status_pendaftaran', {
+			'is_complete': is_complete,
+			'penyedia_email': email,
+			'completed_count': completed_count,
+			'total_forms': len(FORM_ORDER)
+		})
+
+	@http.route('/sadaya-mitra/<string:form_key>', auth='user', website=True, methods=['GET'])
 	def lanjutan_form(self, form_key, **kwargs):
 		config = _build_form_config(form_key)
 		if not config:
 			return request.not_found()
+		user = request.env.user
+		session_email = user.email or user.login
 		return request.render('sadaya_mitra.sadaya_mitra_lanjutan_form', {
 			'config': config,
 			'values': kwargs,
 			'errors': [],
+			'session_email': session_email,
 		})
 
-	@http.route('/sadaya_mitra/lanjutan/<string:form_key>/submit', auth='public', website=True, methods=['POST'], csrf=True)
+	@http.route('/sadaya-mitra/<string:form_key>/submit', auth='user', website=True, methods=['POST'], csrf=True)
 	def lanjutan_submit(self, form_key, **post):
 		config = _build_form_config(form_key)
 		if not config:
 			return request.not_found()
 
 		errors = []
-		email = post.get('penyedia_email')
-		if not email:
-			errors.append('Email penyedia wajib diisi.')
-			penyedia = None
-		else:
-			penyedia = request.env['sadaya_mitra.penyedia'].sudo().search([
-				('email', '=', email)
-			], limit=1)
-			if not penyedia:
-				errors.append('Email penyedia tidak ditemukan.')
+		# Ambil email dari user yang login (lebih aman daripada dari POST)
+		user = request.env.user
+		email = user.email or user.login
+		penyedia = request.env['sadaya_mitra.penyedia'].sudo().search([
+			('email', '=', email)
+		], limit=1)
+		if not penyedia:
+			errors.append('Data penyedia belum terdaftar. Silakan lengkapi data dasar terlebih dahulu.')
 
 		values = {}
 		if penyedia:
@@ -368,66 +454,28 @@ class SadayaMitraWebsite(http.Controller):
 		else:
 			record = model.create(values)
 
+		# Save email to session in case it was not set
+		request.session['penyedia_email'] = email
+
 		return request.render('sadaya_mitra.sadaya_mitra_lanjutan_success', {
 			'record': record,
 			'config': config,
 		})
-	@http.route('/sadaya_mitra/penyedia', auth='public', website=True, methods=['GET'])
-	def penyedia_form(self, **kwargs):
-		return request.render('sadaya_mitra.sadaya_mitra_penyedia_form', {
-			'values': kwargs,
-			'errors': [],
+	@http.route('/sadaya-mitra/profil', auth='user', website=True, methods=['GET'])
+	def profil(self, **kwargs):
+		user = request.env.user
+		email = user.email or user.login
+		
+		penyedia = request.env['sadaya_mitra.penyedia'].sudo().search([('email', '=', email)], limit=1)
+		if not penyedia:
+			return request.redirect('/sadaya-mitra/penyedia')
+			
+		return request.render('sadaya_mitra.sadaya_mitra_profil', {
+			'penyedia': penyedia,
 		})
 
-	@http.route('/sadaya_mitra/penyedia/submit', auth='public', website=True, methods=['POST'], csrf=True)
-	def penyedia_submit(self, **post):
-		values = {
-			'jenis_penyedia': post.get('jenis_penyedia') or False,
-			'nama_badan_usaha': post.get('nama_badan_usaha') or False,
-			'email': post.get('email') or False,
-			'nomor_telepon': post.get('nomor_telepon') or False,
-			'nomor_whatsapp': post.get('nomor_whatsapp') or False,
-			'narahubung': post.get('narahubung') or False,
-			'nomor_nik_narahubung': post.get('nomor_nik_narahubung') or False,
-			'alamat': post.get('alamat') or False,
-			'kata_sandi': post.get('kata_sandi') or False,
-			'nomor_npwp_perusahaan': post.get('nomor_npwp_perusahaan') or False,
-		}
-
-		password = post.get('kata_sandi') or ''
-		password_confirm = post.get('kata_sandi_confirm') or ''
-
-		errors = []
-		if not values['jenis_penyedia']:
-			errors.append('Jenis penyedia wajib diisi.')
-		if not values['nama_badan_usaha']:
-			errors.append('Nama badan usaha wajib diisi.')
-		if not values['email']:
-			errors.append('Email wajib diisi.')
-		if not password:
-			errors.append('Kata sandi wajib diisi.')
-		if not password_confirm:
-			errors.append('Konfirmasi kata sandi wajib diisi.')
-		if password and password_confirm and password != password_confirm:
-			errors.append('Kata sandi dan konfirmasi kata sandi harus sama.')
-
-		scan_file = request.httprequest.files.get('scan_domisili')
-		if scan_file and scan_file.filename:
-			values['scan_domisili'] = base64.b64encode(scan_file.read())
-
-		swafoto_file = request.httprequest.files.get('swafoto_narahubung')
-		if swafoto_file and swafoto_file.filename:
-			values['swafoto_narahubung'] = base64.b64encode(swafoto_file.read())
-
-		npwp_file = request.httprequest.files.get('bukti_npwp')
-		if npwp_file and npwp_file.filename:
-			values['bukti_npwp'] = base64.b64encode(npwp_file.read())
-
-		if errors:
-			return request.render('sadaya_mitra.sadaya_mitra_penyedia_form', {
-				'values': post,
-				'errors': errors,
-			})
-
-		request.env['sadaya_mitra.penyedia'].sudo().create(values)
-		return request.redirect('/sadaya_mitra/lanjutan')
+	@http.route(['/sadaya-mitra/penyedia', '/sadaya-mitra/penyedia/submit'], auth='user', website=True, methods=['GET', 'POST'], csrf=False)
+	def penyedia_redirect(self, **kwargs):
+		"""Form pendaftaran penyedia sudah dipindah ke sadaya_auth.
+		Route ini diarahkan langsung ke halaman Data Lanjutan."""
+		return request.redirect('/sadaya-mitra')

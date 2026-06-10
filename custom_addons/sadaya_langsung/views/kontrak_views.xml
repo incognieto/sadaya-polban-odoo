@@ -20,10 +20,12 @@
           <filter string="Jasa Konsultansi" name="filter_jasa_konsultansi"
                   domain="[('jenis_pengadaan','=','jasa_konsultansi')]"/>
           <separator/>
+          <filter string="PAM" name="filter_pam"
+                  domain="[('status_kontrak','=','pam')]"/>
           <filter string="Persiapan" name="filter_persiapan"
                   domain="[('status_kontrak','=','persiapan_kontrak')]"/>
           <filter string="Proses" name="filter_proses"
-                  domain="[('status_kontrak','=','proses_kontrak')]"/>
+                  domain="[('status_kontrak','=','proses_tte')]"/>
           <filter string="Selesai" name="filter_selesai"
                   domain="[('status_kontrak','=','selesai_kontrak')]"/>
           <separator/>
@@ -59,18 +61,30 @@
       <field name="arch" type="xml">
         <form string="Kontrak">
           <header>
-            <button name="action_proses_kontrak" type="object" string="Proses Kontrak"
+            <button name="action_persiapan_kontrak" type="object" string="Selesai PAM (Lanjut Persiapan)"
+                    class="btn-primary"
+                    invisible="status_kontrak != 'pam'"/>
+            <button name="action_proses_tte" type="object" string="Proses TTE"
                     class="btn-primary"
                     invisible="status_kontrak != 'persiapan_kontrak'"/>
+            <button name="action_pelaksanaan" type="object" string="Mulai Pelaksanaan"
+                    class="btn-primary"
+                    invisible="status_kontrak != 'proses_tte'"/>
+            <button name="action_pemeriksaan" type="object" string="Pemeriksaan PPHP"
+                    class="btn-primary"
+                    invisible="status_kontrak != 'pelaksanaan'"/>
             <button name="action_selesai_kontrak" type="object" string="Selesai Kontrak"
                     class="btn-success"
-                    invisible="status_kontrak != 'proses_kontrak'"/>
+                    invisible="status_kontrak != 'pemeriksaan'"/>
             <button name="action_revisi" type="object" string="Revisi"
                     invisible="status_kontrak in ('selesai_kontrak','revisi')"/>
             <button name="action_addendum" type="object" string="Addendum"
                     invisible="status_kontrak != 'selesai_kontrak'"/>
+            <button name="action_batal" type="object" string="Batal"
+                    class="btn-danger"
+                    invisible="status_kontrak in ('selesai_kontrak','batal')"/>
             <field name="status_kontrak" widget="statusbar"
-                   statusbar_visible="persiapan_kontrak,proses_kontrak,selesai_kontrak"/>
+                   statusbar_visible="pam,persiapan_kontrak,proses_tte,pelaksanaan,pemeriksaan,selesai_kontrak"/>
           </header>
           <sheet>
             <div class="oe_title">
@@ -116,7 +130,7 @@
     <!-- ========== ACTION ========== -->
     <record model="ir.actions.act_url" id="action_sadaya_langsung_kontrak_url">
       <field name="name">Kontrak</field>
-      <field name="url">/sadaya_langsung/kontrak</field>
+      <field name="url">/sadaya-langsung/kontrak</field>
       <field name="target">self</field>
     </record>
 

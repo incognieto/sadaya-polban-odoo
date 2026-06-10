@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Search View -->
+    <record id="view_rancang_hps_search" model="ir.ui.view">
+        <field name="name">rancang.hps.search</field>
+        <field name="model">rancang.hps</field>
+        <field name="arch" type="xml">
+            <search string="Pencarian HPS">
+                <field name="name"/>
+                <field name="rup_id"/>
+                <filter string="Tugas Saya" name="my_tasks" domain="[('tim_teknis_id','=',uid)]"/>
+                <separator/>
+                <filter string="Status: Draft" name="draft" domain="[('state','=','draft')]"/>
+                <filter string="Status: Didelegasikan" name="delegated" domain="[('state','=','delegated')]"/>
+                <filter string="Status: Dalam Review" name="in_review" domain="[('state','=','in_review')]"/>
+                <filter string="Status: Disetujui" name="approved" domain="[('state','=','approved')]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_rancang_hps_tree" model="ir.ui.view">
+        <field name="name">rancang.hps.tree</field>
+        <field name="model">rancang.hps</field>
+        <field name="arch" type="xml">
+            <list string="Daftar Pekerjaan HPS">
+                <field name="name"/>
+                <field name="rup_id"/>
+                <field name="tim_teknis_id"/>
+                <field name="total_hps"/>
+                <field name="state" widget="badge" decoration-info="state in ('draft', 'delegated')" decoration-warning="state == 'in_review'" decoration-success="state == 'approved'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_rancang_hps_form" model="ir.ui.view">
+        <field name="name">rancang.hps.form</field>
+        <field name="model">rancang.hps</field>
+        <field name="arch" type="xml">
+            <form string="Detail HPS">
+                <header>
+                    <button name="action_submit_laporan" string="Submit Laporan" type="object" class="oe_highlight" invisible="state != 'delegated'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,delegated,in_review,approved"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="state not in ('draft', 'delegated')" placeholder="Deskripsi HPS..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="rup_id" readonly="state != 'draft'"/>
+                            <field name="total_hps"/>
+                        </group>
+                        <group>
+                            <field name="tim_teknis_id" readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Rincian Komponen HPS">
+                            <field name="line_ids" readonly="state not in ('draft', 'delegated')">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="satuan"/>
+                                    <field name="volume"/>
+                                    <field name="harga_satuan"/>
+                                    <field name="total" readonly="1" force_save="1"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action untuk Tim Teknis PPK -->
+    <record id="action_rancang_hps_tim_teknis" model="ir.actions.act_window">
+        <field name="name">Pekerjaan Tim Teknis</field>
+        <field name="res_model">rancang.hps</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('tim_teknis_id', '=', uid)]</field>
+        <field name="context">{'search_default_my_tasks': 1}</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_rancang_tim_teknis" name="Tim Teknis PPK" parent="menu_rancang_root" action="action_rancang_hps_tim_teknis" sequence="40"/>
+</odoo>

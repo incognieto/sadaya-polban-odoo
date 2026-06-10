@@ -20,9 +20,9 @@
                   domain="[('jenis_pengadaan','=','jasa_konsultansi')]"/>
           <separator/>
           <filter string="Aktif" name="filter_active"
-                  domain="[('status_paket','not in',['batal','selesai'])]"/>
-          <filter string="Selesai" name="filter_selesai"
-                  domain="[('status_paket','=','selesai')]"/>
+                  domain="[('status_paket','not in',['batal','spk_dibuat'])]"/>
+          <filter string="Selesai (SPK)" name="filter_selesai"
+                  domain="[('status_paket','=','spk_dibuat')]"/>
           <filter string="Batal" name="filter_batal"
                   domain="[('status_paket','=','batal')]"/>
           <separator/>
@@ -83,51 +83,66 @@
       <field name="arch" type="xml">
         <form string="Paket Sadaya Langsung">
           <header>
-            <button name="action_kirim_undangan" type="object"
-                    string="Kirim Undangan"
+            <button name="action_ajukan" type="object"
+                    string="Ajukan Persetujuan"
                     class="btn-primary"
                     invisible="status_paket != 'draft'"/>
 
-            <button name="action_tunggu_penawaran" type="object"
-                    string="Menunggu Penawaran"
+            <button name="action_pengumuman" type="object"
+                    string="Publikasi &amp; Pengumuman"
                     class="btn-primary"
-                    invisible="status_paket != 'undangan'"/>
+                    invisible="status_paket != 'menunggu_persetujuan'"/>
+
+            <button name="action_pendaftaran" type="object"
+                    string="Buka Pendaftaran"
+                    class="btn-primary"
+                    invisible="status_paket != 'pengumuman'"/>
+
+            <button name="action_pemasukan_penawaran" type="object"
+                    string="Mulai Pemasukan Penawaran"
+                    class="btn-primary"
+                    invisible="status_paket != 'pendaftaran_peserta'"/>
+
+            <button name="action_pembukaan_penawaran" type="object"
+                    string="Buka Penawaran"
+                    class="btn-primary"
+                    invisible="status_paket != 'pemasukan_penawaran'"/>
 
             <button name="action_evaluasi" type="object"
                     string="Evaluasi Dokumen"
                     class="btn-primary"
-                    invisible="status_paket != 'penawaran'"/>
+                    invisible="status_paket != 'pembukaan_penawaran'"/>
+
+            <button name="action_pembuktian_kualifikasi" type="object"
+                    string="Pembuktian Kualifikasi"
+                    class="btn-primary"
+                    invisible="status_paket != 'evaluasi'"/>
 
             <button name="action_negosiasi" type="object"
                     string="Klarifikasi &amp; Negosiasi"
                     class="btn-primary"
-                    invisible="status_paket != 'evaluasi'"/>
+                    invisible="status_paket not in ('evaluasi','pembuktian_kualifikasi')"/>
 
             <button name="action_tetapkan_pemenang" type="object"
-                    string="Keluarkan SPPBJ (Penetapan)"
+                    string="Tetapkan Pemenang"
                     class="btn-success"
                     invisible="status_paket != 'negosiasi'"/>
 
-            <button name="action_buat_kontrak" type="object"
+            <button name="action_buat_spk" type="object"
                     string="Buat SPK / Kontrak"
                     class="btn-success"
-                    invisible="status_paket != 'sppbj'"/>
-
-            <button name="action_selesai" type="object"
-                    string="Selesai Pengadaan"
-                    class="btn-success"
-                    invisible="status_paket != 'kontrak'"/>
+                    invisible="status_paket != 'penetapan'"/>
 
             <!-- Exception buttons -->
             <button name="action_batal" type="object" string="Batalkan"
                     class="btn-danger"
-                    invisible="status_paket in ('batal','selesai')"/>
+                    invisible="status_paket in ('batal','spk_dibuat')"/>
             <button name="action_reset_draft" type="object" string="Reset ke Draft"
                     invisible="status_paket != 'batal'"/>
 
             <!-- Statusbar -->
             <field name="status_paket" widget="statusbar"
-                   statusbar_visible="draft,undangan,penawaran,evaluasi,negosiasi,sppbj,kontrak,selesai"/>
+                   statusbar_visible="draft,pengumuman,pendaftaran_peserta,pemasukan_penawaran,evaluasi,negosiasi,penetapan,spk_dibuat"/>
           </header>
           <sheet>
             <div class="oe_title">
@@ -141,7 +156,7 @@
                 <field name="contract_count" readonly="1"/>
                 <field name="jenis_pengadaan"/>
                 <field name="vendor_pemenang_id" string="Vendor Pemenang"
-                       invisible="status_paket in ('draft','undangan','penawaran','evaluasi')"/>
+                       invisible="status_paket in ('draft','menunggu_persetujuan','pengumuman','pendaftaran_peserta','pemasukan_penawaran','pembukaan_penawaran','evaluasi','pembuktian_kualifikasi','negosiasi')"/>
                 <field name="status_paket" string="Status Paket"/>
               </group>
               <group string="Jadwal">
@@ -222,13 +237,13 @@
     <!-- ========== ACTION ========== -->
     <record model="ir.actions.act_url" id="action_sadaya_langsung_dashboard_url">
       <field name="name">Dashboard</field>
-      <field name="url">/sadaya_langsung</field>
+      <field name="url">/sadaya-langsung</field>
       <field name="target">self</field>
     </record>
 
     <record model="ir.actions.act_url" id="action_sadaya_langsung_paket_url">
       <field name="name">Paket Sadaya Langsung</field>
-      <field name="url">/sadaya_langsung/paket</field>
+      <field name="url">/sadaya-langsung/paket</field>
       <field name="target">self</field>
     </record>
 

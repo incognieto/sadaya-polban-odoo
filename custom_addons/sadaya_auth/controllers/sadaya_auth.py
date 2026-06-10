@@ -102,15 +102,17 @@ class SadayaAuthController(http.Controller):
             reg.sudo().action_submit()
             reg.sudo().action_approve()
 
-            # ── Login otomatis setelah register ──────
-            return self._do_login_and_redirect(plain_email, plain_password, '/sadaya/dashboard')
+            # ── Login otomatis setelah register (dan redirect ke sadaya-mitra) ──────
+            return self._do_login_and_redirect(plain_email, plain_password, '/sadaya-mitra')
 
         except ValidationError as e:
+            request.env.cr.rollback()
             errors['general'] = str(e.args[0]) if e.args else 'Kesalahan validasi.'
         except AccessDenied:
             errors['general'] = 'Akun berhasil dibuat namun gagal login otomatis. Silakan login manual.'
             return request.redirect('/sadaya/login')
         except Exception as e:
+            request.env.cr.rollback()
             _logger.exception("Sadaya register error: %s", e)
             errors['general'] = 'Terjadi kesalahan sistem: %s' % str(e)
 
@@ -159,6 +161,9 @@ class SadayaAuthController(http.Controller):
             })
 
         try:
+            # Jika default redirect adalah dashboard, ubah ke sadaya-mitra
+            if redirect == '/sadaya/dashboard':
+                redirect = '/sadaya-mitra'
             return self._do_login_and_redirect(email, password, redirect)
         except AccessDenied:
             return request.render('sadaya_auth.sadaya_login', {

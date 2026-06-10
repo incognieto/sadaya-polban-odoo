@@ -2,67 +2,282 @@
 <odoo>
     <template id="portal_list_paket_template" name="Daftar Paket Sadaya Tawar">
         <t t-call="website.layout">
-            <div class="container mt-5">
-                <h2 class="mb-4">Portal Pengadaan - Sadaya Tawar</h2>
-                <table class="table table-striped table-hover border">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Kode Paket</th>
-                            <th>Nama Paket</th>
-                            <th>Metode Pemilihan</th>
-                            <th>Nilai HPS</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+            <t t-set="title">Sadaya Tawar - Etalase</t>
+            <div id="wrap" class="o_sadaya_frontend sl-app-shell">
+                <header class="sl-app-header">
+                  <div class="container sl-app-header__inner">
+                    <div>
+                      <p class="sl-app-eyebrow">Portal Etalase Pengadaan</p>
+                      <a href="/sadaya-tawar" class="sl-app-brand">Sadaya Tawar</a>
+                    </div>
+                  </div>
+                </header>
+
+                <section class="sl-page-header">
+                  <div class="container">
+                    <p class="sl-kicker">Portal Vendor Publik</p>
+                    <h1>Daftar Paket Pengadaan</h1>
+                    <p class="sl-lead">Temukan dan ikuti pengadaan yang sesuai dengan kualifikasi perusahaan Anda.</p>
+                  </div>
+                </section>
+
+                <section class="sl-section sl-section--form">
+                  <div class="container">
+                    <form method="get" action="/sadaya-tawar" class="sl-form sl-form--inline">
+                        <div class="row g-2">
+                            <div class="col-12 col-lg-4">
+                                <label class="sl-field-label">Cari Nama/Kode</label>
+                                <input type="text" name="search" class="form-control sl-input" placeholder="Ketik kata kunci..." t-att-value="search or ''"/>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="sl-field-label">Metode Pemilihan</label>
+                                <select name="metode" class="form-select sl-input">
+                                    <option value="">Semua Metode</option>
+                                    <option value="e_purchasing" t-att-selected="metode == 'e_purchasing'">E-Purchasing</option>
+                                    <option value="pengadaan_langsung" t-att-selected="metode == 'pengadaan_langsung'">Pengadaan Langsung</option>
+                                    <option value="tender" t-att-selected="metode == 'tender'">Tender</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="sl-field-label">Jenis Pengadaan</label>
+                                <select name="jenis" class="form-select sl-input">
+                                    <option value="">Semua Jenis</option>
+                                    <option value="barang" t-att-selected="jenis == 'barang'">Barang</option>
+                                    <option value="jasa_lainnya" t-att-selected="jenis == 'jasa_lainnya'">Jasa Lainnya</option>
+                                    <option value="konstruksi" t-att-selected="jenis == 'konstruksi'">Konstruksi</option>
+                                    <option value="jasa_konsultansi" t-att-selected="jenis == 'jasa_konsultansi'">Jasa Konsultansi</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label class="sl-field-label">Status Paket</label>
+                                <select name="status" class="form-select sl-input">
+                                    <option value="">Semua Status Aktif</option>
+                                    <option value="published" t-att-selected="status == 'published'">Pengumuman</option>
+                                    <option value="eval" t-att-selected="status == 'eval'">Evaluasi / Routing</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-lg-4 d-flex gap-2">
+                                <div class="w-50">
+                                    <label class="sl-field-label">Min HPS</label>
+                                    <input type="number" name="min_hps" class="form-control sl-input" t-att-value="min_hps or ''" placeholder="Rp"/>
+                                </div>
+                                <div class="w-50">
+                                    <label class="sl-field-label">Max HPS</label>
+                                    <input type="number" name="max_hps" class="form-control sl-input" t-att-value="max_hps or ''" placeholder="Rp"/>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4 d-flex align-items-end">
+                                <button class="btn btn-dark sl-submit w-100" type="submit">Filter Data</button>
+                            </div>
+                        </div>
+                    </form>
+                  </div>
+                </section>
+
+                <section class="sl-section">
+                  <div class="container">
+                    <div class="row g-3">
                         <t t-foreach="pakets" t-as="pkt">
-                            <tr>
-                                <td><t t-esc="pkt.kode_paket"/></td>
-                                <td><strong><t t-esc="pkt.name"/></strong></td>
-                                <td class="text-uppercase"><t t-esc="pkt.metode_pemilihan"/></td>
-                                <td>Rp <t t-esc="'{:,}'.format(pkt.nilai_hps)"/></td>
-                                <td>
-                                    <a t-attf-href="/sadaya_tawar/paket/#{pkt.id}" class="btn btn-sm btn-primary">Lihat Detail</a>
-                                </td>
-                            </tr>
+                            <div class="col-12 col-lg-6">
+                                <article class="sl-card sl-card--detail">
+                                    <div class="sl-card__top">
+                                        <div>
+                                            <span class="sl-label">
+                                                <t t-if="pkt.state == 'published'">Pengumuman</t>
+                                                <t t-elif="pkt.state == 'eval'">Evaluasi / Routing</t>
+                                                <t t-else=""><t t-esc="pkt.state"/></t>
+                                            </span>
+                                            <h3><t t-esc="pkt.name"/></h3>
+                                        </div>
+                                        <strong>Rp <t t-esc="'{:,}'.format(pkt.nilai_hps)"/></strong>
+                                    </div>
+                                    <dl class="sl-dl">
+                                        <div><dt>Kode Paket</dt><dd><t t-esc="pkt.kode_paket"/></dd></div>
+                                        <div><dt>Batas Daftar</dt><dd><t t-esc="pkt.batas_pendaftaran or 'Belum ditentukan'"/></dd></div>
+                                        <div><dt>Metode</dt><dd>
+                                            <t t-if="pkt.metode_pemilihan == 'e_purchasing'">E-Purchasing</t>
+                                            <t t-elif="pkt.metode_pemilihan == 'pengadaan_langsung'">Pengadaan Langsung</t>
+                                            <t t-elif="pkt.metode_pemilihan == 'tender'">Tender</t>
+                                        </dd></div>
+                                        <div><dt>Jenis</dt><dd><t t-esc="pkt.jenis_kontrak.replace('_', ' ').title()"/></dd></div>
+                                    </dl>
+                                    <div class="sl-actions mt-3">
+                                        <a t-attf-href="/sadaya-tawar/#{pkt.id}" class="btn btn-sm btn-outline-primary">Lihat Detail &amp; Daftar</a>
+                                    </div>
+                                </article>
+                            </div>
                         </t>
-                        <tr t-if="not pakets">
-                            <td colspan="5" class="text-center text-muted">Belum ada paket yang diumumkan.</td>
-                        </tr>
-                    </tbody>
-                </table>
+                        <t t-if="not pakets">
+                            <div class="col-12">
+                                <div class="sl-card sl-empty-card p-4 text-center">Belum ada paket pengadaan yang sesuai.</div>
+                            </div>
+                        </t>
+                    </div>
+                  </div>
+                </section>
+                <footer class="sl-app-footer">
+                  <div class="container sl-app-footer__inner">
+                    <div><p class="sl-app-eyebrow">Sadaya Tawar</p><strong>Etalase Pengadaan Terintegrasi</strong></div>
+                  </div>
+                </footer>
             </div>
         </t>
     </template>
 
     <template id="portal_detail_paket_template" name="Detail Paket Sadaya Tawar">
         <t t-call="website.layout">
-            <div class="container mt-5 mb-5">
-                <a href="/sadaya_tawar/paket" class="btn btn-outline-secondary mb-3">&amp;larr; Kembali ke Daftar</a>
-                <div class="card shadow">
-                    <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0"><t t-esc="paket.name"/></h4>
+            <t t-set="title"><t t-esc="paket.name"/></t>
+            <div id="wrap" class="o_sadaya_frontend sl-app-shell">
+                <header class="sl-app-header">
+                  <div class="container sl-app-header__inner">
+                    <div>
+                      <p class="sl-app-eyebrow">Portal Etalase Pengadaan</p>
+                      <a href="/sadaya-tawar" class="sl-app-brand">Sadaya Tawar</a>
                     </div>
-                    <div class="card-body">
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <p><strong>Kode Paket:</strong> <t t-esc="paket.kode_paket"/></p>
-                                <p><strong>Metode Pemilihan:</strong> <t t-esc="paket.metode_pemilihan.replace('_', ' ').title()"/></p>
-                            </div>
-                            <div class="col-md-6">
-                                <p><strong>Jenis Kontrak:</strong> <t t-esc="paket.jenis_kontrak.replace('_', ' ').title()"/></p>
-                                <p><strong>Nilai HPS:</strong> Rp <t t-esc="'{:,}'.format(paket.nilai_hps)"/></p>
-                            </div>
-                        </div>
-                        <div class="alert alert-info">
-                            <strong>Batas Pendaftaran:</strong> <t t-esc="paket.batas_pendaftaran or 'Belum ditentukan'"/>
-                        </div>
+                  </div>
+                </header>
+
+                <section class="sl-page-header">
+                  <div class="container">
+                    <a href="/sadaya-tawar" class="btn btn-sm btn-outline-secondary mb-3">&amp;larr; Kembali ke Daftar</a>
+                    <p class="sl-kicker">Detail Informasi Paket</p>
+                    <h1><t t-esc="paket.name"/></h1>
+                  </div>
+                </section>
+
+                <section class="sl-section sl-section--form pt-0">
+                    <div class="container">
+                        <t t-if="daftar == 'success'">
+                            <div class="alert alert-success sl-notice">Pendaftaran berhasil dikirim. Tim PPK akan segera memproses.</div>
+                        </t>
+                        <t t-if="error == 'not_verified'">
+                            <div class="alert alert-danger sl-notice">Akses Ditolak: Anda belum terdaftar sebagai vendor yang valid di Sadaya Mitra.</div>
+                        </t>
+                        <t t-if="error == 'kbli_mismatch'">
+                            <div class="alert alert-danger sl-notice">Akses Ditolak: Kualifikasi Bidang (KBLI) perusahaan Anda tidak memenuhi persyaratan paket ini.</div>
+                        </t>
+                        <t t-if="error == 'already_registered'">
+                            <div class="alert alert-warning sl-notice">Anda sudah terdaftar sebagai peserta pada paket ini.</div>
+                        </t>
                         
-                        <div class="mt-4 text-end">
-                            <button class="btn btn-success btn-lg">Nyatakan Minat / Daftar</button>
-                        </div>
+                        <article class="sl-card sl-card--detail">
+                            <div class="sl-card__top">
+                                <div><span class="sl-label">Informasi Utama</span></div>
+                                <strong>HPS: Rp <t t-esc="'{:,}'.format(paket.nilai_hps)"/></strong>
+                            </div>
+                            <dl class="sl-dl mb-4">
+                                <div><dt>Kode Paket</dt><dd><t t-esc="paket.kode_paket"/></dd></div>
+                                <div><dt>Metode Pemilihan</dt><dd><t t-esc="paket.metode_pemilihan.replace('_', ' ').title()"/></dd></div>
+                                <div><dt>Jenis Kontrak</dt><dd><t t-esc="paket.jenis_kontrak.replace('_', ' ').title()"/></dd></div>
+                                <div><dt>Batas Pendaftaran</dt><dd><t t-esc="paket.batas_pendaftaran or 'Belum ditentukan'"/></dd></div>
+                                
+                                <!-- Tampilan Persyaratan Kualifikasi -->
+                                <div><dt>Kualifikasi Bidang (KBLI)</dt><dd><t t-esc="paket.syarat_kbli or 'Tidak ada syarat khusus'"/></dd></div>
+                                <div><dt>Dokumen Disyaratkan</dt><dd><t t-esc="paket.syarat_dokumen or 'Tidak ada syarat khusus'"/></dd></div>
+                            </dl>
+
+                            <div class="sl-subsection">
+                                <h4>Deskripsi &amp; Dokumen Persiapan</h4>
+                                <t t-if="paket.deskripsi">
+                                    <div style="background: rgba(13,79,139,0.06); padding: 1.2rem; border-radius: 14px; margin-bottom: 1.5rem; color: #132238;">
+                                        <span t-esc="paket.deskripsi"/>
+                                    </div>
+                                </t>
+
+                                <div class="sl-pill-row">
+                                    <t t-if="paket.dokumen_kak">
+                                        <a t-attf-href="/web/content/sadaya_tawar.paket/#{paket.id}/dokumen_kak?download=true" class="sl-pill text-decoration-none text-dark">
+                                            📄 Unduh KAK (<t t-esc="paket.filename_kak"/>)
+                                        </a>
+                                    </t>
+                                    <t t-if="paket.dokumen_spektek">
+                                        <a t-attf-href="/web/content/sadaya_tawar.paket/#{paket.id}/dokumen_spektek?download=true" class="sl-pill text-decoration-none text-dark">
+                                            📄 Unduh Spektek (<t t-esc="paket.filename_spektek"/>)
+                                        </a>
+                                    </t>
+                                    <t t-if="paket.dokumen_rab">
+                                        <a t-attf-href="/web/content/sadaya_tawar.paket/#{paket.id}/dokumen_rab?download=true" class="sl-pill text-decoration-none text-dark">
+                                            📊 Unduh BoQ (<t t-esc="paket.filename_rab"/>)
+                                        </a>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <div class="sl-subsection mt-4">
+                                <h4>Dokumen Addendum</h4>
+                                <div class="sl-penawaran-list">
+                                    <t t-if="paket.addendum_ids">
+                                        <t t-foreach="paket.addendum_ids" t-as="doc">
+                                            <article class="sl-penawaran-item d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <strong><t t-esc="doc.name"/></strong>
+                                                    <p class="sl-penawaran-meta m-0">File: <t t-esc="doc.dokumen_filename"/></p>
+                                                </div>
+                                                <a t-attf-href="/web/content/sadaya_tawar.addendum/#{doc.id}/dokumen?download=true" class="btn btn-sm btn-outline-primary">Unduh</a>
+                                            </article>
+                                        </t>
+                                    </t>
+                                    <t t-else="">
+                                        <span class="sl-empty">Belum ada dokumen addendum dirilis.</span>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <div class="mt-5 border-top pt-4 text-end">
+                                <t t-if="can_register and not is_registered">
+                                    <form method="post" t-attf-action="/sadaya-tawar/#{paket.id}/daftar" class="m-0">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <button class="btn btn-dark sl-submit" type="submit">Daftar Sebagai Peserta</button>
+                                    </form>
+                                </t>
+                                <t t-if="is_registered">
+                                    <span class="sl-label">✓ Anda Terdaftar Pada Paket Ini</span>
+                                </t>
+                                <t t-if="not can_register">
+                                    <div class="sl-empty">Harap <a href="/web/login">login</a> menggunakan akun vendor yang telah tervalidasi untuk mengikuti paket ini.</div>
+                                </t>
+                            </div>
+                            <div class="sl-subsection mt-4" t-if="paket.jadwal_ids">
+                                <h4>Jadwal Tahapan Pengadaan</h4>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-striped border align-middle">
+                                        <thead class="table-dark small">
+                                            <tr>
+                                                <th>Tahapan</th>
+                                                <th>Waktu Mulai</th>
+                                                <th>Waktu Selesai</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="small">
+                                            <t t-foreach="paket.jadwal_ids" t-as="jadwal">
+                                                <tr>
+                                                    <td class="fw-bold"><t t-esc="jadwal.name"/></td>
+                                                    <td>
+                                                        <t t-if="jadwal.start_date">
+                                                            <t t-esc="jadwal.start_date.strftime('%d-%m-%Y %H:%M')"/>
+                                                        </t>
+                                                        <t t-else="">-</t>
+                                                    </td>
+                                                    <td>
+                                                        <t t-if="jadwal.end_date">
+                                                            <t t-esc="jadwal.end_date.strftime('%d-%m-%Y %H:%M')"/>
+                                                        </t>
+                                                        <t t-else="">-</t>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </article>
                     </div>
-                </div>
+                </section>
+                <footer class="sl-app-footer mt-5">
+                  <div class="container sl-app-footer__inner">
+                    <div><p class="sl-app-eyebrow">Sadaya Tawar</p></div>
+                  </div>
+                </footer>
             </div>
         </t>
     </template>

@@ -78,7 +78,7 @@
             <search string="Cari Registrasi">
                 <field name="nama_lengkap"/>
                 <field name="email"/>
-                <field name="whatsapp_narahubung" string="WhatsApp"/>
+                <field name="whatsapp_narahubung"/>
                 <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
                 <filter string="Menunggu Verifikasi" name="pending" domain="[('state','=','pending')]"/>
                 <filter string="Disetujui" name="approved" domain="[('state','=','approved')]"/>
@@ -86,10 +86,8 @@
                 <separator/>
                 <filter string="Badan Usaha" name="badan_usaha" domain="[('tipe_pendaftar','=','badan_usaha')]"/>
                 <filter string="Perorangan" name="perorangan" domain="[('tipe_pendaftar','=','perorangan')]"/>
-                <group expand="0" string="Group By">
-                    <filter name="group_tipe" string="Tipe Pendaftar" context="{'group_by': 'tipe_pendaftar'}"/>
-                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
-                </group>
+                <filter name="group_tipe" string="Tipe Pendaftar" context="{'group_by': 'tipe_pendaftar'}"/>
+                <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
             </search>
         </field>
     </record>

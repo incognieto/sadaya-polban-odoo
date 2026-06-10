@@ -1,2 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_sadaya_tawar_paket,sadaya_tawar.paket,model_sadaya_tawar_paket,,1,1,1,1
+access_sadaya_tawar_peserta_user,sadaya_tawar.peserta.user,model_sadaya_tawar_peserta,base.group_user,1,1,1,1
+access_sadaya_tawar_peserta_portal,sadaya_tawar.peserta.portal,model_sadaya_tawar_peserta,base.group_portal,1,0,1,0
+access_sadaya_tawar_addendum_user,sadaya_tawar.addendum.user,model_sadaya_tawar_addendum,base.group_user,1,1,1,1
+access_sadaya_tawar_jadwal,sadaya_tawar.jadwal,model_sadaya_tawar_jadwal,base.group_user,1,1,1,1

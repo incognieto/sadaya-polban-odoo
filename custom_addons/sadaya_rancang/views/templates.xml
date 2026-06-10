@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Landing Page Portal -->
+    <template id="portal_rancang_index" name="Portal Sadaya Rancang">
+        <t t-call="website.layout">
+            <t t-set="title">Sadaya Rancang</t>
+            <div id="wrap" class="o_sadaya_frontend sl-app-shell">
+                <header class="sl-app-header">
+                    <div class="container sl-app-header__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sistem Informasi Pengajuan Rancang</p>
+                            <a href="/sadaya-rancang" class="sl-app-brand">Sadaya Rancang</a>
+                        </div>
+                        <nav class="sl-app-nav" aria-label="Navigasi utama">
+                            <a href="/sadaya-rancang" t-att-class="'active' if active_page == 'dashboard' else ''">Dashboard</a>
+                            <a href="/sadaya-rancang/pengajuan" t-att-class="'active' if active_page == 'pengajuan' else ''">Pengajuan</a>
+                            <a href="/sadaya-rancang/persetujuan_manajemen" t-att-class="'active' if active_page == 'persetujuan' else ''">Persetujuan</a>
+                        </nav>
+                    </div>
+                </header>
+
+                <section class="sl-hero">
+                    <div class="container">
+                        <div class="sl-hero__inner">
+                            <div>
+                                <p class="sl-kicker">Portal Perancangan</p>
+                                <h1>Sadaya Rancang</h1>
+                                <p class="sl-lead">
+                                    Dashboard untuk mengajukan usulan kebutuhan dan persetujuan manajemen Sadaya Polban.
+                                </p>
+                                <div class="sl-hero__stats">
+                                    <div>
+                                        <span>Total Usulan</span>
+                                        <strong><t t-esc="total_usulan"/></strong>
+                                    </div>
+                                    <div>
+                                        <span>Usulan Draft</span>
+                                        <strong><t t-esc="usulan_draft"/></strong>
+                                    </div>
+                                    <div>
+                                        <span>Menunggu Persetujuan</span>
+                                        <strong><t t-esc="usulan_submitted"/></strong>
+                                    </div>
+                                    <div>
+                                        <span>Disetujui</span>
+                                        <strong><t t-esc="usulan_approved"/></strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="sl-hero__actions">
+                                <a href="/sadaya-rancang/pengajuan" class="btn btn-primary">Lihat Pengajuan</a>
+                                <a href="/sadaya-rancang/persetujuan_manajemen" class="btn btn-outline-primary">Lihat Persetujuan</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="sl-section">
+                    <div class="container">
+                        <div class="row g-3 sl-metrics">
+                            <div class="col-12 col-md-6">
+                                <article class="sl-card sl-card--metric">
+                                    <span>Pengajuan Kebutuhan</span>
+                                    <p class="mt-2 text-muted">Lihat daftar usulan kebutuhan yang diajukan oleh unit kerja.</p>
+                                    <div class="mt-3">
+                                        <a href="/sadaya-rancang/pengajuan" class="btn btn-primary btn-sm">Masuk ke Pengajuan</a>
+                                    </div>
+                                </article>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <article class="sl-card sl-card--metric">
+                                    <span>Persetujuan Manajemen</span>
+                                    <p class="mt-2 text-muted">Lihat daftar usulan yang menunggu persetujuan dari manajemen.</p>
+                                    <div class="mt-3">
+                                        <a href="/sadaya-rancang/persetujuan_manajemen" class="btn btn-success btn-sm">Masuk ke Persetujuan</a>
+                                    </div>
+                                </article>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <footer class="sl-app-footer">
+                    <div class="container sl-app-footer__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sadaya Rancang</p>
+                            <strong>Pengajuan kebutuhan dan rencana umum pengadaan.</strong>
+                        </div>
+                        <div class="sl-app-footer__meta">
+                            <span>Admin area</span>
+                            <span>Powered by Odoo</span>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </t>
+    </template>
+
+    <!-- Halaman Pengajuan -->
+    <template id="portal_rancang_pengajuan" name="Daftar Pengajuan Kebutuhan">
+        <t t-call="website.layout">
+            <t t-set="title">Daftar Pengajuan</t>
+            <div id="wrap" class="o_sadaya_frontend sl-app-shell">
+                <header class="sl-app-header">
+                    <div class="container sl-app-header__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sistem Informasi Pengajuan Rancang</p>
+                            <a href="/sadaya-rancang" class="sl-app-brand">Sadaya Rancang</a>
+                        </div>
+                        <nav class="sl-app-nav" aria-label="Navigasi utama">
+                            <a href="/sadaya-rancang">Dashboard</a>
+                            <a href="/sadaya-rancang/pengajuan" class="active">Pengajuan</a>
+                            <a href="/sadaya-rancang/persetujuan_manajemen">Persetujuan</a>
+                        </nav>
+                    </div>
+                </header>
+
+                <section class="sl-page-header">
+                    <div class="container">
+                        <div class="d-flex justify-content-between align-items-end flex-wrap gap-3">
+                            <div>
+                                <p class="sl-kicker">Portal Perancangan</p>
+                                <h1>Daftar Pengajuan Kebutuhan</h1>
+                                <p class="sl-lead">Total pengajuan: <t t-esc="total_usulan"/></p>
+                            </div>
+                            <div>
+                                <a href="/sadaya-rancang/pengajuan/baru" class="btn btn-primary">Buat Pengajuan Baru</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="sl-section">
+                    <div class="container">
+                        <div class="row g-3">
+                            <t t-foreach="usulans" t-as="u">
+                                <div class="col-12 col-lg-6">
+                                    <article class="sl-card sl-card--detail">
+                                        <div class="sl-card__top">
+                                            <div>
+                                                <span t-attf-class="sl-label #{'bg-secondary' if u.state == 'draft' else 'bg-warning text-dark' if u.state == 'submitted' else 'bg-success text-white' if u.state in ('approved', 'published') else 'bg-danger text-white'}">
+                                                    <t t-if="u.state == 'draft'">Draft</t>
+                                                    <t t-if="u.state == 'submitted'">Menunggu Persetujuan</t>
+                                                    <t t-if="u.state == 'returned'">Dikembalikan (Revisi)</t>
+                                                    <t t-if="u.state == 'rejected'">Ditolak</t>
+                                                    <t t-if="u.state == 'approved'">Disetujui</t>
+                                                    <t t-if="u.state == 'published'">Dipublikasi ke RUP</t>
+                                                </span>
+                                                <h3><t t-esc="u.name"/></h3>
+                                            </div>
+                                            <strong>Rp <t t-esc="'{:,}'.format(u.rab)"/></strong>
+                                        </div>
+                                        <dl class="sl-dl">
+                                            <div><dt>Pemohon</dt><dd><t t-esc="u.pemohon"/></dd></div>
+                                            <div><dt>Jenis Kebutuhan</dt><dd><t t-esc="u.jenis_kebutuhan.replace('_', ' ').title()"/></dd></div>
+                                        </dl>
+                                        <div class="sl-actions">
+                                            <a t-attf-href="/sadaya-rancang/pengajuan/#{u.id}" class="btn btn-sm btn-info text-white">Lihat Detail</a>
+                                        </div>
+                                    </article>
+                                </div>
+                            </t>
+                            <t t-if="not usulans">
+                                <div class="col-12">
+                                    <div class="sl-card sl-empty-card">Belum ada pengajuan kebutuhan.</div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </section>
+
+                <footer class="sl-app-footer">
+                    <div class="container sl-app-footer__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sadaya Rancang</p>
+                            <strong>Data pengajuan siap dipantau dari halaman ini.</strong>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </t>
+    </template>
+
+    <!-- Halaman Persetujuan Manajemen -->
+    <template id="portal_rancang_persetujuan" name="Daftar Persetujuan Manajemen">
+        <t t-call="website.layout">
+            <t t-set="title">Daftar Persetujuan</t>
+            <div id="wrap" class="o_sadaya_frontend sl-app-shell">
+                <header class="sl-app-header">
+                    <div class="container sl-app-header__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sistem Informasi Pengajuan Rancang</p>
+                            <a href="/sadaya-rancang" class="sl-app-brand">Sadaya Rancang</a>
+                        </div>
+                        <nav class="sl-app-nav" aria-label="Navigasi utama">
+                            <a href="/sadaya-rancang">Dashboard</a>
+                            <a href="/sadaya-rancang/pengajuan">Pengajuan</a>
+                            <a href="/sadaya-rancang/persetujuan_manajemen" class="active">Persetujuan</a>
+                        </nav>
+                    </div>
+                </header>
+
+                <section class="sl-page-header">
+                    <div class="container">
+                        <p class="sl-kicker">Portal Perancangan</p>
+                        <h1>Daftar Persetujuan Manajemen</h1>
+                        <p class="sl-lead">Menampilkan usulan yang berstatus Menunggu Persetujuan. Total: <t t-esc="total_usulan"/></p>
+                    </div>
+                </section>
+
+                <section class="sl-section">
+                    <div class="container">
+                        <div class="row g-3">
+                            <t t-foreach="usulans" t-as="u">
+                                <div class="col-12 col-lg-6">
+                                    <article class="sl-card sl-card--detail">
+                                        <div class="sl-card__top">
+                                            <div>
+                                                <span class="sl-label bg-warning text-dark">Menunggu Persetujuan</span>
+                                                <h3><t t-esc="u.name"/></h3>
+                                            </div>
+                                            <strong>Rp <t t-esc="'{:,}'.format(u.rab)"/></strong>
+                                        </div>
+                                        <dl class="sl-dl">
+                                            <div><dt>Pemohon</dt><dd><t t-esc="u.pemohon"/></dd></div>
+                                            <div><dt>Jenis Kebutuhan</dt><dd><t t-esc="u.jenis_kebutuhan.replace('_', ' ').title()"/></dd></div>
+                                        </dl>
+                                        <div class="sl-actions">
+                                            <a t-attf-href="/sadaya-rancang/pengajuan/#{u.id}" class="btn btn-sm btn-info text-white">Lihat Detail</a>
+                                        </div>
+                                    </article>
+                                </div>
+                            </t>
+                            <t t-if="not usulans">
+                                <div class="col-12">
+                                    <div class="sl-card sl-empty-card">Belum ada usulan yang menunggu persetujuan.</div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </section>
+
+                <footer class="sl-app-footer">
+                    <div class="container sl-app-footer__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sadaya Rancang</p>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </t>
+    </template>
+
+    <!-- Halaman Form Pengajuan -->
+    <template id="portal_rancang_form" name="Buat Pengajuan Baru">
+        <t t-call="website.layout">
+            <t t-set="title">Buat Pengajuan Baru</t>
+            <div id="wrap" class="o_sadaya_frontend sl-app-shell">
+                <header class="sl-app-header">
+                    <div class="container sl-app-header__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sistem Informasi Pengajuan Rancang</p>
+                            <a href="/sadaya-rancang" class="sl-app-brand">Sadaya Rancang</a>
+                        </div>
+                        <nav class="sl-app-nav" aria-label="Navigasi utama">
+                            <a href="/sadaya-rancang">Dashboard</a>
+                            <a href="/sadaya-rancang/pengajuan" class="active">Pengajuan</a>
+                            <a href="/sadaya-rancang/persetujuan_manajemen">Persetujuan</a>
+                        </nav>
+                    </div>
+                </header>
+
+                <section class="sl-page-header">
+                    <div class="container">
+                        <div class="d-flex justify-content-between align-items-end flex-wrap gap-3">
+                            <div>
+                                <p class="sl-kicker">Formulir</p>
+                                <h1>Buat Pengajuan Baru</h1>
+                            </div>
+                            <div>
+                                <a href="/sadaya-rancang/pengajuan" class="btn btn-outline-secondary">Kembali ke Daftar</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="sl-section sl-section--form">
+                    <div class="container">
+                        <div class="sl-card" style="max-width: 800px; margin: 0 auto;">
+                            <form action="/sadaya-rancang/pengajuan/baru" method="POST" enctype="multipart/form-data" class="sl-form sl-form--inline">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label for="name" class="sl-field-label">Judul Usulan</label>
+                                        <input type="text" class="form-control sl-input" id="name" name="name" required="1"/>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label for="pemohon" class="sl-field-label">Unit Kerja / Pemohon</label>
+                                        <input type="text" class="form-control sl-input" id="pemohon" name="pemohon" required="1"/>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label for="jenis_kebutuhan" class="sl-field-label">Jenis Kebutuhan</label>
+                                        <select class="form-select sl-input" id="jenis_kebutuhan" name="jenis_kebutuhan" required="1">
+                                            <option value="barang">Barang</option>
+                                            <option value="jasa_lainnya">Jasa Lainnya</option>
+                                            <option value="konstruksi">Konstruksi</option>
+                                            <option value="konsultansi">Konsultansi</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="rab" class="sl-field-label">Anggaran (RAB)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">Rp</span>
+                                            <input type="number" class="form-control sl-input" id="rab" name="rab" required="1"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="deskripsi_kebutuhan" class="sl-field-label">Deskripsi Kebutuhan</label>
+                                        <textarea class="form-control sl-input" id="deskripsi_kebutuhan" name="deskripsi_kebutuhan" rows="3"></textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="kak" class="sl-field-label">File KAK (Hanya PDF)</label>
+                                        <input class="form-control" type="file" id="kak" name="kak" accept="application/pdf" required="1"/>
+                                    </div>
+                                    <div class="col-12 text-end mt-4">
+                                        <button type="submit" class="btn btn-primary sl-submit">Simpan Pengajuan</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <footer class="sl-app-footer">
+                    <div class="container sl-app-footer__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sadaya Rancang</p>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </t>
+    </template>
+
+    <!-- Halaman Detail Pengajuan -->
+    <template id="portal_rancang_detail" name="Detail Pengajuan">
+        <t t-call="website.layout">
+            <t t-set="title"><t t-esc="usulan.name"/></t>
+            <div id="wrap" class="o_sadaya_frontend sl-app-shell">
+                <header class="sl-app-header">
+                    <div class="container sl-app-header__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sistem Informasi Pengajuan Rancang</p>
+                            <a href="/sadaya-rancang" class="sl-app-brand">Sadaya Rancang</a>
+                        </div>
+                        <nav class="sl-app-nav" aria-label="Navigasi utama">
+                            <a href="/sadaya-rancang">Dashboard</a>
+                            <a href="/sadaya-rancang/pengajuan" class="active">Pengajuan</a>
+                            <a href="/sadaya-rancang/persetujuan_manajemen">Persetujuan</a>
+                        </nav>
+                    </div>
+                </header>
+
+                <section class="sl-page-header">
+                    <div class="container">
+                        <div class="d-flex justify-content-between align-items-end flex-wrap gap-3">
+                            <div>
+                                <p class="sl-kicker">Detail Pengajuan</p>
+                                <h1><t t-esc="usulan.name"/></h1>
+                            </div>
+                            <div>
+                                <a href="/sadaya-rancang/pengajuan" class="btn btn-outline-secondary">&amp;larr; Kembali ke Daftar</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="sl-section">
+                    <div class="container">
+                        <div class="row g-4">
+                            <div class="col-12 col-lg-8">
+                                <article class="sl-card sl-card--detail">
+                                    <div class="sl-card__top">
+                                        <div>
+                                            <span t-attf-class="sl-label #{'bg-secondary' if usulan.state == 'draft' else 'bg-warning text-dark' if usulan.state == 'submitted' else 'bg-success text-white' if usulan.state in ('approved', 'published') else 'bg-danger text-white'}">
+                                                <t t-if="usulan.state == 'draft'">Draft</t>
+                                                <t t-if="usulan.state == 'submitted'">Menunggu Persetujuan</t>
+                                                <t t-if="usulan.state == 'returned'">Dikembalikan (Revisi)</t>
+                                                <t t-if="usulan.state == 'rejected'">Ditolak</t>
+                                                <t t-if="usulan.state == 'approved'">Disetujui</t>
+                                                <t t-if="usulan.state == 'published'">Dipublikasi ke RUP</t>
+                                            </span>
+                                        </div>
+                                        <strong>Rp <t t-esc="'{:,}'.format(usulan.rab)"/></strong>
+                                    </div>
+                                    <dl class="sl-dl">
+                                        <div><dt>Pemohon</dt><dd><t t-esc="usulan.pemohon"/></dd></div>
+                                        <div><dt>Jenis Kebutuhan</dt><dd><t t-esc="usulan.jenis_kebutuhan.replace('_', ' ').title()"/></dd></div>
+                                        <div><dt>Klasifikasi</dt><dd><t t-esc="usulan.klasifikasi.replace('_', ' ').title() if usulan.klasifikasi else '-'"/></dd></div>
+                                    </dl>
+                                    
+                                    <hr class="my-4"/>
+                                    
+                                    <div class="mb-4">
+                                        <h5 class="sl-field-label">Deskripsi Kebutuhan</h5>
+                                        <p class="text-muted"><t t-esc="usulan.deskripsi_kebutuhan or 'Tidak ada deskripsi'"/></p>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <h5 class="sl-field-label">File KAK</h5>
+                                        <div t-if="usulan.kak">
+                                            <a t-attf-href="/web/content/rancang.usulan/#{usulan.id}/kak" target="_blank" class="btn btn-outline-info btn-sm">Unduh <t t-esc="usulan.kak_filename"/></a>
+                                        </div>
+                                        <div t-else="">
+                                            <span class="text-muted">Belum ada file</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="sl-actions mt-4 pt-3 border-top">
+                                        <t t-if="usulan.state in ['draft', 'returned']">
+                                            <a t-attf-href="/sadaya-rancang/pengajuan/#{usulan.id}/submit" class="btn btn-primary" onclick="return confirm('Ajukan usulan ini ke manajemen?');">Ajukan Pengajuan</a>
+                                            <a t-attf-href="/sadaya-rancang/pengajuan/#{usulan.id}/delete" class="btn btn-outline-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus pengajuan ini?');">Hapus Pengajuan</a>
+                                        </t>
+
+                                        <t t-if="usulan.state == 'submitted'">
+                                            <a t-attf-href="/sadaya-rancang/pengajuan/#{usulan.id}/approve" class="btn btn-success" onclick="return confirm('Setujui pengajuan ini?');">Setujui</a>
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal">Tolak</button>
+                                        </t>
+
+                                        <t t-if="usulan.state == 'approved'">
+                                            <a t-attf-href="/sadaya-rancang/pengajuan/#{usulan.id}/publish" class="btn btn-primary" onclick="return confirm('Publikasi usulan ini ke RUP (Rencana Umum Pengadaan)?');">Publikasi ke RUP</a>
+                                        </t>
+
+                                        <t t-if="usulan.state in ['submitted', 'returned', 'rejected']">
+                                            <a t-attf-href="/sadaya-rancang/pengajuan/#{usulan.id}/revert" class="btn btn-warning" onclick="return confirm('Kembalikan pengajuan ini ke Draft?');">Kembali ke Draft (Revert)</a>
+                                        </t>
+                                    </div>
+                                </article>
+
+                                <!-- Modal Reject -->
+                                <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="rejectModalLabel">Alasan Penolakan</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <form t-attf-action="/sadaya-rancang/pengajuan/#{usulan.id}/reject" method="POST" class="sl-form">
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label for="alasan" class="sl-field-label">Berikan alasan menolak pengajuan ini:</label>
+                                                        <textarea class="form-control sl-input" id="alasan" name="alasan" rows="3" required="1"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                    <button type="submit" class="btn btn-danger">Tolak Pengajuan</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <div class="sl-card">
+                                    <h4>Log Perubahan</h4>
+                                    <div class="mt-3">
+                                        <t t-call="portal.message_thread">
+                                            <t t-set="object" t-value="usulan"/>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <footer class="sl-app-footer">
+                    <div class="container sl-app-footer__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sadaya Rancang</p>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </t>
+    </template>
+</odoo>

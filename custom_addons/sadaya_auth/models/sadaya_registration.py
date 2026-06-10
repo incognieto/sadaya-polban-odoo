@@ -148,11 +148,10 @@ class SadayaRegistration(models.Model):
             user = self.env['res.users'].sudo().create(user_vals)
 
             # ── Assign group portal (Odoo 17/18/19 compatible) ──────────
-            # Gunakan write pada user.groups_id bukan pada group.users
             portal_group = self.env.ref('base.group_portal')
-            # Pastikan hanya group_portal, hapus internal jika ada
+            group_field = 'group_ids' if 'group_ids' in self.env['res.users']._fields else 'groups_id'
             user.sudo().write({
-                'groups_id': [(6, 0, [portal_group.id])],
+                group_field: [(6, 0, [portal_group.id])],
             })
 
             rec.write({
@@ -162,6 +161,21 @@ class SadayaRegistration(models.Model):
             })
             rec.message_post(
                 body=_('Registrasi disetujui. Akun dibuat untuk %s.') % rec.email)
+
+            # ── Auto-buat sadaya_mitra.penyedia jika modul tersedia ───────
+            try:
+                PenyediaModel = self.env.get('sadaya_mitra.penyedia')
+                if PenyediaModel is not None:
+                    existing = PenyediaModel.sudo().search([('email', '=', rec.email)], limit=1)
+                    if not existing:
+                        penyedia_vals = {
+                            'registration_id': rec.id,
+                        }
+                        PenyediaModel.sudo().create(penyedia_vals)
+                        rec.message_post(body=_('Data penyedia (sadaya_mitra) otomatis dibuat.'))
+            except Exception as e:
+                _logger.warning('Gagal membuat sadaya_mitra.penyedia: %s', e)
+
 
     def action_reject(self):
         for rec in self:
