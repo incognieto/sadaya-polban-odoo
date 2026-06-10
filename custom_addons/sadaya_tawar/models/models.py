@@ -9,6 +9,11 @@ class SadayaTawarPaket(models.Model):
     name = fields.Char(string='Nama Paket', required=True)
     nilai_hps = fields.Float(string='Nilai HPS (Rp)', required=True)
     
+    unit_pengusul = fields.Char(string='Unit Pengusul')
+    tgl_mulai = fields.Date(string='Perkiraan Tanggal Mulai')
+    tgl_selesai = fields.Date(string='Perkiraan Tanggal Selesai')
+
+    
     # === TAMBAHAN PERSYARATAN VENDOR ===
     syarat_kbli = fields.Char(string='Persyaratan KBLI', help='Pisahkan dengan koma, contoh: 6201, 6202, 6203')
     syarat_dokumen = fields.Text(string='Dokumen yang Harus Disiapkan')
@@ -124,6 +129,9 @@ class SadayaTawarPaket(models.Model):
                 'procurement_type': 'goods',
                 'amount_total': self.nilai_hps,
                 'request_notes': self.deskripsi,
+                'proposing_unit': self.unit_pengusul,
+                'start_date': self.tgl_mulai,
+                'end_date': self.tgl_selesai,
                 'status': 'draft',
             }
         elif 50000000 <= self.nilai_hps <= 200000000:

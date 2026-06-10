@@ -100,6 +100,7 @@ class RancangUsulan(models.Model):
                     'usulan_id': record.id,
                     'jenis_pengadaan': record.jenis_kebutuhan,
                     'nilai_pagu': record.rab,
+                    'unit_pengusul': record.pemohon,
                     'state': 'draft',
                 })
                 record.state = 'published'
