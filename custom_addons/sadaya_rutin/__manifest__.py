@@ -23,6 +23,7 @@
     ],
     "assets": {
         "web.assets_frontend": [
+            "sadaya_rutin/static/src/scss/frontend.scss",
             "sadaya_rutin/static/src/css/portal.css",
         ],
     },

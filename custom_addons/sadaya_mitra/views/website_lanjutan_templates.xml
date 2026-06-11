@@ -1,41 +1,127 @@
 <odoo>
     <template id="sadaya_mitra_lanjutan_landing" name="SadayaMitra Lanjutan Landing">
         <t t-call="website.layout">
-            <section class="container my-5">
-                <div class="row justify-content-center">
-                    <div class="col-lg-10">
-                        <h1 class="mb-2">Data Lanjutan Penyedia</h1>
-                        <p class="text-muted">Pilih bagian data lanjutan yang akan diisi. Pastikan email penyedia sudah terdaftar.</p>
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+            <t t-set="title">Data Lanjutan Penyedia</t>
+            <div id="wrap" class="o_sadaya_frontend sl-app-shell">
+                <header class="sl-app-header">
+                    <div class="container sl-app-header__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sistem Informasi Mitra</p>
+                            <a href="/sadaya-mitra" class="sl-app-brand">Sadaya Mitra</a>
+                        </div>
+                        <nav class="sl-app-nav" aria-label="Navigasi utama">
+                            <a href="/sadaya-mitra" class="active">Data Lanjutan</a>
+                            <a href="/sadaya-mitra/profil">Profil &amp; Status</a>
+                        </nav>
+                    </div>
+                </header>
 
-                        <div class="row g-4 mt-3">
+                <section class="sl-page-header">
+                    <div class="container">
+                        <p class="sl-kicker">Portal Mitra</p>
+                        <h1>Data Lanjutan Penyedia</h1>
+                        <p class="sl-lead">Silakan lengkapi data administratif, teknis, dan finansial.</p>
+                    </div>
+                </section>
+
+                <section class="sl-section sl-section--form">
+                    <div class="container">
+                        <p class="text-muted mb-4">Pengisian data untuk: <strong><t t-esc="penyedia_email"/></strong></p>
+                        
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted">Progres Pengisian (<t t-esc="completed_count"/> / <t t-esc="total_forms"/>)</span>
+                                <span><t t-esc="progress_percent"/>%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-primary" role="progressbar" 
+                                     t-att-style="'width: ' + str(progress_percent) + '%'" 
+                                     t-att-aria-valuenow="progress_percent" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
                             <t t-foreach="forms" t-as="form">
-                                <div class="col-md-6 col-lg-4">
-                                    <div class="card h-100">
-                                        <div class="card-body d-flex flex-column">
-                                            <h5 class="card-title"><t t-esc="form['title']"/></h5>
-                                            <p class="card-text text-muted"><t t-esc="form.get('description')"/></p>
-                                            <a class="btn btn-outline-primary mt-auto" t-att-href="form['url']">Isi Data</a>
+                                <div class="col-12 col-md-6">
+                                    <article class="sl-card sl-card--detail h-100 d-flex flex-column justify-content-between">
+                                        <div>
+                                            <div class="d-flex align-items-center gap-2 mb-2">
+                                                <h3 class="mb-0"><t t-esc="form['title']"/></h3>
+                                                <t t-if="form.get('is_completed')">
+                                                    <span class="sl-label">Selesai</span>
+                                                </t>
+                                                <t t-else="">
+                                                    <span class="sl-label" style="background:#e2e8f0;color:#475569">Belum</span>
+                                                </t>
+                                            </div>
+                                            <p class="text-muted small mb-3"><t t-esc="form.get('description')"/></p>
                                         </div>
-                                    </div>
+                                        <div class="sl-actions mt-auto">
+                                            <t t-if="form.get('is_completed')">
+                                                <a class="btn btn-sm btn-outline-primary" t-att-href="form['url']">Ubah Data</a>
+                                            </t>
+                                            <t t-else="">
+                                                <a class="btn btn-sm btn-primary" t-att-href="form['url']">Isi Data</a>
+                                            </t>
+                                        </div>
+                                    </article>
                                 </div>
                             </t>
                         </div>
+                        
+                        <div class="mt-4 d-flex justify-content-end">
+                            <a href="/sadaya-mitra/status" class="btn btn-primary sl-submit">
+                                Simpan Pendaftaran
+                            </a>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+                
+                <footer class="sl-app-footer">
+                    <div class="container sl-app-footer__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sadaya Mitra</p>
+                            <strong>Pendaftaran penyedia untuk pengadaan Polban.</strong>
+                        </div>
+                    </div>
+                </footer>
+            </div>
         </t>
     </template>
 
     <template id="sadaya_mitra_lanjutan_form" name="SadayaMitra Lanjutan Form">
         <t t-call="website.layout">
-            <section class="container my-5">
-                <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <h1 class="mb-3"><t t-esc="config['title']"/></h1>
-                        <p class="text-muted">Gunakan email penyedia yang sudah terdaftar.</p>
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+            <t t-set="title"><t t-esc="config['title']"/></t>
+            <div id="wrap" class="o_sadaya_frontend sl-app-shell">
+                <header class="sl-app-header">
+                    <div class="container sl-app-header__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sistem Informasi Mitra</p>
+                            <a href="/sadaya-mitra" class="sl-app-brand">Sadaya Mitra</a>
+                        </div>
+                        <nav class="sl-app-nav" aria-label="Navigasi utama">
+                            <a href="/sadaya-mitra" class="active">Data Lanjutan</a>
+                            <a href="/sadaya-mitra/profil">Profil &amp; Status</a>
+                        </nav>
+                    </div>
+                </header>
 
+                <section class="sl-page-header">
+                    <div class="container">
+                        <p class="sl-kicker">Portal Mitra</p>
+                        <h1><t t-esc="config['title']"/></h1>
+                        <p class="sl-lead">Gunakan email penyedia yang sudah terdaftar.</p>
+                    </div>
+                </section>
+
+                <section class="sl-section sl-section--form">
+                    <div class="container">
                         <t t-if="errors">
-                            <div class="alert alert-danger" role="alert">
+                            <div class="alert alert-danger sl-notice" role="alert">
                                 <ul class="mb-0">
                                     <t t-foreach="errors" t-as="error">
                                         <li><t t-esc="error"/></li>
@@ -44,80 +130,284 @@
                             </div>
                         </t>
 
-                        <form t-att-action="'/sadaya_mitra/lanjutan/%s/submit' % config['key']" method="post" enctype="multipart/form-data" class="o_website_form">
-                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <article class="sl-card sl-card--detail">
+                            <form t-att-action="'/sadaya-mitra/%s/submit' % config['key']" method="post" enctype="multipart/form-data" class="sl-form o_website_form" novalidate="novalidate">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
 
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Email Penyedia</label>
-                                    <input type="email" class="form-control" name="penyedia_email" required="required" t-att-value="values.get('penyedia_email')"/>
-                                </div>
-
-                                <t t-foreach="config['fields']" t-as="field">
-                                    <div t-att-class="field.get('full_width') and 'col-12' or 'col-md-6'">
-                                        <label class="form-label"><t t-esc="field['label']"/></label>
-
-                                        <t t-if="field['type'] == 'selection'">
-                                            <select class="form-select" t-att-name="field['name']" t-att-required="field.get('required') and 'required' or None">
-                                                <option value="">Pilih</option>
-                                                <t t-foreach="field['options']" t-as="opt">
-                                                    <option t-att-value="opt['value']" t-att-selected="values.get(field['name']) == opt['value']">
-                                                        <t t-esc="opt['label']"/>
-                                                    </option>
-                                                </t>
-                                            </select>
-                                        </t>
-                                        <t t-elif="field['type'] == 'many2one'">
-                                            <select class="form-select" t-att-name="field['name']" t-att-required="field.get('required') and 'required' or None">
-                                                <option value="">Pilih</option>
-                                                <t t-foreach="field['options']" t-as="opt">
-                                                    <option t-att-value="opt['id']" t-att-selected="values.get(field['name']) == str(opt['id'])">
-                                                        <t t-esc="opt['label']"/>
-                                                    </option>
-                                                </t>
-                                            </select>
-                                        </t>
-                                        <t t-elif="field['type'] == 'textarea'">
-                                            <textarea class="form-control" t-att-name="field['name']" rows="3"><t t-esc="values.get(field['name'])"/></textarea>
-                                        </t>
-                                        <t t-elif="field['type'] == 'binary'">
-                                            <input type="file" class="form-control" t-att-name="field['name']"/>
-                                        </t>
-                                        <t t-elif="field['type'] == 'date'">
-                                            <input type="date" class="form-control" t-att-name="field['name']" t-att-value="values.get(field['name'])"/>
-                                        </t>
-                                        <t t-elif="field['type'] == 'datetime'">
-                                            <input type="datetime-local" class="form-control" t-att-name="field['name']" t-att-value="values.get(field['name'])"/>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="sl-field-label">Email Penyedia</label>
+                                        <t t-if="session_email">
+                                            <input type="email" class="form-control sl-input bg-light" name="penyedia_email" required="required" t-att-value="session_email" readonly="readonly"/>
                                         </t>
                                         <t t-else="">
-                                            <input type="text" class="form-control" t-att-name="field['name']" t-att-required="field.get('required') and 'required' or None" t-att-value="values.get(field['name'])"/>
+                                            <input type="email" class="form-control sl-input" name="penyedia_email" required="required" t-att-value="values.get('penyedia_email')"/>
                                         </t>
+                                        <div class="invalid-feedback">Field harus diisi</div>
                                     </div>
-                                </t>
-                            </div>
 
-                            <div class="mt-4 d-flex justify-content-between">
-                                <a class="btn btn-light" href="/sadaya_mitra/lanjutan">Kembali</a>
-                                <button type="submit" class="btn btn-primary">Simpan</button>
-                            </div>
-                        </form>
+                                    <t t-foreach="config['fields']" t-as="field">
+                                        <div t-att-class="field.get('full_width') and 'col-12' or 'col-md-6'">
+                                            <label class="sl-field-label"><t t-esc="field['label']"/></label>
+
+                                            <t t-if="field['type'] == 'selection'">
+                                                <select class="form-select sl-input" t-att-name="field['name']" t-att-required="field.get('required') and 'required' or None">
+                                                    <option value="">Pilih</option>
+                                                    <t t-foreach="field['options']" t-as="opt">
+                                                        <option t-att-value="opt['value']" t-att-selected="values.get(field['name']) == opt['value']">
+                                                            <t t-esc="opt['label']"/>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                                <div class="invalid-feedback">Field harus diisi</div>
+                                            </t>
+                                            <t t-elif="field['type'] == 'many2one'">
+                                                <select class="form-select sl-input" t-att-name="field['name']" t-att-required="field.get('required') and 'required' or None">
+                                                    <option value="">Pilih</option>
+                                                    <t t-foreach="field['options']" t-as="opt">
+                                                        <option t-att-value="opt['id']" t-att-selected="values.get(field['name']) == str(opt['id'])">
+                                                            <t t-esc="opt['label']"/>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                                <div class="invalid-feedback">Field harus diisi</div>
+                                            </t>
+                                            <t t-elif="field['type'] == 'textarea'">
+                                                <textarea class="form-control sl-input" t-att-name="field['name']" rows="3" t-att-required="field.get('required') and 'required' or None"><t t-esc="values.get(field['name'])"/></textarea>
+                                                <div class="invalid-feedback">Field harus diisi</div>
+                                            </t>
+                                            <t t-elif="field['type'] == 'binary'">
+                                                <input type="file" class="form-control" t-att-name="field['name']" t-att-required="field.get('required') and 'required' or None"/>
+                                                <div class="invalid-feedback">Field harus diisi</div>
+                                            </t>
+                                            <t t-elif="field['type'] == 'date'">
+                                                <input type="date" class="form-control sl-input" t-att-name="field['name']" t-att-required="field.get('required') and 'required' or None" t-att-value="values.get(field['name'])"/>
+                                                <div class="invalid-feedback">Field harus diisi</div>
+                                            </t>
+                                            <t t-elif="field['type'] == 'datetime'">
+                                                <input type="datetime-local" class="form-control sl-input" t-att-name="field['name']" t-att-required="field.get('required') and 'required' or None" t-att-value="values.get(field['name'])"/>
+                                                <div class="invalid-feedback">Field harus diisi</div>
+                                            </t>
+                                            <t t-else="">
+                                                <input type="text" class="form-control sl-input" 
+                                                    t-att-name="field['name']" 
+                                                    t-att-required="field.get('required') and 'required' or None" 
+                                                    t-att-value="values.get(field['name'])"
+                                                    t-att-pattern="field.get('pattern')"
+                                                    t-att-maxlength="field.get('maxlength')"
+                                                    t-att-placeholder="field.get('placeholder')"/>
+                                                <div class="invalid-feedback"><t t-esc="field.get('invalid_feedback') or 'Field harus diisi'"/></div>
+                                            </t>
+                                        </div>
+                                    </t>
+                                </div>
+
+                                <div class="mt-4 d-flex justify-content-between align-items-center">
+                                    <a class="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center" href="/sadaya-mitra">Kembali</a>
+                                    <button type="submit" class="btn btn-primary sl-submit d-inline-flex align-items-center justify-content-center">Simpan</button>
+                                </div>
+                            </form>
+                        </article>
+                        
+                        <script>
+                        <![CDATA[
+                        (function () {
+                            'use strict';
+                            var form = document.querySelector('.o_website_form');
+                            if (!form) return;
+
+                            function validateInput(input) {
+                                if (!input.checkValidity()) {
+                                    input.classList.add('is-invalid');
+                                    input.classList.remove('is-valid');
+                                } else {
+                                    input.classList.remove('is-invalid');
+                                    input.classList.add('is-valid');
+                                }
+                            }
+
+                            var inputs = form.querySelectorAll('input, select, textarea');
+                            inputs.forEach(function (input) {
+                                input.addEventListener('blur', function () {
+                                    if (input.name === 'nik') {
+                                        var nikLen = input.value.replace(/\D/g, '').length;
+                                        input.setCustomValidity(input.value.length > 0 && nikLen !== 16 ? 'NIK harus tepat 16 digit angka.' : '');
+                                    } else if (input.name === 'npwp') {
+                                        var npwpLen = input.value.replace(/\D/g, '').length;
+                                        input.setCustomValidity(input.value.length > 0 && npwpLen !== 15 && npwpLen !== 16 ? 'NPWP harus tepat 15 atau 16 digit angka.' : '');
+                                    }
+                                    validateInput(input);
+                                });
+
+                                input.addEventListener('input', function () {
+                                    if (input.name === 'nik' || input.name === 'npwp') {
+                                        this.value = this.value.replace(/\D/g, '').slice(0, 16);
+                                    }
+                                    if (input.classList.contains('is-invalid') || input.classList.contains('is-valid') || form.classList.contains('was-validated')) {
+                                        if (input.name === 'nik') {
+                                            var nikLen = input.value.replace(/\D/g, '').length;
+                                            input.setCustomValidity(input.value.length > 0 && nikLen !== 16 ? 'NIK harus tepat 16 digit angka.' : '');
+                                        } else if (input.name === 'npwp') {
+                                            var npwpLen = input.value.replace(/\D/g, '').length;
+                                            input.setCustomValidity(input.value.length > 0 && npwpLen !== 15 && npwpLen !== 16 ? 'NPWP harus tepat 15 atau 16 digit angka.' : '');
+                                        }
+                                        validateInput(input);
+                                    }
+                                });
+                            });
+
+                            form.addEventListener('submit', function (event) {
+                                inputs.forEach(function(input) {
+                                    if (input.name === 'nik') {
+                                        var nikLen = input.value.replace(/\D/g, '').length;
+                                        input.setCustomValidity(nikLen !== 16 ? 'NIK harus tepat 16 digit angka.' : '');
+                                    } else if (input.name === 'npwp') {
+                                        var npwpLen = input.value.replace(/\D/g, '').length;
+                                        input.setCustomValidity(npwpLen !== 15 && npwpLen !== 16 ? 'NPWP harus tepat 15 atau 16 digit angka.' : '');
+                                    }
+                                });
+
+                                if (!form.checkValidity()) {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    inputs.forEach(validateInput);
+                                }
+                                form.classList.add('was-validated');
+                            });
+                        })();
+                        ]]>
+                        </script>
                     </div>
-                </div>
-            </section>
+                </section>
+                
+                <footer class="sl-app-footer">
+                    <div class="container sl-app-footer__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sadaya Mitra</p>
+                            <strong>Pendaftaran penyedia untuk pengadaan Polban.</strong>
+                        </div>
+                    </div>
+                </footer>
+            </div>
         </t>
     </template>
 
     <template id="sadaya_mitra_lanjutan_success" name="SadayaMitra Lanjutan Success">
         <t t-call="website.layout">
-            <section class="container my-5">
-                <div class="row justify-content-center">
-                    <div class="col-lg-6 text-center">
-                        <h1 class="mb-3">Data Tersimpan</h1>
-                        <p class="text-muted">Data <t t-esc="config['title']"/> sudah tersimpan.</p>
-                        <a class="btn btn-primary" href="/sadaya_mitra/lanjutan">Kembali ke Landing</a>
+            <t t-set="title">Data Tersimpan</t>
+            <div id="wrap" class="o_sadaya_frontend sl-app-shell">
+                <header class="sl-app-header">
+                    <div class="container sl-app-header__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sistem Informasi Mitra</p>
+                            <a href="/sadaya-mitra" class="sl-app-brand">Sadaya Mitra</a>
+                        </div>
+                        <nav class="sl-app-nav" aria-label="Navigasi utama">
+                            <a href="/sadaya-mitra" class="active">Data Lanjutan</a>
+                            <a href="/sadaya-mitra/profil">Profil &amp; Status</a>
+                        </nav>
                     </div>
-                </div>
-            </section>
+                </header>
+
+                <section class="sl-hero">
+                    <div class="container">
+                        <div class="sl-hero__inner">
+                            <div>
+                                <p class="sl-kicker">Status</p>
+                                <h1>Data Tersimpan</h1>
+                                <p class="sl-lead">Data <strong><t t-esc="config['title']"/></strong> Anda telah berhasil disimpan ke dalam sistem.</p>
+                            </div>
+                            <div class="sl-hero__actions">
+                                <a class="btn btn-primary" href="/sadaya-mitra">Kembali ke Data Lanjutan</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <footer class="sl-app-footer">
+                    <div class="container sl-app-footer__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sadaya Mitra</p>
+                            <strong>Pendaftaran penyedia untuk pengadaan Polban.</strong>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </t>
+    </template>
+
+    <template id="sadaya_mitra_status_pendaftaran" name="SadayaMitra Status Pendaftaran">
+        <t t-call="website.layout">
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+            <t t-set="title">Status Pendaftaran</t>
+            <div id="wrap" class="o_sadaya_frontend sl-app-shell">
+                <header class="sl-app-header">
+                    <div class="container sl-app-header__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sistem Informasi Mitra</p>
+                            <a href="/sadaya-mitra" class="sl-app-brand">Sadaya Mitra</a>
+                        </div>
+                        <nav class="sl-app-nav" aria-label="Navigasi utama">
+                            <a href="/sadaya-mitra">Data Lanjutan</a>
+                            <a href="/sadaya-mitra/profil">Profil &amp; Status</a>
+                        </nav>
+                    </div>
+                </header>
+
+                <section class="sl-hero">
+                    <div class="container">
+                        <div class="sl-hero__inner">
+                            <div>
+                                <p class="sl-kicker">Status Pendaftaran</p>
+                                <h1>
+                                    <t t-if="is_complete">Pendaftaran Lengkap</t>
+                                    <t t-else="">Pendaftaran Belum Lengkap</t>
+                                </h1>
+                                <p class="sl-lead">
+                                    Email Terdaftar: <strong><t t-esc="penyedia_email"/></strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="sl-section">
+                    <div class="container">
+                        <t t-if="is_complete">
+                            <article class="sl-card sl-card--detail">
+                                <div class="alert alert-success sl-notice mb-0" role="alert">
+                                    <strong>Sedang Diverifikasi.</strong> Terima kasih, Anda telah mengisi seluruh bagian data (<t t-esc="completed_count"/>/<t t-esc="total_forms"/>). Data pengguna sedang dilakukan proses verifikasi oleh petugas.
+                                </div>
+                                <p class="mt-3 text-muted">Anda akan menerima notifikasi lebih lanjut melalui email jika proses verifikasi telah selesai.</p>
+                                <div class="mt-4">
+                                    <a href="/sadaya-mitra" class="btn btn-outline-secondary">Kembali ke Data Lanjutan</a>
+                                </div>
+                            </article>
+                        </t>
+                        <t t-else="">
+                            <article class="sl-card sl-card--detail">
+                                <div class="alert alert-warning sl-notice mb-0" role="alert">
+                                    <strong>Aksi Diperlukan.</strong> Anda baru menyelesaikan <t t-esc="completed_count"/> dari <t t-esc="total_forms"/> bagian data lanjutan yang dibutuhkan.
+                                </div>
+                                <p class="mt-3 text-muted">Harap segera melakukan pengisian data yang tersisa agar proses pendaftaran dapat dilanjutkan ke tahap verifikasi.</p>
+                                <div class="mt-4">
+                                    <a href="/sadaya-mitra" class="btn btn-primary sl-submit">Lengkapi Data Sekarang</a>
+                                </div>
+                            </article>
+                        </t>
+                    </div>
+                </section>
+
+                <footer class="sl-app-footer">
+                    <div class="container sl-app-footer__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sadaya Mitra</p>
+                            <strong>Pendaftaran penyedia untuk pengadaan Polban.</strong>
+                        </div>
+                    </div>
+                </footer>
+            </div>
         </t>
     </template>
 </odoo>

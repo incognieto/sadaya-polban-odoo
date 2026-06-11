@@ -6,70 +6,163 @@ _logger = logging.getLogger(__name__)
 
 
 class SadayaMitraPenyedia(models.Model):
-    _name = "sadaya_mitra.penyedia"
-    _description = "Penyedia / Vendor SI-DAPET"
-    _inherit = ["mail.thread", "mail.activity.mixin"]
-
-    jenis_penyedia = fields.Selection(
-        [("badan_usaha", "Badan Usaha"), ("perorangan", "Perorangan")], required=True
-    )
-
-    nama_badan_usaha = fields.Char(required=True)
-    email = fields.Char()
-    nomor_telepon = fields.Char()
-    nomor_whatsapp = fields.Char()
-    narahubung = fields.Char()
-    nomor_nik_narahubung = fields.Char()
-    alamat = fields.Text()
-    kata_sandi = fields.Char()
-    swafoto_narahubung = fields.Binary()
-    nomor_npwp_perusahaan = fields.Char()
-    bukti_npwp = fields.Binary()
-    # 1:1
-    landasan_hukum_id = fields.One2many("sadaya_mitra.landasan.hukum", "penyedia_id")
-    keuangan_id = fields.One2many("sadaya_mitra.keuangan", "penyedia_id")
-    pajak_id = fields.One2many("sadaya_mitra.pajak", "penyedia_id")
-
-    # 1:N
-    pengurus_ids = fields.One2many("sadaya_mitra.pengurus", "penyedia_id")
-    izin_usaha_ids = fields.One2many("sadaya_mitra.izin.usaha", "penyedia_id")
-    sertifikat_perusahaan_ids = fields.One2many(
-        "sadaya_mitra.sertifikat.perusahaan", "penyedia_id"
-    )
-    saham_ids = fields.One2many("sadaya_mitra.saham", "penyedia_id")
-    personalia_ids = fields.One2many("sadaya_mitra.personalia", "penyedia_id")
-    kantor_ids = fields.One2many("sadaya_mitra.kantor", "penyedia_id")
-    fasilitas_ids = fields.One2many("sadaya_mitra.fasilitas", "penyedia_id")
-    pengalaman_perusahaan_ids = fields.One2many(
-        "sadaya_mitra.pengalaman.perusahaan", "penyedia_id"
-    )
-    pendaftaran_dpt_ids = fields.One2many("sadaya_mitra.pendaftaran.dpt", "penyedia_id")
-    tte_ids = fields.One2many("sadaya_mitra.tte", "penyedia_id")
+    _name = 'sadaya_mitra.penyedia'
+    _description = 'Penyedia / Vendor SI-DAPET'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     partner_id = fields.Many2one(
-        "res.partner",
-        string="Partner (Odoo)",
-        readonly=True,
-        copy=False,
-        ondelete="set null",
-        help="Partner Odoo yang dibuat otomatis untuk penyedia ini.",
+        'res.partner', string='Partner', ondelete='set null', index=True
+    )
+    registration_id = fields.Many2one('sadaya.registration', string='Registrasi Sadaya Auth', ondelete='set null')
+
+    jenis_penyedia = fields.Selection([
+        ('badan_usaha', 'Badan Usaha'),
+        ('perorangan', 'Perorangan')
+    ], string='Jenis Penyedia', compute='_compute_jenis_penyedia', store=True, readonly=False)
+
+    nama_badan_usaha = fields.Char(string='Nama Badan Usaha', compute='_compute_nama_badan_usaha', store=True, readonly=False)
+    email = fields.Char(string='Email', compute='_compute_email', store=True, readonly=False)
+    nomor_telepon = fields.Char(string='Nomor Telepon', compute='_compute_nomor_telepon', store=True, readonly=False)
+    nomor_whatsapp = fields.Char(string='Nomor WhatsApp', compute='_compute_nomor_whatsapp', store=True, readonly=False)
+    narahubung = fields.Char(string='Narahubung', compute='_compute_narahubung', store=True, readonly=False)
+    nomor_nik_narahubung = fields.Char(string='Nomor NIK Narahubung', compute='_compute_nomor_nik_narahubung', store=True, readonly=False)
+    alamat = fields.Text(string='Alamat')
+    kata_sandi = fields.Char(string='Kata Sandi')
+    swafoto_narahubung = fields.Binary(string='Swafoto Narahubung', compute='_compute_swafoto_narahubung', store=True, readonly=False)
+    nomor_npwp_perusahaan = fields.Char(string='Nomor NPWP Perusahaan', compute='_compute_nomor_npwp_perusahaan', store=True, readonly=False)
+    bukti_npwp = fields.Binary(string='Bukti NPWP', compute='_compute_bukti_npwp', store=True, readonly=False)
+
+    @api.depends('registration_id')
+    def _compute_jenis_penyedia(self):
+        for rec in self:
+            if rec.registration_id:
+                rec.jenis_penyedia = rec.registration_id.tipe_pendaftar
+
+    @api.depends('registration_id', 'registration_id.nama_badan_usaha', 'registration_id.nama_lengkap', 'jenis_penyedia')
+    def _compute_nama_badan_usaha(self):
+        for rec in self:
+            if rec.registration_id:
+                if rec.jenis_penyedia == 'badan_usaha':
+                    rec.nama_badan_usaha = rec.registration_id.nama_badan_usaha
+                else:
+                    rec.nama_badan_usaha = rec.registration_id.nama_lengkap
+
+    @api.depends('registration_id.email')
+    def _compute_email(self):
+        for rec in self:
+            if rec.registration_id:
+                rec.email = rec.registration_id.email
+
+    @api.depends('registration_id.telepon_badan_usaha')
+    def _compute_nomor_telepon(self):
+        for rec in self:
+            if rec.registration_id:
+                rec.nomor_telepon = rec.registration_id.telepon_badan_usaha
+
+    @api.depends('registration_id.whatsapp_narahubung')
+    def _compute_nomor_whatsapp(self):
+        for rec in self:
+            if rec.registration_id:
+                rec.nomor_whatsapp = rec.registration_id.whatsapp_narahubung
+
+    @api.depends('registration_id.nama_lengkap')
+    def _compute_narahubung(self):
+        for rec in self:
+            if rec.registration_id:
+                rec.narahubung = rec.registration_id.nama_lengkap
+
+    @api.depends('registration_id.nik_narahubung')
+    def _compute_nomor_nik_narahubung(self):
+        for rec in self:
+            if rec.registration_id:
+                rec.nomor_nik_narahubung = rec.registration_id.nik_narahubung
+
+    @api.depends('registration_id.swafoto_ktp')
+    def _compute_swafoto_narahubung(self):
+        for rec in self:
+            if rec.registration_id:
+                rec.swafoto_narahubung = rec.registration_id.swafoto_ktp
+
+    @api.depends('registration_id.npwp_perusahaan')
+    def _compute_nomor_npwp_perusahaan(self):
+        for rec in self:
+            if rec.registration_id:
+                rec.nomor_npwp_perusahaan = rec.registration_id.npwp_perusahaan
+
+    @api.depends('registration_id.bukti_npwp')
+    def _compute_bukti_npwp(self):
+        for rec in self:
+            if rec.registration_id:
+                rec.bukti_npwp = rec.registration_id.bukti_npwp
+
+    # 1:1
+    landasan_hukum_id = fields.One2many('sadaya_mitra.landasan.hukum', 'penyedia_id')
+    keuangan_id = fields.One2many('sadaya_mitra.keuangan', 'penyedia_id')
+    pajak_id = fields.One2many('sadaya_mitra.pajak', 'penyedia_id')
+
+    # 1:N
+    pengurus_ids = fields.One2many('sadaya_mitra.pengurus', 'penyedia_id')
+    izin_usaha_ids = fields.One2many('sadaya_mitra.izin.usaha', 'penyedia_id')
+    sertifikat_perusahaan_ids = fields.One2many('sadaya_mitra.sertifikat.perusahaan', 'penyedia_id')
+    saham_ids = fields.One2many('sadaya_mitra.saham', 'penyedia_id')
+    personalia_ids = fields.One2many('sadaya_mitra.personalia', 'penyedia_id')
+    kantor_ids = fields.One2many('sadaya_mitra.kantor', 'penyedia_id')
+    fasilitas_ids = fields.One2many('sadaya_mitra.fasilitas', 'penyedia_id')
+    pengalaman_perusahaan_ids = fields.One2many('sadaya_mitra.pengalaman.perusahaan', 'penyedia_id')
+    pendaftaran_dpt_ids = fields.One2many('sadaya_mitra.pendaftaran.dpt', 'penyedia_id')
+    tte_ids = fields.One2many('sadaya_mitra.tte', 'penyedia_id')
+
+
+    status_verifikasi = fields.Selection([
+        ('draft', 'Menunggu Verifikasi'),
+        ('approved', 'Disetujui'),
+        ('rejected', 'Ditolak'),
+    ], string='Status Verifikasi', default='draft', tracking=True)
+
+    catatan_verifikasi = fields.Text(string='Catatan Verifikasi')
+    tanggal_verifikasi = fields.Datetime(string='Tanggal Verifikasi')
+
+    data_lengkap_count = fields.Char(
+        string='Kelengkapan Data', compute='_compute_data_lengkap'
     )
 
-    def _prepare_partner_vals(self, vals=None):
-        vals = vals or {}
-        name = vals.get("nama_badan_usaha") or self.nama_badan_usaha
-        email = vals.get("email") if "email" in vals else self.email
-        phone = (
-            vals.get("nomor_telepon") if "nomor_telepon" in vals else self.nomor_telepon
-        )
-        street = vals.get("alamat") if "alamat" in vals else self.alamat
+    def _compute_data_lengkap(self):
+        for record in self:
+            checklist = {
+                'landasan_hukum': bool(record.landasan_hukum_id),
+                'pengurus': bool(record.pengurus_ids),
+                'izin_usaha': bool(record.izin_usaha_ids),
+                'sertifikat_perusahaan': bool(record.sertifikat_perusahaan_ids),
+                'saham': bool(record.saham_ids),
+                'personalia': bool(record.personalia_ids),
+                'kantor': bool(record.kantor_ids),
+                'fasilitas': bool(record.fasilitas_ids),
+                'pengalaman_perusahaan': bool(record.pengalaman_perusahaan_ids),
+                'keuangan': bool(record.keuangan_id),
+                'pajak': bool(record.pajak_id),
+                'pendaftaran_dpt': bool(record.pendaftaran_dpt_ids),
+                'tte': bool(record.tte_ids),
+            }
+            total = len(checklist)
+            completed = sum(1 for v in checklist.values() if v)
+            record.data_lengkap_count = f"{completed}/{total}"
 
+    def action_approve(self):
+        self.write({
+            'status_verifikasi': 'approved',
+            'tanggal_verifikasi': fields.Datetime.now(),
+        })
+
+    def action_reject(self):
         return {
-            "name": name,
-            "email": email,
-            "phone": phone,
-            "street": street,
-            "is_sadaya_mitra_vendor": True,
+            'type': 'ir.actions.act_window',
+            'res_model': 'sadaya_mitra.verifikasi.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_penyedia_id': self.id,
+                'action_type': 'reject',
+            }
         }
 
     def _ensure_partner_exists(self, vals=None):
@@ -81,6 +174,24 @@ class SadayaMitraPenyedia(models.Model):
             partner_vals["sadaya_mitra_penyedia_id"] = rec.id
             partner = rec.env["res.partner"].sudo().create(partner_vals)
             rec.sudo().write({"partner_id": partner.id})
+
+    def _prepare_partner_vals(self, vals=None):
+        self.ensure_one()
+        vals = vals or {}
+
+        jenis_penyedia = vals.get("jenis_penyedia") or self.jenis_penyedia
+        return {
+            "name": vals.get("nama_badan_usaha")
+            or self.nama_badan_usaha
+            or self.narahubung
+            or "Penyedia",
+            "email": vals.get("email") or self.email,
+            "phone": vals.get("nomor_telepon") or self.nomor_telepon,
+            # "mobile": vals.get("nomor_whatsapp") or self.nomor_whatsapp,
+            "street": vals.get("alamat") or self.alamat,
+            "is_company": jenis_penyedia == "badan_usaha",
+            "is_sadaya_mitra_vendor": True,
+        }
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -118,17 +229,24 @@ class SadayaMitraPenyedia(models.Model):
             _logger.exception("Failed to backfill partner_id for sadaya_mitra.penyedia")
         return res
 
+    def action_reset(self):
+        self.write({
+            'status_verifikasi': 'draft',
+            'catatan_verifikasi': '',
+            'tanggal_verifikasi': False,
+        })
+
 
 class IzinUsaha(models.Model):
-    _name = "sadaya_mitra.izin.usaha"
+    _name = 'sadaya_mitra.izin.usaha'
 
-    penyedia_id = fields.Many2one(
-        "sadaya_mitra.penyedia", required=True, ondelete="cascade"
-    )
+    penyedia_id = fields.Many2one('sadaya_mitra.penyedia', required=True, ondelete='cascade')
 
-    tipe_izin = fields.Selection(
-        [("nib", "NIB"), ("sbu", "SBU"), ("lainnya", "Lainnya")]
-    )
+    tipe_izin = fields.Selection([
+        ('nib', 'NIB'),
+        ('sbu', 'SBU'),
+        ('lainnya', 'Lainnya')
+    ])
 
     nama_izin = fields.Char()
     nomor_izin = fields.Char()
@@ -137,26 +255,27 @@ class IzinUsaha(models.Model):
 
 
 class KBLI(models.Model):
-    _name = "sadaya_mitra.kbli"
+    _name = 'sadaya_mitra.kbli'
 
-    izin_id = fields.Many2one(
-        "sadaya_mitra.izin.usaha", required=True, ondelete="cascade"
-    )
+    izin_id = fields.Many2one('sadaya_mitra.izin.usaha', required=True, ondelete='cascade')
     kode_kbli = fields.Char()
 
 
 class KategoriDPT(models.Model):
-    _name = "sadaya_mitra.kategori.dpt"
+    _name = 'sadaya_mitra.kategori.dpt'
 
     nama_kategori = fields.Char()
-    metode = fields.Selection([("undangan", "Undangan"), ("pengumuman", "Pengumuman")])
+    metode = fields.Selection([
+        ('undangan', 'Undangan'),
+        ('pengumuman', 'Pengumuman')
+    ])
     status_buka = fields.Boolean()
 
 
 class DataKeuangan(models.Model):
-    _name = "sadaya_mitra.keuangan"
+    _name = 'sadaya_mitra.keuangan'
 
-    penyedia_id = fields.Many2one("sadaya_mitra.penyedia", required=True)
+    penyedia_id = fields.Many2one('sadaya_mitra.penyedia', required=True)
 
     nama_pemilik_rekening = fields.Char()
     nomor_rekening = fields.Char()
@@ -171,18 +290,15 @@ class DataKeuangan(models.Model):
     masa_berlaku_audited = fields.Date()
 
     _sql_constraints = [
-        (
-            "unique_penyedia_keuangan",
-            "unique(penyedia_id)",
-            "Satu penyedia hanya boleh punya satu data keuangan!",
-        )
+        ('unique_penyedia_keuangan', 'unique(penyedia_id)',
+         'Satu penyedia hanya boleh punya satu data keuangan!')
     ]
 
 
 class DataPajak(models.Model):
-    _name = "sadaya_mitra.pajak"
+    _name = 'sadaya_mitra.pajak'
 
-    penyedia_id = fields.Many2one("sadaya_mitra.penyedia", required=True)
+    penyedia_id = fields.Many2one('sadaya_mitra.penyedia', required=True)
 
     npwp = fields.Char()
     bukti_kswp = fields.Binary()
@@ -193,11 +309,14 @@ class DataPajak(models.Model):
 
 
 class Personalia(models.Model):
-    _name = "sadaya_mitra.personalia"
+    _name = 'sadaya_mitra.personalia'
 
-    penyedia_id = fields.Many2one("sadaya_mitra.penyedia", required=True)
+    penyedia_id = fields.Many2one('sadaya_mitra.penyedia', required=True)
 
-    tipe_personalia = fields.Selection([("ahli", "Ahli"), ("pendukung", "Pendukung")])
+    tipe_personalia = fields.Selection([
+        ('ahli', 'Ahli'),
+        ('pendukung', 'Pendukung')
+    ])
 
     tenaga_ahli = fields.Char()
     nik = fields.Char()
@@ -211,40 +330,43 @@ class Personalia(models.Model):
     scan_ijazah = fields.Binary()
     cv_pdf = fields.Binary()
     cv_tanggal = fields.Date()
-    pengalaman_ids = fields.One2many(
-        "sadaya_mitra.pengalaman.personalia", "personalia_id"
-    )
-    sertifikat_ids = fields.One2many(
-        "sadaya_mitra.sertifikat.personalia", "personalia_id"
-    )
+    pengalaman_ids = fields.One2many('sadaya_mitra.pengalaman.personalia', 'personalia_id')
+    sertifikat_ids = fields.One2many('sadaya_mitra.sertifikat.personalia', 'personalia_id')
+    
+    # Fields moved from Pengalaman Personalia
+    pengalaman = fields.Char()
+    bukti_pengalaman = fields.Binary()
+
+    # Fields moved from Sertifikat Personalia
+    nama_sertifikat = fields.Char()
+    bukti_sertifikat = fields.Binary()
 
 
 class SadayaMitraPengalamanPerusahaan(models.Model):
-    _name = "sadaya_mitra.pengalaman.perusahaan"
-    _description = "Pengalaman Perusahaan"
+    _name = 'sadaya_mitra.pengalaman.perusahaan'
+    _description = 'Pengalaman Perusahaan'
 
-    penyedia_id = fields.Many2one(
-        "sadaya_mitra.penyedia", required=True, ondelete="cascade"
-    )
+    penyedia_id = fields.Many2one('sadaya_mitra.penyedia', required=True, ondelete='cascade')
     name = fields.Char()
 
 
 class PengalamanPersonalia(models.Model):
-    _name = "sadaya_mitra.pengalaman.personalia"
+    _name = 'sadaya_mitra.pengalaman.personalia'
 
-    personalia_id = fields.Many2one("sadaya_mitra.personalia", required=True)
+    personalia_id = fields.Many2one('sadaya_mitra.personalia', required=True)
     pengalaman = fields.Char()
     bukti_pengalaman = fields.Binary()
 
 
 class Pengurus(models.Model):
-    _name = "sadaya_mitra.pengurus"
+    _name = 'sadaya_mitra.pengurus'
 
-    penyedia_id = fields.Many2one(
-        "sadaya_mitra.penyedia", required=True, ondelete="cascade"
-    )
+    penyedia_id = fields.Many2one('sadaya_mitra.penyedia', required=True, ondelete='cascade')
 
-    jabatan = fields.Selection([("direksi", "Direksi"), ("komisaris", "Komisaris")])
+    jabatan = fields.Selection([
+        ('direksi', 'Direksi'),
+        ('komisaris', 'Komisaris')
+    ])
 
     nama_lengkap = fields.Char()
     nomor_hp = fields.Char()
@@ -253,49 +375,41 @@ class Pengurus(models.Model):
 
 
 class SubklasifikasiSBU(models.Model):
-    _name = "sadaya_mitra.sbu"
+    _name = 'sadaya_mitra.sbu'
 
-    izin_id = fields.Many2one(
-        "sadaya_mitra.izin.usaha", required=True, ondelete="cascade"
-    )
+    izin_id = fields.Many2one('sadaya_mitra.izin.usaha', required=True, ondelete='cascade')
     kode_subklasifikasi = fields.Char()
 
 
 class SadayaMitraSertifikatPerusahaan(models.Model):
-    _name = "sadaya_mitra.sertifikat.perusahaan"
-    _description = "Sertifikat Perusahaan"
+    _name = 'sadaya_mitra.sertifikat.perusahaan'
+    _description = 'Sertifikat Perusahaan'
 
-    penyedia_id = fields.Many2one(
-        "sadaya_mitra.penyedia", required=True, ondelete="cascade"
-    )
+    penyedia_id = fields.Many2one('sadaya_mitra.penyedia', required=True, ondelete='cascade')
     name = fields.Char()
 
 
 class SertifikatKeahlianPersonalia(models.Model):
-    _name = "sadaya_mitra.sertifikat.personalia"
+    _name = 'sadaya_mitra.sertifikat.personalia'
 
-    personalia_id = fields.Many2one("sadaya_mitra.personalia", required=True)
+    personalia_id = fields.Many2one('sadaya_mitra.personalia', required=True)
     nama_sertifikat = fields.Char()
     bukti_sertifikat = fields.Binary()
 
 
 class SadayaMitraRiwayatDpt(models.Model):
-    _name = "sadaya_mitra.riwayat.dpt"
-    _description = "Riwayat DPT"
+    _name = 'sadaya_mitra.riwayat.dpt'
+    _description = 'Riwayat DPT'
 
-    penyedia_id = fields.Many2one(
-        "sadaya_mitra.penyedia", required=True, ondelete="cascade"
-    )
+    penyedia_id = fields.Many2one('sadaya_mitra.penyedia', required=True, ondelete='cascade')
     name = fields.Char()
 
 
 class SadayaMitraFasilitas(models.Model):
-    _name = "sadaya_mitra.fasilitas"
-    _description = "Fasilitas"
+    _name = 'sadaya_mitra.fasilitas'
+    _description = 'Fasilitas'
 
-    penyedia_id = fields.Many2one(
-        "sadaya_mitra.penyedia", required=True, ondelete="cascade"
-    )
+    penyedia_id = fields.Many2one('sadaya_mitra.penyedia', required=True, ondelete='cascade')
     name = fields.Char()
 
 
@@ -303,9 +417,7 @@ class LandasanHukum(models.Model):
     _name = "sadaya_mitra.landasan.hukum"
     _description = "Landasan Hukum"
 
-    penyedia_id = fields.Many2one(
-        "sadaya_mitra.penyedia", required=True, ondelete="cascade"
-    )
+    penyedia_id = fields.Many2one('sadaya_mitra.penyedia', required=True, ondelete='cascade')
 
     nomor_akta = fields.Char()
     tanggal_akta = fields.Date()
@@ -316,33 +428,26 @@ class LandasanHukum(models.Model):
     scan_bukti = fields.Binary()
 
     _sql_constraints = [
-        (
-            "unique_penyedia_landasan",
-            "unique(penyedia_id)",
-            "Satu penyedia hanya boleh punya satu landasan hukum!",
-        )
+        ('unique_penyedia_landasan', 'unique(penyedia_id)',
+         'Satu penyedia hanya boleh punya satu landasan hukum!')
     ]
 
 
 class SadayaMitraSaham(models.Model):
-    _name = "sadaya_mitra.saham"
-    _description = "Kepemilikan Saham"
+    _name = 'sadaya_mitra.saham'
+    _description = 'Kepemilikan Saham'
 
-    penyedia_id = fields.Many2one(
-        "sadaya_mitra.penyedia", required=True, ondelete="cascade"
-    )
+    penyedia_id = fields.Many2one('sadaya_mitra.penyedia', required=True, ondelete='cascade')
     susunan = fields.Char()
     nik = fields.Char()
     posisi = fields.Char()
 
 
 class SadayaMitraKantor(models.Model):
-    _name = "sadaya_mitra.kantor"
-    _description = "Kantor"
+    _name = 'sadaya_mitra.kantor'
+    _description = 'Kantor'
 
-    penyedia_id = fields.Many2one(
-        "sadaya_mitra.penyedia", required=True, ondelete="cascade"
-    )
+    penyedia_id = fields.Many2one('sadaya_mitra.penyedia', required=True, ondelete='cascade')
     name = fields.Char()
 
 
@@ -350,37 +455,61 @@ class PendaftaranDPT(models.Model):
     _name = "sadaya_mitra.pendaftaran.dpt"
     _description = "Pendaftaran DPT"
 
-    penyedia_id = fields.Many2one("sadaya_mitra.penyedia", required=True)
-    kategori_id = fields.Many2one("sadaya_mitra.kategori.dpt", required=True)
+    penyedia_id = fields.Many2one('sadaya_mitra.penyedia', required=True)
+    kategori_id = fields.Selection([
+        ('barang', 'Barang'),
+        ('jasa', 'Jasa'),
+        ('pekerjaan_konstruksi', 'Pekerjaan Konstruksi'),
+        ('jasa_konsultasi', 'Jasa Konsultasi'),
+        ('barang_printil', 'Barang Printil'),
+        ('jasa_lainnya', 'Jasa Lainnya'),
+    ], string='Kategori DPT', required=True)
 
     tanggal_daftar = fields.Datetime()
 
-    status_proses = fields.Selection(
-        [
-            ("pendaftaran", "Pendaftaran"),
-            ("verifikasi", "Verifikasi"),
-            ("perbaikan", "Perbaikan"),
-            ("evaluasi", "Evaluasi"),
-            ("pengumuman", "Pengumuman"),
-        ]
-    )
+    status_proses = fields.Selection([
+        ('pendaftaran', 'Pendaftaran'),
+        ('verifikasi', 'Verifikasi'),
+        ('perbaikan', 'Perbaikan'),
+        ('evaluasi', 'Evaluasi'),
+        ('pengumuman', 'Pengumuman')
+    ])
 
     waktu_verifikasi = fields.Datetime()
-    hasil_akhir = fields.Selection([("terpilih", "Terpilih"), ("tidak", "Tidak")])
+    hasil_akhir = fields.Selection([
+        ('terpilih', 'Terpilih'),
+        ('tidak', 'Tidak')
+    ])
 
     catatan_perbaikan = fields.Text()
+
+    def _auto_init(self):
+        """Handle schema migration: drop the old foreign key constraint if it exists."""
+        cr = self.env.cr
+        # Drop the old foreign key constraint if it exists.
+        try:
+            with cr.savepoint():
+                cr.execute("""
+                    ALTER TABLE sadaya_mitra_pendaftaran_dpt
+                    DROP CONSTRAINT IF EXISTS sadaya_mitra_pendaftaran_dpt_kategori_id_fkey
+                """)
+        except Exception:
+            _logger.exception("Failed to drop old kategori_id foreign key")
+        return super()._auto_init()
 
 
 class PengajuanTTE(models.Model):
     _name = "sadaya_mitra.tte"
     _description = "Pengajuan TTE"
 
-    penyedia_id = fields.Many2one("sadaya_mitra.penyedia", required=True)
+    penyedia_id = fields.Many2one('sadaya_mitra.penyedia', required=True)
 
     email = fields.Char()
     pin = fields.Char()
     surat_kuasa = fields.Binary()
 
-    status_verifikasi = fields.Selection(
-        [("draft", "Draft"), ("verifikasi", "Verifikasi"), ("aktif", "Aktif")]
-    )
+    status_verifikasi = fields.Selection([
+        ('draft', 'Draft'),
+        ('verifikasi', 'Verifikasi'),
+        ('aktif', 'Aktif')
+    ])

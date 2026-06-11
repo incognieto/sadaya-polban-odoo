@@ -9,6 +9,11 @@ class SadayaTawarPaket(models.Model):
     name = fields.Char(string='Nama Paket', required=True)
     nilai_hps = fields.Float(string='Nilai HPS (Rp)', required=True)
     
+    unit_pengusul = fields.Char(string='Unit Pengusul')
+    tgl_mulai = fields.Date(string='Perkiraan Tanggal Mulai')
+    tgl_selesai = fields.Date(string='Perkiraan Tanggal Selesai')
+
+    
     # === TAMBAHAN PERSYARATAN VENDOR ===
     syarat_kbli = fields.Char(string='Persyaratan KBLI', help='Pisahkan dengan koma, contoh: 6201, 6202, 6203')
     syarat_dokumen = fields.Text(string='Dokumen yang Harus Disiapkan')
@@ -111,6 +116,11 @@ class SadayaTawarPaket(models.Model):
 
     def action_route_paket(self):
         for rec in self:
+            # 1. Validasi Status (Diambil dari branch main)
+            if rec.state not in ['published', 'eval']:
+                raise UserError("Paket hanya dapat diteruskan ke modul eksekusi jika sudah dipublikasikan atau dievaluasi.")
+
+            # 2. Tarik Data Sumber RUP (Diambil dari branch sadaya-tawar)
             rup = self.env['rancang.rup'].sudo().search([
                 ('name', '=', rec.name),
                 ('nilai_pagu', '=', rec.nilai_hps),
@@ -127,13 +137,13 @@ class SadayaTawarPaket(models.Model):
             if rup.usulan_id:
                 unit_pemohon = getattr(rup.usulan_id, 'pemohon', False) or getattr(rup.usulan_id, 'name', False)
 
+            # 3. Mapping Kategori Pengadaan
             jenis_langsung_map = {
                 'barang': 'barang',
                 'jasa': 'jasa_lainnya',
                 'konstruksi': 'konstruksi',
                 'konsultansi': 'jasa_konsultansi',
             }
-
             jenis_rutin_map = {
                 'barang': 'goods',
                 'jasa': 'services',
@@ -149,40 +159,51 @@ class SadayaTawarPaket(models.Model):
                 f"Tanggal Mulai: {rup.tgl_mulai or '-'}\n"
                 f"Tanggal Selesai: {rup.tgl_selesai or '-'}"
             )
+            keterangan_gabungan = f"{rec.deskripsi or ''}\n\n{info_rup}".strip()
 
+            # 4. Routing Berdasarkan Metode Pemilihan (Menggabungkan logika kedua branch)
             if rec.metode_pemilihan == 'e_purchasing':
                 self.env['sadaya_rutin.procurement_package'].sudo().create({
                     'name': rec.name,
-                    'proposing_unit': unit_pemohon,
+                    'item_name': rec.name,
+                    'proposing_unit': unit_pemohon or rec.unit_pengusul,
                     'procurement_type': jenis_rutin_map.get(rec.jenis_pengadaan, 'goods'),
                     'amount_total': rec.nilai_hps,
-                    'request_notes': f"{rec.deskripsi or ''}\n\n{info_rup}".strip(),
-                    'start_date': rup.tgl_mulai,
-                    'end_date': rup.tgl_selesai,
+                    'request_notes': keterangan_gabungan,
+                    'start_date': rup.tgl_mulai or rec.tgl_mulai,
+                    'end_date': rup.tgl_selesai or rec.tgl_selesai,
                     'status': 'draft',
                 })
 
             elif rec.metode_pemilihan == 'pengadaan_langsung':
                 self.env['sadaya_langsung.paket'].sudo().create({
                     'name': rec.name,
-                    'unit_pengusul': unit_pemohon,
+                    'unit_pengusul': unit_pemohon or rec.unit_pengusul,
                     'jenis_pengadaan': jenis_langsung_map.get(rec.jenis_pengadaan, 'barang'),
                     'nilai_hps': rec.nilai_hps,
-                    'tanggal_mulai': rup.tgl_mulai,
-                    'tanggal_selesai': rup.tgl_selesai,
+                    'tanggal_mulai': rup.tgl_mulai or rec.tgl_mulai,
+                    'tanggal_selesai': rup.tgl_selesai or rec.tgl_selesai,
                     'dokumen_kak': rec.dokumen_kak,
                     'filename_kak': rec.filename_kak,
                     'dokumen_rab': rec.dokumen_rab,
                     'filename_rab': rec.filename_rab,
-                    'keterangan': f"{rec.deskripsi or ''}\n\n{info_rup}".strip(),
+                    'keterangan': keterangan_gabungan,
                     'status_paket': 'draft',
                 })
 
+            elif rec.metode_pemilihan == 'tender':
+                self.env['sadaya_lelang.paket'].sudo().create({
+                    'name': rec.name,
+                    'hps': rec.nilai_hps,
+                    'description': keterangan_gabungan,
+                    'file_kebutuhan': rec.dokumen_kak,
+                    'status': 'draft',
+                    'metode_pemilihan': 'tender',
+                })
             else:
-                raise UserError(
-                    "Routing untuk metode Tender belum diaktifkan di function ini."
-                )
+                raise UserError("Metode pemilihan tidak dikenali atau belum disetting.")
 
+            # Update status setelah routing berhasil
             rec.state = 'routed'
 
         return True

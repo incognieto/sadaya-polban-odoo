@@ -263,14 +263,14 @@ class SadayaLangsungController(http.Controller):
 			],
 		}
 
-	@http.route("/sadaya_langsung", type="http", auth="user", website=True)
+	@http.route("/sadaya-langsung", type="http", auth="user", website=True)
 	def dashboard(self, **kwargs):
 		return request.render(
 			"sadaya_langsung.frontend_dashboard",
 			{"active_page": "dashboard", **self._get_dashboard_payload()},
 		)
 
-	@http.route("/sadaya_langsung/paket", type="http", auth="user", website=True)
+	@http.route("/sadaya-langsung/paket", type="http", auth="user", website=True)
 	def paket_page(self, **kwargs):
 		Paket = request.env["sadaya_langsung.paket"].sudo()
 		return request.render(
@@ -292,7 +292,7 @@ class SadayaLangsungController(http.Controller):
 		)
 
 	@http.route(
-		"/sadaya_langsung/paket/create",
+		"/sadaya-langsung/paket/create",
 		type="http",
 		auth="user",
 		website=True,
@@ -335,11 +335,11 @@ class SadayaLangsungController(http.Controller):
 				except Exception:
 					pass
 		return self._redirect_with_message(
-			"/sadaya_langsung/paket", success="Paket berhasil ditambahkan"
+			"/sadaya-langsung/paket", success="Paket berhasil ditambahkan"
 		)
 
 	@http.route(
-		"/sadaya_langsung/paket/<int:paket_id>/update",
+		"/sadaya-langsung/paket/<int:paket_id>/update",
 		type="http",
 		auth="user",
 		website=True,
@@ -350,7 +350,7 @@ class SadayaLangsungController(http.Controller):
 		record = Paket.browse(paket_id)
 		if not record.exists():
 			return self._redirect_with_message(
-				"/sadaya_langsung/paket", error="Paket tidak ditemukan"
+				"/sadaya-langsung/paket", error="Paket tidak ditemukan"
 			)
 
 		jenis_options = self._selection_options(Paket, "jenis_pengadaan")
@@ -375,7 +375,7 @@ class SadayaLangsungController(http.Controller):
 		try:
 			record.write(values)
 		except Exception as exc:
-			return self._redirect_with_message("/sadaya_langsung/paket", error=str(exc))
+			return self._redirect_with_message("/sadaya-langsung/paket", error=str(exc))
 
 		# Handle file uploads on update
 		if request.httprequest.files:
@@ -399,11 +399,11 @@ class SadayaLangsungController(http.Controller):
 					pass
 
 		return self._redirect_with_message(
-			"/sadaya_langsung/paket", success="Paket berhasil diperbarui"
+			"/sadaya-langsung/paket", success="Paket berhasil diperbarui"
 		)
 
 	@http.route(
-		"/sadaya_langsung/paket/<int:paket_id>/penawaran/create",
+		"/sadaya-langsung/paket/<int:paket_id>/penawaran/create",
 		type="http",
 		auth="user",
 		website=True,
@@ -413,13 +413,13 @@ class SadayaLangsungController(http.Controller):
 		paket = request.env["sadaya_langsung.paket"].sudo().browse(paket_id)
 		if not paket.exists():
 			return self._redirect_with_message(
-				"/sadaya_langsung/paket", error="Paket tidak ditemukan"
+				"/sadaya-langsung/paket", error="Paket tidak ditemukan"
 			)
 
 		vendor_id = self._safe_int(post.get("vendor_id"))
 		if not vendor_id:
 			return self._redirect_with_message(
-				"/sadaya_langsung/paket", error="Vendor wajib dipilih"
+				"/sadaya-langsung/paket", error="Vendor wajib dipilih"
 			)
 
 		values = {
@@ -434,7 +434,7 @@ class SadayaLangsungController(http.Controller):
 		try:
 			penawaran = request.env["sadaya_langsung.penawaran"].sudo().create(values)
 		except Exception as exc:
-			return self._redirect_with_message("/sadaya_langsung/paket", error=str(exc))
+			return self._redirect_with_message("/sadaya-langsung/paket", error=str(exc))
 		if penawaran and request.httprequest.files:
 			f_doc = request.httprequest.files.get("dokumen_penawaran")
 			if f_doc:
@@ -449,11 +449,11 @@ class SadayaLangsungController(http.Controller):
 						pass
 
 		return self._redirect_with_message(
-			"/sadaya_langsung/paket", success="Penawaran vendor berhasil ditambahkan"
+			"/sadaya-langsung/paket", success="Penawaran vendor berhasil ditambahkan"
 		)
 
 	@http.route(
-		"/sadaya_langsung/penawaran/<int:penawaran_id>/evaluate",
+		"/sadaya-langsung/penawaran/<int:penawaran_id>/evaluate",
 		type="http",
 		auth="user",
 		website=True,
@@ -464,7 +464,7 @@ class SadayaLangsungController(http.Controller):
 		record = Penawaran.browse(penawaran_id)
 		if not record.exists():
 			return self._redirect_with_message(
-				"/sadaya_langsung/paket", error="Penawaran tidak ditemukan"
+				"/sadaya-langsung/paket", error="Penawaran tidak ditemukan"
 			)
 
 		eval_options = self._selection_options(Penawaran, "evaluasi_administrasi")
@@ -478,14 +478,14 @@ class SadayaLangsungController(http.Controller):
 		try:
 			record.write(values)
 		except Exception as exc:
-			return self._redirect_with_message("/sadaya_langsung/paket", error=str(exc))
+			return self._redirect_with_message("/sadaya-langsung/paket", error=str(exc))
 
 		return self._redirect_with_message(
-			"/sadaya_langsung/paket", success="Evaluasi penawaran diperbarui"
+			"/sadaya-langsung/paket", success="Evaluasi penawaran diperbarui"
 		)
 
 	@http.route(
-		"/sadaya_langsung/penawaran/<int:penawaran_id>/action",
+		"/sadaya-langsung/penawaran/<int:penawaran_id>/action",
 		type="http",
 		auth="user",
 		website=True,
@@ -500,26 +500,26 @@ class SadayaLangsungController(http.Controller):
 		record = request.env["sadaya_langsung.penawaran"].sudo().browse(penawaran_id)
 		if not record.exists():
 			return self._redirect_with_message(
-				"/sadaya_langsung/paket", error="Penawaran tidak ditemukan"
+				"/sadaya-langsung/paket", error="Penawaran tidak ditemukan"
 			)
 		action_key = post.get("action")
 		method_name = action_map.get(action_key)
 		if not method_name:
 			return self._redirect_with_message(
-				"/sadaya_langsung/paket", error="Aksi penawaran tidak valid"
+				"/sadaya-langsung/paket", error="Aksi penawaran tidak valid"
 			)
 
 		try:
 			getattr(record, method_name)()
 		except Exception as exc:
-			return self._redirect_with_message("/sadaya_langsung/paket", error=str(exc))
+			return self._redirect_with_message("/sadaya-langsung/paket", error=str(exc))
 
 		return self._redirect_with_message(
-			"/sadaya_langsung/paket", success="Aksi penawaran berhasil diproses"
+			"/sadaya-langsung/paket", success="Aksi penawaran berhasil diproses"
 		)
 
 	@http.route(
-		"/sadaya_langsung/paket/<int:paket_id>/workflow",
+		"/sadaya-langsung/paket/<int:paket_id>/workflow",
 		type="http",
 		auth="user",
 		website=True,
@@ -540,26 +540,26 @@ class SadayaLangsungController(http.Controller):
 		record = request.env["sadaya_langsung.paket"].sudo().browse(paket_id)
 		if not record.exists():
 			return self._redirect_with_message(
-				"/sadaya_langsung/paket", error="Paket tidak ditemukan"
+				"/sadaya-langsung/paket", error="Paket tidak ditemukan"
 			)
 		action_key = post.get("action")
 		method_name = action_map.get(action_key)
 		if not method_name:
 			return self._redirect_with_message(
-				"/sadaya_langsung/paket", error="Aksi paket tidak valid"
+				"/sadaya-langsung/paket", error="Aksi paket tidak valid"
 			)
 
 		try:
 			getattr(record, method_name)()
 		except Exception as exc:
-			return self._redirect_with_message("/sadaya_langsung/paket", error=str(exc))
+			return self._redirect_with_message("/sadaya-langsung/paket", error=str(exc))
 
 		return self._redirect_with_message(
-			"/sadaya_langsung/paket", success="Status paket berhasil diperbarui"
+			"/sadaya-langsung/paket", success="Status paket berhasil diperbarui"
 		)
 
 	@http.route(
-		"/sadaya_langsung/paket/<int:paket_id>/item/create",
+		"/sadaya-langsung/paket/<int:paket_id>/item/create",
 		type="http",
 		auth="user",
 		website=True,
@@ -570,7 +570,7 @@ class SadayaLangsungController(http.Controller):
 		paket = Paket.browse(paket_id)
 		if not paket.exists():
 			return self._redirect_with_message(
-				"/sadaya_langsung/paket", error="Paket tidak ditemukan"
+				"/sadaya-langsung/paket", error="Paket tidak ditemukan"
 			)
 		values = {
 			"paket_id": paket.id,
@@ -583,11 +583,11 @@ class SadayaLangsungController(http.Controller):
 		try:
 			request.env["sadaya_langsung.paket.line"].sudo().create(values)
 		except Exception as exc:
-			return self._redirect_with_message("/sadaya_langsung/paket", error=str(exc))
-		return self._redirect_with_message("/sadaya_langsung/paket", success="Item berhasil ditambahkan")
+			return self._redirect_with_message("/sadaya-langsung/paket", error=str(exc))
+		return self._redirect_with_message("/sadaya-langsung/paket", success="Item berhasil ditambahkan")
 
 	@http.route(
-		"/sadaya_langsung/paket/<int:paket_id>/item/<int:item_id>/update",
+		"/sadaya-langsung/paket/<int:paket_id>/item/<int:item_id>/update",
 		type="http",
 		auth="user",
 		website=True,
@@ -596,7 +596,7 @@ class SadayaLangsungController(http.Controller):
 	def paket_item_update(self, paket_id, item_id, **post):
 		item = request.env["sadaya_langsung.paket.line"].sudo().browse(item_id)
 		if not item.exists() or item.paket_id.id != paket_id:
-			return self._redirect_with_message("/sadaya_langsung/paket", error="Item tidak ditemukan")
+			return self._redirect_with_message("/sadaya-langsung/paket", error="Item tidak ditemukan")
 		values = {
 			"name": post.get("name") or item.name,
 			"deskripsi": post.get("deskripsi") or False,
@@ -607,11 +607,11 @@ class SadayaLangsungController(http.Controller):
 		try:
 			item.write(values)
 		except Exception as exc:
-			return self._redirect_with_message("/sadaya_langsung/paket", error=str(exc))
-		return self._redirect_with_message("/sadaya_langsung/paket", success="Item berhasil diperbarui")
+			return self._redirect_with_message("/sadaya-langsung/paket", error=str(exc))
+		return self._redirect_with_message("/sadaya-langsung/paket", success="Item berhasil diperbarui")
 
 	@http.route(
-		"/sadaya_langsung/paket/<int:paket_id>/item/<int:item_id>/delete",
+		"/sadaya-langsung/paket/<int:paket_id>/item/<int:item_id>/delete",
 		type="http",
 		auth="user",
 		website=True,
@@ -620,14 +620,14 @@ class SadayaLangsungController(http.Controller):
 	def paket_item_delete(self, paket_id, item_id, **post):
 		item = request.env["sadaya_langsung.paket.line"].sudo().browse(item_id)
 		if not item.exists() or item.paket_id.id != paket_id:
-			return self._redirect_with_message("/sadaya_langsung/paket", error="Item tidak ditemukan")
+			return self._redirect_with_message("/sadaya-langsung/paket", error="Item tidak ditemukan")
 		try:
 			item.unlink()
 		except Exception as exc:
-			return self._redirect_with_message("/sadaya_langsung/paket", error=str(exc))
-		return self._redirect_with_message("/sadaya_langsung/paket", success="Item berhasil dihapus")
+			return self._redirect_with_message("/sadaya-langsung/paket", error=str(exc))
+		return self._redirect_with_message("/sadaya-langsung/paket", success="Item berhasil dihapus")
 
-	@http.route("/sadaya_langsung/kontrak", type="http", auth="user", website=True)
+	@http.route("/sadaya-langsung/kontrak", type="http", auth="user", website=True)
 	def kontrak_page(self, **kwargs):
 		Kontrak = request.env["sadaya_langsung.kontrak"].sudo()
 		Paket = request.env["sadaya_langsung.paket"].sudo()
@@ -653,7 +653,7 @@ class SadayaLangsungController(http.Controller):
 		)
 
 	@http.route(
-		"/sadaya_langsung/kontrak/create",
+		"/sadaya-langsung/kontrak/create",
 		type="http",
 		auth="user",
 		website=True,
@@ -685,11 +685,11 @@ class SadayaLangsungController(http.Controller):
 		}
 		Kontrak.create(values)
 		return self._redirect_with_message(
-			"/sadaya_langsung/kontrak", success="Kontrak berhasil ditambahkan"
+			"/sadaya-langsung/kontrak", success="Kontrak berhasil ditambahkan"
 		)
 
 	@http.route(
-		"/sadaya_langsung/kontrak/<int:kontrak_id>/update",
+		"/sadaya-langsung/kontrak/<int:kontrak_id>/update",
 		type="http",
 		auth="user",
 		website=True,
@@ -700,7 +700,7 @@ class SadayaLangsungController(http.Controller):
 		record = Kontrak.browse(kontrak_id)
 		if not record.exists():
 			return self._redirect_with_message(
-				"/sadaya_langsung/kontrak", error="Kontrak tidak ditemukan"
+				"/sadaya-langsung/kontrak", error="Kontrak tidak ditemukan"
 			)
 
 		jenis_options = self._selection_options(Kontrak, "jenis_pengadaan")
@@ -725,14 +725,14 @@ class SadayaLangsungController(http.Controller):
 		try:
 			record.write(values)
 		except Exception as exc:
-			return self._redirect_with_message("/sadaya_langsung/kontrak", error=str(exc))
+			return self._redirect_with_message("/sadaya-langsung/kontrak", error=str(exc))
 
 		return self._redirect_with_message(
-			"/sadaya_langsung/kontrak", success="Kontrak berhasil diperbarui"
+			"/sadaya-langsung/kontrak", success="Kontrak berhasil diperbarui"
 		)
 
 	@http.route(
-		"/sadaya_langsung/kontrak/<int:kontrak_id>/workflow",
+		"/sadaya-langsung/kontrak/<int:kontrak_id>/workflow",
 		type="http",
 		auth="user",
 		website=True,
@@ -748,21 +748,21 @@ class SadayaLangsungController(http.Controller):
 		record = request.env["sadaya_langsung.kontrak"].sudo().browse(kontrak_id)
 		if not record.exists():
 			return self._redirect_with_message(
-				"/sadaya_langsung/kontrak", error="Kontrak tidak ditemukan"
+				"/sadaya-langsung/kontrak", error="Kontrak tidak ditemukan"
 			)
 		action_key = post.get("action")
 		method_name = action_map.get(action_key)
 		if not method_name:
 			return self._redirect_with_message(
-				"/sadaya_langsung/kontrak", error="Aksi kontrak tidak valid"
+				"/sadaya-langsung/kontrak", error="Aksi kontrak tidak valid"
 			)
 
 		try:
 			getattr(record, method_name)()
 		except Exception as exc:
-			return self._redirect_with_message("/sadaya_langsung/kontrak", error=str(exc))
+			return self._redirect_with_message("/sadaya-langsung/kontrak", error=str(exc))
 
 		return self._redirect_with_message(
-			"/sadaya_langsung/kontrak", success="Status kontrak berhasil diperbarui"
+			"/sadaya-langsung/kontrak", success="Status kontrak berhasil diperbarui"
 		)
 

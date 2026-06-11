@@ -52,6 +52,7 @@
                     <group>
                         <group string="Informasi Utama">
                             <field name="usulan_id"/>
+                            <field name="unit_pengusul" readonly="state != 'draft'"/>
                             <field name="jenis_pengadaan" readonly="state != 'draft'"/>
                             <field name="metode_pemilihan" readonly="state != 'draft'"/>
                             <field name="nilai_pagu" readonly="state != 'draft'"/>
