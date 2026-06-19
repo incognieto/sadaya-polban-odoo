@@ -23,6 +23,7 @@
         'mail',
     ],
     'data': [
+        'data/res_users_seed.xml',
         'security/sadaya_security.xml',
         'security/ir.model.access.csv',
         'views/registration_views.xml',
