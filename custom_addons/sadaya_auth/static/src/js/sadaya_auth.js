@@ -69,36 +69,46 @@ function validatePhoneID(phone) {
 // =====================
 function initFileUpload(container) {
     const input = container.querySelector('input[type="file"]');
-    const preview = container.querySelector('.sadaya-file-preview');
-
     if (!input) return;
 
+    const normalState = container.querySelector('.upload-state-normal');
+    const uploadedState = container.querySelector('.upload-state-uploaded');
+    const nameLabel = container.querySelector('.file-name-label');
+    const clearBtn = container.querySelector('.clear-file-btn');
+
     ['dragenter', 'dragover'].forEach(evt => {
-        container.addEventListener(evt, (e) => {
-            e.preventDefault();
-            container.classList.add('dragover');
-        });
-    });
-
-    ['dragleave', 'drop'].forEach(evt => {
-        container.addEventListener(evt, (e) => {
-            e.preventDefault();
-            container.classList.remove('dragover');
-        });
-    });
-
-    container.addEventListener('drop', (e) => {
-        const files = e.dataTransfer.files;
-        if (files.length && input) {
-            // Create a DataTransfer to assign files to the input
-            const dt = new DataTransfer();
-            dt.items.add(files[0]);
-            input.files = dt.files;
-            input.dispatchEvent(new Event('change'));
+        if (normalState) {
+            normalState.addEventListener(evt, (e) => {
+                e.preventDefault();
+                normalState.classList.add('bg-light');
+            });
         }
     });
 
+    ['dragleave', 'drop'].forEach(evt => {
+        if (normalState) {
+            normalState.addEventListener(evt, (e) => {
+                e.preventDefault();
+                normalState.classList.remove('bg-light');
+            });
+        }
+    });
+
+    if (normalState) {
+        normalState.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            if (files.length && input) {
+                const dt = new DataTransfer();
+                dt.items.add(files[0]);
+                input.files = dt.files;
+                input.dispatchEvent(new Event('change'));
+            }
+        });
+    }
+
     input.addEventListener('change', () => {
+        const preview = input.id ? document.getElementById(input.id + '_preview') : null;
+
         if (input.files && input.files[0]) {
             const file = input.files[0];
             const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
@@ -108,10 +118,37 @@ function initFileUpload(container) {
                 preview.style.color = 'var(--sadaya-success)';
             }
 
-            // Remove invalid state
-            container.classList.remove('is-invalid');
+            if (normalState) {
+                normalState.classList.add('d-none');
+            }
+            if (uploadedState) {
+                uploadedState.classList.remove('d-none');
+            }
+            if (nameLabel) {
+                nameLabel.textContent = file.name;
+                nameLabel.title = file.name; // Show full file name on hover
+            }
+        } else {
+            if (preview) {
+                preview.textContent = '';
+            }
+            if (normalState) {
+                normalState.classList.remove('d-none');
+            }
+            if (uploadedState) {
+                uploadedState.classList.add('d-none');
+            }
         }
     });
+
+    if (clearBtn) {
+        clearBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            input.value = ''; // Clear file input
+            input.dispatchEvent(new Event('change')); // Trigger change state
+        });
+    }
 }
 
 // =====================
@@ -122,7 +159,14 @@ function initPasswordToggle(inputEl, toggleBtn) {
     toggleBtn.addEventListener('click', () => {
         const isPassword = inputEl.type === 'password';
         inputEl.type = isPassword ? 'text' : 'password';
-        toggleBtn.textContent = isPassword ? '🙈' : '👁️';
+        const icon = toggleBtn.querySelector('i');
+        if (icon) {
+            if (isPassword) {
+                icon.className = 'fa fa-eye-slash';
+            } else {
+                icon.className = 'fa fa-eye';
+            }
+        }
     });
 }
 
@@ -152,7 +196,7 @@ function clearFieldError(fieldEl) {
 document.addEventListener('DOMContentLoaded', function () {
 
     // Init all file uploads
-    document.querySelectorAll('.sadaya-file-upload').forEach(initFileUpload);
+    document.querySelectorAll('.sadaya-file-upload, .sadaya-file-container').forEach(initFileUpload);
 
     // Password strength meter
     const pwdInput = document.getElementById('password');

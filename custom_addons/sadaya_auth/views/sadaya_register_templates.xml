@@ -2,22 +2,23 @@
 <odoo>
 
     <!-- ============================================
-         HELPER MACRO: FILE UPLOAD
+         HELPER MACRO: FILE UPLOAD (tidak terpakai, tapi dipertahankan agar tidak regression)
          ============================================ -->
     <template id="sadaya_file_upload_widget">
         <t t-set="accept_val" t-value="accept or 'image/*'"/>
-        <div class="sadaya-file-upload" t-att-class="'is-invalid' if error else ''">
+        <div class="sadaya-file-upload border border-dashed rounded p-3 text-center mb-2 bg-light" style="position: relative;" t-att-class="'border-danger' if error else ''">
             <input type="file" t-att-id="field_id" t-att-name="field_name"
-                   t-att-accept="accept_val" t-att-required="required_val"/>
-            <div class="sadaya-file-upload-icon">📎</div>
-            <div class="sadaya-file-upload-text">
+                   t-att-accept="accept_val" t-att-required="required_val"
+                   style="position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;"/>
+            <div class="fs-3 text-primary mb-1">📎</div>
+            <div class="small text-muted">
                 <strong>Pilih file</strong> atau drag &amp; drop di sini
             </div>
         </div>
         <t t-if="error">
-            <div class="sadaya-field-error">⚠ <t t-esc="error"/></div>
+            <div class="text-danger small mt-1">⚠ <t t-esc="error"/></div>
         </t>
-        <div class="sadaya-file-preview" t-att-id="field_id + '_preview'"></div>
+        <div class="sadaya-file-preview small text-success mt-1 fw-bold" t-att-id="field_id + '_preview'"></div>
     </template>
 
     <!-- ============================================
@@ -27,47 +28,39 @@
         <t t-call="sadaya_auth.sadaya_layout_auth">
             <t t-set="title">Daftar Akun</t>
 
-            <!-- Tabs -->
-            <div class="sadaya-auth-tabs">
-                <button class="sadaya-auth-tab active" onclick="window.location='/sadaya/register/badan-usaha'">
-                    🏢 Badan Usaha
-                </button>
-                <button class="sadaya-auth-tab" onclick="window.location='/sadaya/register/perorangan'">
-                    👤 Perorangan
-                </button>
+            <div class="text-center mb-4">
+                <h3 class="fw-bold text-dark mb-1">Daftar Akun Sadaya</h3>
+                <p class="text-muted small">
+                    Pilih tipe pendaftaran Anda, atau
+                    <a href="/sadaya/login" class="fw-bold text-primary text-decoration-none">Sudah memiliki akun? Masuk</a>
+                </p>
             </div>
 
-            <h2 class="sadaya-auth-title">Daftar Akun Sadaya</h2>
-            <p class="sadaya-auth-subtitle">
-                Pilih tipe pendaftaran Anda, atau
-                <a href="/sadaya/login">Sudah memiliki akun? Masuk</a>
-            </p>
-
-            <div style="display:flex; flex-direction:column; gap:1rem; margin-top:1rem;">
-                <a href="/sadaya/register/badan-usaha" class="sadaya-card" style="text-decoration:none; transition:all 0.2s;">
-                    <div class="sadaya-card-body" style="display:flex; gap:1rem; align-items:center;">
-                        <div style="font-size:2.5rem;">🏢</div>
-                        <div>
-                            <div style="font-weight:700; color:var(--sadaya-text); margin-bottom:0.25rem;">Badan Usaha</div>
-                            <div style="font-size:0.85rem; color:var(--sadaya-text-muted);">
-                                PT, CV, Firma, Koperasi, atau badan hukum lainnya
-                            </div>
-                        </div>
-                        <div style="margin-left:auto; color:var(--sadaya-primary);">→</div>
-                    </div>
+            <div class="d-flex flex-column gap-3">
+                <a href="/sadaya/register/badan-usaha" class="card list-group-item-action border shadow-sm text-decoration-none p-3 rounded-3 bg-white" style="transition: transform 0.2s, box-shadow: 0.2s;">
+                   <div class="d-flex align-items-center gap-3">
+                       <div class="fs-1">🏢</div>
+                       <div class="overflow-hidden">
+                           <div class="fw-bold text-dark mb-1 text-truncate">Badan Usaha</div>
+                           <div class="small text-muted text-truncate">
+                               PT, CV, Firma, Koperasi, atau badan hukum lainnya
+                           </div>
+                       </div>
+                       <div class="ms-auto text-primary fs-4">→</div>
+                   </div>
                 </a>
 
-                <a href="/sadaya/register/perorangan" class="sadaya-card" style="text-decoration:none;">
-                    <div class="sadaya-card-body" style="display:flex; gap:1rem; align-items:center;">
-                        <div style="font-size:2.5rem;">👤</div>
-                        <div>
-                            <div style="font-weight:700; color:var(--sadaya-text); margin-bottom:0.25rem;">Perorangan</div>
-                            <div style="font-size:0.85rem; color:var(--sadaya-text-muted);">
-                                Individu atau usaha perseorangan
-                            </div>
-                        </div>
-                        <div style="margin-left:auto; color:var(--sadaya-primary);">→</div>
-                    </div>
+                <a href="/sadaya/register/perorangan" class="card list-group-item-action border shadow-sm text-decoration-none p-3 rounded-3 bg-white" style="transition: transform 0.2s, box-shadow: 0.2s;">
+                   <div class="d-flex align-items-center gap-3">
+                       <div class="fs-1">👤</div>
+                       <div class="overflow-hidden">
+                           <div class="fw-bold text-dark mb-1 text-truncate">Perorangan</div>
+                           <div class="small text-muted text-truncate">
+                               Individu atau usaha perseorangan
+                           </div>
+                       </div>
+                       <div class="ms-auto text-primary fs-4">→</div>
+                   </div>
                 </a>
             </div>
         </t>
@@ -81,21 +74,27 @@
             <t t-set="title">Daftar Badan Usaha</t>
 
             <!-- Tabs -->
-            <div class="sadaya-auth-tabs">
-                <button class="sadaya-auth-tab active" data-tab="badan_usaha">🏢 Badan Usaha</button>
-                <button class="sadaya-auth-tab" data-tab="perorangan" onclick="window.location='/sadaya/register/perorangan'">👤 Perorangan</button>
-            </div>
+            <ul class="nav nav-pills nav-fill mb-4">
+                <li class="nav-item">
+                    <button class="nav-link active border-0 w-100 fw-bold" data-tab="badan_usaha">🏢 Badan Usaha</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link text-muted border-0 w-100 bg-transparent" data-tab="perorangan">👤 Perorangan</button>
+                </li>
+            </ul>
 
-            <h2 class="sadaya-auth-title">Daftar</h2>
-            <p class="sadaya-auth-subtitle">
-                Sudah memiliki akun?
-                <a href="/sadaya/login">Masuk</a>
-            </p>
+            <div class="text-center mb-4">
+                <h3 class="fw-bold text-dark mb-1">Daftar</h3>
+                <p class="text-muted small">
+                    Sudah memiliki akun?
+                    <a href="/sadaya/login" class="fw-bold text-primary text-decoration-none">Masuk</a>
+                </p>
+            </div>
 
             <!-- Global Error -->
             <t t-if="error and error.get('general')">
-                <div class="sadaya-alert sadaya-alert-error">
-                    ⚠ <t t-esc="error['general']"/>
+                <div class="alert alert-danger d-flex align-items-center gap-2 mb-3">
+                    <span>⚠</span> <t t-esc="error['general']"/>
                 </div>
             </t>
 
@@ -105,251 +104,273 @@
                 <input type="hidden" name="tipe_pendaftar" value="badan_usaha"/>
 
                 <!-- ===== INFORMASI BADAN USAHA ===== -->
-                <div class="sadaya-form-section">
-                    <div class="sadaya-form-section-title">🏢 Informasi Badan Usaha</div>
-                </div>
+                <h5 class="text-primary fw-bold border-bottom pb-2 my-4">🏢 Informasi Badan Usaha</h5>
 
                 <!-- Nama Badan Usaha -->
-                <div class="sadaya-form-group">
-                    <label class="sadaya-label" for="nama_badan_usaha">
-                        Nama Badan Usaha <span class="required">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark" for="nama_badan_usaha">
+                        Nama Badan Usaha <span class="text-danger">*</span>
                     </label>
                     <input type="text" id="nama_badan_usaha" name="nama_badan_usaha"
-                           class="sadaya-input"
-                           t-att-class="'sadaya-input is-invalid' if error and error.get('nama_badan_usaha') else 'sadaya-input'"
+                           class="form-control"
+                           t-att-class="'form-control is-invalid' if error and error.get('nama_badan_usaha') else 'form-control'"
                            placeholder="Nama Badan Usaha"
                            t-att-value="form_data.get('nama_badan_usaha', '')"
                            required="required"/>
                     <t t-if="error and error.get('nama_badan_usaha')">
-                        <div class="sadaya-field-error">⚠ <t t-esc="error['nama_badan_usaha']"/></div>
+                        <div class="text-danger small mt-1">⚠ <t t-esc="error['nama_badan_usaha']"/></div>
                     </t>
                 </div>
 
                 <!-- Email -->
-                <div class="sadaya-form-group">
-                    <label class="sadaya-label" for="email">
-                        Email <span class="required">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark" for="email">
+                        Email <span class="text-danger">*</span>
                     </label>
                     <input type="email" id="email" name="email"
-                           class="sadaya-input"
-                           t-att-class="'sadaya-input is-invalid' if error and error.get('email') else 'sadaya-input'"
+                           class="form-control"
+                           t-att-class="'form-control is-invalid' if error and error.get('email') else 'form-control'"
                            placeholder="Email"
                            t-att-value="form_data.get('email', '')"
                            required="required"/>
                     <t t-if="error and error.get('email')">
-                        <div class="sadaya-field-error">⚠ <t t-esc="error['email']"/></div>
+                        <div class="text-danger small mt-1">⚠ <t t-esc="error['email']"/></div>
                     </t>
                 </div>
 
                 <!-- Kata Sandi -->
-                <div class="sadaya-form-group">
-                    <label class="sadaya-label" for="password">
-                        Kata Sandi <span class="required">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark" for="password">
+                        Kata Sandi <span class="text-danger">*</span>
                     </label>
-                    <div style="position:relative;">
+                    <div class="input-group">
                         <input type="password" id="password" name="password"
-                               class="sadaya-input"
-                               t-att-class="'sadaya-input is-invalid' if error and error.get('password') else 'sadaya-input'"
+                               class="form-control"
+                               t-att-class="'form-control is-invalid' if error and error.get('password') else 'form-control'"
                                placeholder="Kata Sandi"
-                               required="required" style="padding-right:3rem;"/>
-                        <button type="button" data-sadaya-toggle-pwd="password"
-                                style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;">
-                            👁️
+                               required="required"/>
+                        <button class="btn btn-outline-secondary" type="button" data-sadaya-toggle-pwd="password">
+                            <i class="fa fa-eye"/>
                         </button>
                     </div>
-                    <div class="sadaya-pwd-strength" style="margin-top:0.5rem;">
-                        <div class="sadaya-pwd-bars">
-                            <div class="sadaya-pwd-bar"></div>
-                            <div class="sadaya-pwd-bar"></div>
-                            <div class="sadaya-pwd-bar"></div>
-                            <div class="sadaya-pwd-bar"></div>
+                    <div class="sadaya-pwd-strength mt-2">
+                        <div class="sadaya-pwd-bars d-flex gap-1 mb-1">
+                            <div class="sadaya-pwd-bar flex-grow-1" style="height: 4px; border-radius: 2px; background: #dee2e6;"></div>
+                            <div class="sadaya-pwd-bar flex-grow-1" style="height: 4px; border-radius: 2px; background: #dee2e6;"></div>
+                            <div class="sadaya-pwd-bar flex-grow-1" style="height: 4px; border-radius: 2px; background: #dee2e6;"></div>
+                            <div class="sadaya-pwd-bar flex-grow-1" style="height: 4px; border-radius: 2px; background: #dee2e6;"></div>
                         </div>
-                        <div class="sadaya-pwd-label sadaya-input-hint">
+                        <div class="sadaya-pwd-label text-muted small" style="font-size: 0.75rem;">
                             Harus berisi setidaknya satu angka dan satu huruf besar dan kecil, dan setidaknya 8 karakter atau lebih, contoh: 1Rstigapuluh
                         </div>
                     </div>
                     <t t-if="error and error.get('password')">
-                        <div class="sadaya-field-error">⚠ <t t-esc="error['password']"/></div>
+                        <div class="text-danger small mt-1">⚠ <t t-esc="error['password']"/></div>
                     </t>
                 </div>
 
                 <!-- Konfirmasi Kata Sandi -->
-                <div class="sadaya-form-group">
-                    <label class="sadaya-label" for="password_confirm">
-                        Konfirmasi Kata Sandi <span class="required">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark" for="password_confirm">
+                        Konfirmasi Kata Sandi <span class="text-danger">*</span>
                     </label>
-                    <div style="position:relative;">
+                    <div class="input-group">
                         <input type="password" id="password_confirm" name="password_confirm"
-                               class="sadaya-input"
-                               t-att-class="'sadaya-input is-invalid' if error and error.get('password_confirm') else 'sadaya-input'"
+                               class="form-control"
+                               t-att-class="'form-control is-invalid' if error and error.get('password_confirm') else 'form-control'"
                                placeholder="Konfirmasi Kata Sandi"
-                               required="required" style="padding-right:3rem;"/>
-                        <button type="button" data-sadaya-toggle-pwd="password_confirm"
-                                style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;">
-                            👁️
+                               required="required"/>
+                        <button class="btn btn-outline-secondary" type="button" data-sadaya-toggle-pwd="password_confirm">
+                            <i class="fa fa-eye"/>
                         </button>
                     </div>
                     <t t-if="error and error.get('password_confirm')">
-                        <div class="sadaya-field-error">⚠ <t t-esc="error['password_confirm']"/></div>
+                        <div class="text-danger small mt-1">⚠ <t t-esc="error['password_confirm']"/></div>
                     </t>
                 </div>
 
                 <!-- Telepon Badan Usaha -->
-                <div class="sadaya-form-group">
-                    <label class="sadaya-label" for="telepon_badan_usaha">
-                        Telepon Badan Usaha <span class="required">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark" for="telepon_badan_usaha">
+                        Telepon Badan Usaha <span class="text-danger">*</span>
                     </label>
                     <input type="tel" id="telepon_badan_usaha" name="telepon_badan_usaha"
-                           class="sadaya-input"
-                           t-att-class="'sadaya-input is-invalid' if error and error.get('telepon_badan_usaha') else 'sadaya-input'"
+                           class="form-control"
+                           t-att-class="'form-control is-invalid' if error and error.get('telepon_badan_usaha') else 'form-control'"
                            placeholder="+628123456789"
                            t-att-value="form_data.get('telepon_badan_usaha', '')"
                            data-sadaya-phone="1"
                            required="required"/>
-                    <div class="sadaya-input-hint">Contoh: +628123456789</div>
+                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">Contoh: +628123456789</div>
                     <t t-if="error and error.get('telepon_badan_usaha')">
-                        <div class="sadaya-field-error">⚠ <t t-esc="error['telepon_badan_usaha']"/></div>
+                        <div class="text-danger small mt-1">⚠ <t t-esc="error['telepon_badan_usaha']"/></div>
                     </t>
                 </div>
 
                 <!-- ===== NARAHUBUNG ===== -->
-                <div class="sadaya-form-section">
-                    <div class="sadaya-form-section-title">👤 Informasi Narahubung</div>
-                </div>
+                <h5 class="text-primary fw-bold border-bottom pb-2 my-4">👤 Informasi Narahubung</h5>
 
                 <!-- Nama Lengkap Narahubung -->
-                <div class="sadaya-form-group">
-                    <label class="sadaya-label" for="nama_lengkap">
-                        Nama Lengkap Narahubung <span class="required">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark" for="nama_lengkap">
+                        Nama Lengkap Narahubung <span class="text-danger">*</span>
                     </label>
                     <input type="text" id="nama_lengkap" name="nama_lengkap"
-                           class="sadaya-input"
-                           t-att-class="'sadaya-input is-invalid' if error and error.get('nama_lengkap') else 'sadaya-input'"
+                           class="form-control"
+                           t-att-class="'form-control is-invalid' if error and error.get('nama_lengkap') else 'form-control'"
                            placeholder="Nama Lengkap Narahubung"
                            t-att-value="form_data.get('nama_lengkap', '')"
                            required="required"/>
                     <t t-if="error and error.get('nama_lengkap')">
-                        <div class="sadaya-field-error">⚠ <t t-esc="error['nama_lengkap']"/></div>
+                        <div class="text-danger small mt-1">⚠ <t t-esc="error['nama_lengkap']"/></div>
                     </t>
                 </div>
 
                 <!-- WhatsApp Narahubung -->
-                <div class="sadaya-form-group">
-                    <label class="sadaya-label" for="whatsapp_narahubung">
-                        Nomor WhatsApp Narahubung <span class="required">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark" for="whatsapp_narahubung">
+                        Nomor WhatsApp Narahubung <span class="text-danger">*</span>
                     </label>
                     <input type="tel" id="whatsapp_narahubung" name="whatsapp_narahubung"
-                           class="sadaya-input"
-                           t-att-class="'sadaya-input is-invalid' if error and error.get('whatsapp_narahubung') else 'sadaya-input'"
+                           class="form-control"
+                           t-att-class="'form-control is-invalid' if error and error.get('whatsapp_narahubung') else 'form-control'"
                            placeholder="+628123456789"
                            t-att-value="form_data.get('whatsapp_narahubung', '')"
                            data-sadaya-phone="1"
                            required="required"/>
-                    <div class="sadaya-input-hint">Contoh: +628123456789</div>
+                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">Contoh: +628123456789</div>
                     <t t-if="error and error.get('whatsapp_narahubung')">
-                        <div class="sadaya-field-error">⚠ <t t-esc="error['whatsapp_narahubung']"/></div>
+                        <div class="text-danger small mt-1">⚠ <t t-esc="error['whatsapp_narahubung']"/></div>
                     </t>
                 </div>
 
                 <!-- NIK Narahubung -->
-                <div class="sadaya-form-group">
-                    <label class="sadaya-label" for="nik_narahubung">
-                        Nomor NIK Narahubung <span class="required">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark" for="nik_narahubung">
+                        Nomor NIK Narahubung <span class="text-danger">*</span>
                     </label>
                     <input type="text" id="nik_narahubung" name="nik_narahubung"
-                           class="sadaya-input"
-                           t-att-class="'sadaya-input is-invalid' if error and error.get('nik_narahubung') else 'sadaya-input'"
+                           class="form-control"
+                           t-att-class="'form-control is-invalid' if error and error.get('nik_narahubung') else 'form-control'"
                            placeholder="Nomor NIK Narahubung"
                            t-att-value="form_data.get('nik_narahubung', '')"
                            data-sadaya-nik="1"
                            maxlength="16"
                            required="required"/>
-                    <div class="sadaya-input-hint">Panjang NIK harus terdiri dari 16 digit.</div>
+                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">Panjang NIK harus terdiri dari 16 digit.</div>
                     <t t-if="error and error.get('nik_narahubung')">
-                        <div class="sadaya-field-error">⚠ <t t-esc="error['nik_narahubung']"/></div>
+                        <div class="text-danger small mt-1">⚠ <t t-esc="error['nik_narahubung']"/></div>
                     </t>
                 </div>
 
                 <!-- Swafoto Narahubung (KTP) -->
-                <div class="sadaya-form-group">
-                    <label class="sadaya-label">
-                        Swafoto Narahubung (Memegang KTP) <span class="required">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark">
+                        Swafoto Narahubung (Memegang KTP) <span class="text-danger">*</span>
                     </label>
-                    <div class="sadaya-file-upload" t-att-class="'sadaya-file-upload is-invalid' if error and error.get('swafoto_ktp') else 'sadaya-file-upload'">
-                        <input type="file" id="swafoto_ktp" name="swafoto_ktp"
-                               accept=".jpg,.jpeg,.png" required="required"/>
-                        <div class="sadaya-file-upload-icon">📸</div>
-                        <div class="sadaya-file-upload-text">
-                            <strong>Pilih file</strong> atau drag &amp; drop<br/>
-                            <small style="color:var(--sadaya-text-muted)">JPEG/JPG/PNG • Maks. 10 MB</small>
+                    <div class="sadaya-file-container d-flex align-items-center gap-2">
+                        <!-- State Normal -->
+                        <div class="upload-state-normal position-relative" style="display: inline-block;">
+                            <input type="file" id="swafoto_ktp" name="swafoto_ktp"
+                                   accept=".jpg,.jpeg,.png" required="required"
+                                   style="position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 2;"/>
+                            <button type="button" t-attf-class="btn btn-outline-light border text-primary d-flex align-items-center gap-2 px-3 py-2 fw-medium bg-white #{'is-invalid border-danger' if error and error.get('swafoto_ktp') else ''}" style="border-color: #dee2e6 !important;">
+                                <i class="fa fa-upload"/> Tambahkan file
+                            </button>
+                        </div>
+                        
+                        <!-- State Uploaded -->
+                        <div class="upload-state-uploaded d-none d-flex align-items-center gap-2">
+                            <div class="d-flex align-items-center gap-2 border rounded px-2 py-1 bg-white" style="border-color: #dee2e6; max-width: 250px;">
+                                <span class="badge bg-danger p-1 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+                                    <i class="fa fa-image text-white"/>
+                                </span>
+                                <span class="file-name-label text-truncate text-primary fw-medium small" style="max-width: 150px;">nama_file.jpg</span>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-secondary border-0 p-1 d-flex align-items-center justify-content-center clear-file-btn" style="width: 24px; height: 24px;">
+                                <i class="fa fa-times"/>
+                            </button>
                         </div>
                     </div>
-                    <div class="sadaya-file-preview" id="swafoto_ktp_preview"></div>
+                    <div class="sadaya-file-preview small text-success mt-1 fw-bold" id="swafoto_ktp_preview"></div>
                     <t t-if="error and error.get('swafoto_ktp')">
-                        <div class="sadaya-field-error" id="swafoto_error">⚠ <t t-esc="error['swafoto_ktp']"/></div>
+                        <div class="text-danger small mt-1" id="swafoto_error">⚠ <t t-esc="error['swafoto_ktp']"/></div>
                     </t>
                     <t t-else="">
-                        <div id="swafoto_error" class="sadaya-field-error"></div>
+                        <div id="swafoto_error" class="text-danger small mt-1"></div>
                     </t>
-                    <div class="sadaya-input-hint">
+                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">
                         Harap unggah dokumen dengan ekstensi JPEG/JPG/PNG dengan ukuran maksimal 10 mb
                     </div>
                 </div>
 
                 <!-- ===== NPWP (Opsional) ===== -->
-                <div class="sadaya-form-section">
-                    <div class="sadaya-form-section-title">📄 Dokumen NPWP <span style="font-weight:400;color:var(--sadaya-text-muted);font-size:0.75rem;">(Opsional)</span></div>
-                </div>
+                <h5 class="text-primary fw-bold border-bottom pb-2 my-4">📄 Dokumen NPWP <span class="text-muted fw-normal small">(Opsional)</span></h5>
 
                 <!-- Nomor NPWP -->
-                <div class="sadaya-form-group">
-                    <label class="sadaya-label" for="npwp_perusahaan">Nomor NPWP Perusahaan</label>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark" for="npwp_perusahaan">Nomor NPWP Perusahaan</label>
                     <input type="text" id="npwp_perusahaan" name="npwp_perusahaan"
-                           class="sadaya-input"
-                           t-att-class="'sadaya-input is-invalid' if error and error.get('npwp_perusahaan') else 'sadaya-input'"
+                           class="form-control"
+                           t-att-class="'form-control is-invalid' if error and error.get('npwp_perusahaan') else 'form-control'"
                            placeholder="16 digit NPWP"
                            t-att-value="form_data.get('npwp_perusahaan', '')"
                            data-sadaya-npwp="1"
                            maxlength="16"/>
-                    <div class="sadaya-input-hint">Panjang NPWP harus terdiri dari 16 digit.</div>
+                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">Panjang NPWP harus terdiri dari 16 digit.</div>
                     <t t-if="error and error.get('npwp_perusahaan')">
-                        <div class="sadaya-field-error">⚠ <t t-esc="error['npwp_perusahaan']"/></div>
+                        <div class="text-danger small mt-1">⚠ <t t-esc="error['npwp_perusahaan']"/></div>
                     </t>
                 </div>
 
                 <!-- Bukti NPWP -->
-                <div class="sadaya-form-group">
-                    <label class="sadaya-label">
-                        Bukti NPWP <span class="required">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark">
+                        Bukti NPWP
                     </label>
-                    <div class="sadaya-file-upload" t-att-class="'sadaya-file-upload is-invalid' if error and error.get('bukti_npwp') else 'sadaya-file-upload'">
-                        <input type="file" id="bukti_npwp" name="bukti_npwp" accept=".pdf"/>
-                        <div class="sadaya-file-upload-icon">📄</div>
-                        <div class="sadaya-file-upload-text">
-                            <strong>Pilih file PDF</strong> atau drag &amp; drop<br/>
-                            <small style="color:var(--sadaya-text-muted)">PDF • Maks. 10 MB</small>
+                    <div class="sadaya-file-container d-flex align-items-center gap-2">
+                        <!-- State Normal -->
+                        <div class="upload-state-normal position-relative" style="display: inline-block;">
+                            <input type="file" id="bukti_npwp" name="bukti_npwp" accept=".pdf"
+                                   style="position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 2;"/>
+                            <button type="button" t-attf-class="btn btn-outline-light border text-primary d-flex align-items-center gap-2 px-3 py-2 fw-medium bg-white #{'is-invalid border-danger' if error and error.get('bukti_npwp') else ''}" style="border-color: #dee2e6 !important;">
+                                <i class="fa fa-upload"/> Tambahkan file
+                            </button>
+                        </div>
+
+                        <!-- State Uploaded -->
+                        <div class="upload-state-uploaded d-none d-flex align-items-center gap-2">
+                            <div class="d-flex align-items-center gap-2 border rounded px-2 py-1 bg-white" style="border-color: #dee2e6; max-width: 250px;">
+                                <span class="badge bg-danger p-1 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+                                    <i class="fa fa-file-pdf text-white"/>
+                                </span>
+                                <span class="file-name-label text-truncate text-primary fw-medium small" style="max-width: 150px;">nama_file.pdf</span>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-secondary border-0 p-1 d-flex align-items-center justify-content-center clear-file-btn" style="width: 24px; height: 24px;">
+                                <i class="fa fa-times"/>
+                            </button>
                         </div>
                     </div>
-                    <div class="sadaya-file-preview" id="bukti_npwp_preview"></div>
+                    <div class="sadaya-file-preview small text-success mt-1 fw-bold" id="bukti_npwp_preview"></div>
                     <t t-if="error and error.get('bukti_npwp')">
-                        <div class="sadaya-field-error" id="bukti_npwp_error">⚠ <t t-esc="error['bukti_npwp']"/></div>
+                        <div class="text-danger small mt-1" id="bukti_npwp_error">⚠ <t t-esc="error['bukti_npwp']"/></div>
                     </t>
                     <t t-else="">
-                        <div id="bukti_npwp_error" class="sadaya-field-error"></div>
+                        <div id="bukti_npwp_error" class="text-danger small mt-1"></div>
                     </t>
-                    <div class="sadaya-input-hint">
+                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">
                         Harap unggah dokumen dengan ekstensi PDF dengan ukuran maksimal 10 mb
                     </div>
                 </div>
 
                 <!-- Submit -->
-                <div style="margin-top:1.5rem;">
-                    <button type="submit" class="sadaya-btn sadaya-btn-primary sadaya-btn-full sadaya-btn-lg sadaya-form-submit">
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary w-100 btn-lg fw-bold sadaya-form-submit">
                         Daftar
                     </button>
-                    <div style="text-align:center; margin-top:1rem; font-size:0.875rem; color:var(--sadaya-text-muted);">
+                    <div class="text-center mt-3 small text-muted">
                         Sudah memiliki akun?
-                        <a href="/sadaya/login" style="color:var(--sadaya-primary); font-weight:600;">Masuk</a>
+                        <a href="/sadaya/login" class="fw-bold text-primary text-decoration-none">Masuk</a>
                     </div>
                 </div>
             </form>
@@ -364,21 +385,27 @@
             <t t-set="title">Daftar Perorangan</t>
 
             <!-- Tabs -->
-            <div class="sadaya-auth-tabs">
-                <button class="sadaya-auth-tab" data-tab="badan_usaha" onclick="window.location='/sadaya/register/badan-usaha'">🏢 Badan Usaha</button>
-                <button class="sadaya-auth-tab active" data-tab="perorangan">👤 Perorangan</button>
-            </div>
+            <ul class="nav nav-pills nav-fill mb-4">
+                <li class="nav-item">
+                    <button class="nav-link text-muted border-0 w-100 bg-transparent" data-tab="badan_usaha">🏢 Badan Usaha</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link active border-0 w-100 fw-bold" data-tab="perorangan">👤 Perorangan</button>
+                </li>
+            </ul>
 
-            <h2 class="sadaya-auth-title">Daftar</h2>
-            <p class="sadaya-auth-subtitle">
-                Sudah memiliki akun?
-                <a href="/sadaya/login">Masuk</a>
-            </p>
+            <div class="text-center mb-4">
+                <h3 class="fw-bold text-dark mb-1">Daftar</h3>
+                <p class="text-muted small">
+                    Sudah memiliki akun?
+                    <a href="/sadaya/login" class="fw-bold text-primary text-decoration-none">Masuk</a>
+                </p>
+            </div>
 
             <!-- Global Error -->
             <t t-if="error and error.get('general')">
-                <div class="sadaya-alert sadaya-alert-error">
-                    ⚠ <t t-esc="error['general']"/>
+                <div class="alert alert-danger d-flex align-items-center gap-2 mb-3">
+                    <span>⚠</span> <t t-esc="error['general']"/>
                 </div>
             </t>
 
@@ -388,205 +415,231 @@
                 <input type="hidden" name="tipe_pendaftar" value="perorangan"/>
 
                 <!-- Nama -->
-                <div class="sadaya-form-group">
-                    <label class="sadaya-label" for="nama_lengkap">
-                        Nama <span class="required">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark" for="nama_lengkap">
+                        Nama <span class="text-danger">*</span>
                     </label>
                     <input type="text" id="nama_lengkap" name="nama_lengkap"
-                           class="sadaya-input"
-                           t-att-class="'sadaya-input is-invalid' if error and error.get('nama_lengkap') else 'sadaya-input'"
+                           class="form-control"
+                           t-att-class="'form-control is-invalid' if error and error.get('nama_lengkap') else 'form-control'"
                            placeholder="Nama Lengkap"
                            t-att-value="form_data.get('nama_lengkap', '')"
                            required="required"/>
                     <t t-if="error and error.get('nama_lengkap')">
-                        <div class="sadaya-field-error">⚠ <t t-esc="error['nama_lengkap']"/></div>
+                        <div class="text-danger small mt-1">⚠ <t t-esc="error['nama_lengkap']"/></div>
                     </t>
                 </div>
 
                 <!-- Email -->
-                <div class="sadaya-form-group">
-                    <label class="sadaya-label" for="email">
-                        Email <span class="required">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark" for="email">
+                        Email <span class="text-danger">*</span>
                     </label>
                     <input type="email" id="email" name="email"
-                           class="sadaya-input"
-                           t-att-class="'sadaya-input is-invalid' if error and error.get('email') else 'sadaya-input'"
+                           class="form-control"
+                           t-att-class="'form-control is-invalid' if error and error.get('email') else 'form-control'"
                            placeholder="Email"
                            t-att-value="form_data.get('email', '')"
                            required="required"/>
                     <t t-if="error and error.get('email')">
-                        <div class="sadaya-field-error">⚠ <t t-esc="error['email']"/></div>
+                        <div class="text-danger small mt-1">⚠ <t t-esc="error['email']"/></div>
                     </t>
                 </div>
 
                 <!-- Kata Sandi -->
-                <div class="sadaya-form-group">
-                    <label class="sadaya-label" for="password">
-                        Kata Sandi <span class="required">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark" for="password">
+                        Kata Sandi <span class="text-danger">*</span>
                     </label>
-                    <div style="position:relative;">
+                    <div class="input-group">
                         <input type="password" id="password" name="password"
-                               class="sadaya-input"
-                               t-att-class="'sadaya-input is-invalid' if error and error.get('password') else 'sadaya-input'"
+                               class="form-control"
+                               t-att-class="'form-control is-invalid' if error and error.get('password') else 'form-control'"
                                placeholder="Kata Sandi"
-                               required="required" style="padding-right:3rem;"/>
-                        <button type="button" data-sadaya-toggle-pwd="password"
-                                style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;">
-                            👁️
+                               required="required"/>
+                        <button class="btn btn-outline-secondary" type="button" data-sadaya-toggle-pwd="password">
+                            <i class="fa fa-eye"/>
                         </button>
                     </div>
-                    <div class="sadaya-pwd-strength" style="margin-top:0.5rem;">
-                        <div class="sadaya-pwd-bars">
-                            <div class="sadaya-pwd-bar"></div>
-                            <div class="sadaya-pwd-bar"></div>
-                            <div class="sadaya-pwd-bar"></div>
-                            <div class="sadaya-pwd-bar"></div>
+                    <div class="sadaya-pwd-strength mt-2">
+                        <div class="sadaya-pwd-bars d-flex gap-1 mb-1">
+                            <div class="sadaya-pwd-bar flex-grow-1" style="height: 4px; border-radius: 2px; background: #dee2e6;"></div>
+                            <div class="sadaya-pwd-bar flex-grow-1" style="height: 4px; border-radius: 2px; background: #dee2e6;"></div>
+                            <div class="sadaya-pwd-bar flex-grow-1" style="height: 4px; border-radius: 2px; background: #dee2e6;"></div>
+                            <div class="sadaya-pwd-bar flex-grow-1" style="height: 4px; border-radius: 2px; background: #dee2e6;"></div>
                         </div>
-                        <div class="sadaya-pwd-label sadaya-input-hint">
+                        <div class="sadaya-pwd-label text-muted small" style="font-size: 0.75rem;">
                             Harus berisi setidaknya satu angka dan satu huruf besar dan kecil, dan setidaknya 8 karakter atau lebih, contoh: 1Rstigapuluh
                         </div>
                     </div>
                     <t t-if="error and error.get('password')">
-                        <div class="sadaya-field-error">⚠ <t t-esc="error['password']"/></div>
+                        <div class="text-danger small mt-1">⚠ <t t-esc="error['password']"/></div>
                     </t>
                 </div>
 
                 <!-- Konfirmasi Kata Sandi -->
-                <div class="sadaya-form-group">
-                    <label class="sadaya-label" for="password_confirm">
-                        Konfirmasi Kata Sandi <span class="required">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark" for="password_confirm">
+                        Konfirmasi Kata Sandi <span class="text-danger">*</span>
                     </label>
-                    <div style="position:relative;">
+                    <div class="input-group">
                         <input type="password" id="password_confirm" name="password_confirm"
-                               class="sadaya-input"
-                               t-att-class="'sadaya-input is-invalid' if error and error.get('password_confirm') else 'sadaya-input'"
+                               class="form-control"
+                               t-att-class="'form-control is-invalid' if error and error.get('password_confirm') else 'form-control'"
                                placeholder="Konfirmasi Kata Sandi"
-                               required="required" style="padding-right:3rem;"/>
-                        <button type="button" data-sadaya-toggle-pwd="password_confirm"
-                                style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;">
-                            👁️
+                               required="required"/>
+                        <button class="btn btn-outline-secondary" type="button" data-sadaya-toggle-pwd="password_confirm">
+                            <i class="fa fa-eye"/>
                         </button>
                     </div>
                     <t t-if="error and error.get('password_confirm')">
-                        <div class="sadaya-field-error">⚠ <t t-esc="error['password_confirm']"/></div>
+                        <div class="text-danger small mt-1">⚠ <t t-esc="error['password_confirm']"/></div>
                     </t>
                 </div>
 
                 <!-- Nomor WhatsApp -->
-                <div class="sadaya-form-group">
-                    <label class="sadaya-label" for="whatsapp_narahubung">
-                        Nomor WhatsApp <span class="required">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark" for="whatsapp_narahubung">
+                        Nomor WhatsApp <span class="text-danger">*</span>
                     </label>
                     <input type="tel" id="whatsapp_narahubung" name="whatsapp_narahubung"
-                           class="sadaya-input"
-                           t-att-class="'sadaya-input is-invalid' if error and error.get('whatsapp_narahubung') else 'sadaya-input'"
+                           class="form-control"
+                           t-att-class="'form-control is-invalid' if error and error.get('whatsapp_narahubung') else 'form-control'"
                            placeholder="+628123456789"
                            t-att-value="form_data.get('whatsapp_narahubung', '')"
                            data-sadaya-phone="1"
                            required="required"/>
-                    <div class="sadaya-input-hint">Minimal 12 Digit</div>
+                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">Minimal 12 Digit</div>
                     <t t-if="error and error.get('whatsapp_narahubung')">
-                        <div class="sadaya-field-error">⚠ <t t-esc="error['whatsapp_narahubung']"/></div>
+                        <div class="text-danger small mt-1">⚠ <t t-esc="error['whatsapp_narahubung']"/></div>
                     </t>
                 </div>
 
                 <!-- NIK -->
-                <div class="sadaya-form-group">
-                    <label class="sadaya-label" for="nik_narahubung">
-                        NIK <span class="required">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark" for="nik_narahubung">
+                        NIK <span class="text-danger">*</span>
                     </label>
                     <input type="text" id="nik_narahubung" name="nik_narahubung"
-                           class="sadaya-input"
-                           t-att-class="'sadaya-input is-invalid' if error and error.get('nik_narahubung') else 'sadaya-input'"
+                           class="form-control"
+                           t-att-class="'form-control is-invalid' if error and error.get('nik_narahubung') else 'form-control'"
                            placeholder="16 digit NIK"
                            t-att-value="form_data.get('nik_narahubung', '')"
                            data-sadaya-nik="1"
                            maxlength="16"
                            required="required"/>
-                    <div class="sadaya-input-hint">Minimal 16 Digit</div>
+                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">Minimal 16 Digit</div>
                     <t t-if="error and error.get('nik_narahubung')">
-                        <div class="sadaya-field-error">⚠ <t t-esc="error['nik_narahubung']"/></div>
+                        <div class="text-danger small mt-1">⚠ <t t-esc="error['nik_narahubung']"/></div>
                     </t>
                 </div>
 
                 <!-- Swafoto (Memegang KTP) -->
-                <div class="sadaya-form-group">
-                    <label class="sadaya-label">
-                        Swafoto (Memegang KTP) <span class="required">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark">
+                        Swafoto (Memegang KTP) <span class="text-danger">*</span>
                     </label>
-                    <div class="sadaya-file-upload" t-att-class="'sadaya-file-upload is-invalid' if error and error.get('swafoto_ktp') else 'sadaya-file-upload'">
-                        <input type="file" id="swafoto_ktp" name="swafoto_ktp"
-                               accept=".jpg,.jpeg,.png" required="required"/>
-                        <div class="sadaya-file-upload-icon">📸</div>
-                        <div class="sadaya-file-upload-text">
-                            <strong>Pilih file</strong> atau drag &amp; drop<br/>
-                            <small style="color:var(--sadaya-text-muted)">JPEG/JPG/PNG • Maks. 10 MB</small>
+                    <div class="sadaya-file-container d-flex align-items-center gap-2">
+                        <!-- State Normal -->
+                        <div class="upload-state-normal position-relative" style="display: inline-block;">
+                            <input type="file" id="swafoto_ktp" name="swafoto_ktp"
+                                   accept=".jpg,.jpeg,.png" required="required"
+                                   style="position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 2;"/>
+                            <button type="button" t-attf-class="btn btn-outline-light border text-primary d-flex align-items-center gap-2 px-3 py-2 fw-medium bg-white #{'is-invalid border-danger' if error and error.get('swafoto_ktp') else ''}" style="border-color: #dee2e6 !important;">
+                                <i class="fa fa-upload"/> Tambahkan file
+                            </button>
+                        </div>
+                        
+                        <!-- State Uploaded -->
+                        <div class="upload-state-uploaded d-none d-flex align-items-center gap-2">
+                            <div class="d-flex align-items-center gap-2 border rounded px-2 py-1 bg-white" style="border-color: #dee2e6; max-width: 250px;">
+                                <span class="badge bg-danger p-1 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+                                    <i class="fa fa-image text-white"/>
+                                </span>
+                                <span class="file-name-label text-truncate text-primary fw-medium small" style="max-width: 150px;">nama_file.jpg</span>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-secondary border-0 p-1 d-flex align-items-center justify-content-center clear-file-btn" style="width: 24px; height: 24px;">
+                                <i class="fa fa-times"/>
+                            </button>
                         </div>
                     </div>
-                    <div class="sadaya-file-preview" id="swafoto_ktp_preview"></div>
+                    <div class="sadaya-file-preview small text-success mt-1 fw-bold" id="swafoto_ktp_preview"></div>
                     <t t-if="error and error.get('swafoto_ktp')">
-                        <div class="sadaya-field-error" id="swafoto_error">⚠ <t t-esc="error['swafoto_ktp']"/></div>
+                        <div class="text-danger small mt-1" id="swafoto_error">⚠ <t t-esc="error['swafoto_ktp']"/></div>
                     </t>
                     <t t-else="">
-                        <div id="swafoto_error" class="sadaya-field-error"></div>
+                        <div id="swafoto_error" class="text-danger small mt-1"></div>
                     </t>
-                    <div class="sadaya-input-hint">
+                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">
                         Harap unggah dokumen dengan ekstensi JPEG/JPG/PNG dengan ukuran maksimal 10 mb
                     </div>
                 </div>
 
                 <!-- NPWP Opsional -->
-                <div class="sadaya-form-section">
-                    <div class="sadaya-form-section-title">📄 NPWP <span style="font-weight:400;color:var(--sadaya-text-muted);font-size:0.75rem;">(Opsional)</span></div>
-                </div>
+                <h5 class="text-primary fw-bold border-bottom pb-2 my-4">📄 NPWP <span class="text-muted fw-normal small">(Opsional)</span></h5>
 
-                <div class="sadaya-form-group">
-                    <label class="sadaya-label" for="npwp_perusahaan">Nomor NPWP</label>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark" for="npwp_perusahaan">Nomor NPWP</label>
                     <input type="text" id="npwp_perusahaan" name="npwp_perusahaan"
-                           class="sadaya-input"
-                           t-att-class="'sadaya-input is-invalid' if error and error.get('npwp_perusahaan') else 'sadaya-input'"
+                           class="form-control"
+                           t-att-class="'form-control is-invalid' if error and error.get('npwp_perusahaan') else 'form-control'"
                            placeholder="16 digit NPWP"
                            t-att-value="form_data.get('npwp_perusahaan', '')"
                            data-sadaya-npwp="1"
                            maxlength="16"/>
-                    <div class="sadaya-input-hint">Panjang NPWP harus terdiri dari 16 digit.</div>
+                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">Panjang NPWP harus terdiri dari 16 digit.</div>
                     <t t-if="error and error.get('npwp_perusahaan')">
-                        <div class="sadaya-field-error">⚠ <t t-esc="error['npwp_perusahaan']"/></div>
+                        <div class="text-danger small mt-1">⚠ <t t-esc="error['npwp_perusahaan']"/></div>
                     </t>
                 </div>
 
-                <div class="sadaya-form-group">
-                    <label class="sadaya-label">
-                        Bukti NPWP <span class="required">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark">
+                        Bukti NPWP
                     </label>
-                    <div class="sadaya-file-upload" t-att-class="'sadaya-file-upload is-invalid' if error and error.get('bukti_npwp') else 'sadaya-file-upload'">
-                        <input type="file" id="bukti_npwp" name="bukti_npwp" accept=".pdf"/>
-                        <div class="sadaya-file-upload-icon">📄</div>
-                        <div class="sadaya-file-upload-text">
-                            <strong>Pilih file PDF</strong> atau drag &amp; drop<br/>
-                            <small style="color:var(--sadaya-text-muted)">PDF • Maks. 10 MB</small>
+                    <div class="sadaya-file-container d-flex align-items-center gap-2">
+                        <!-- State Normal -->
+                        <div class="upload-state-normal position-relative" style="display: inline-block;">
+                            <input type="file" id="bukti_npwp" name="bukti_npwp" accept=".pdf"
+                                   style="position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 2;"/>
+                            <button type="button" t-attf-class="btn btn-outline-light border text-primary d-flex align-items-center gap-2 px-3 py-2 fw-medium bg-white #{'is-invalid border-danger' if error and error.get('bukti_npwp') else ''}" style="border-color: #dee2e6 !important;">
+                                <i class="fa fa-upload"/> Tambahkan file
+                            </button>
+                        </div>
+
+                        <!-- State Uploaded -->
+                        <div class="upload-state-uploaded d-none d-flex align-items-center gap-2">
+                            <div class="d-flex align-items-center gap-2 border rounded px-2 py-1 bg-white" style="border-color: #dee2e6; max-width: 250px;">
+                                <span class="badge bg-danger p-1 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+                                    <i class="fa fa-file-pdf text-white"/>
+                                </span>
+                                <span class="file-name-label text-truncate text-primary fw-medium small" style="max-width: 150px;">nama_file.pdf</span>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-secondary border-0 p-1 d-flex align-items-center justify-content-center clear-file-btn" style="width: 24px; height: 24px;">
+                                <i class="fa fa-times"/>
+                            </button>
                         </div>
                     </div>
-                    <div class="sadaya-file-preview" id="bukti_npwp_preview"></div>
+                    <div class="sadaya-file-preview small text-success mt-1 fw-bold" id="bukti_npwp_preview"></div>
                     <t t-if="error and error.get('bukti_npwp')">
-                        <div class="sadaya-field-error" id="bukti_npwp_error">⚠ <t t-esc="error['bukti_npwp']"/></div>
+                        <div class="text-danger small mt-1" id="bukti_npwp_error">⚠ <t t-esc="error['bukti_npwp']"/></div>
                     </t>
                     <t t-else="">
-                        <div id="bukti_npwp_error" class="sadaya-field-error"></div>
+                        <div id="bukti_npwp_error" class="text-danger small mt-1"></div>
                     </t>
-                    <div class="sadaya-input-hint">
+                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">
                         Harap unggah dokumen dengan ekstensi PDF dengan ukuran maksimal 10 mb
                     </div>
                 </div>
 
                 <!-- Submit -->
-                <div style="margin-top:1.5rem;">
-                    <button type="submit" class="sadaya-btn sadaya-btn-primary sadaya-btn-full sadaya-btn-lg sadaya-form-submit">
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary w-100 btn-lg fw-bold sadaya-form-submit">
                         Daftar
                     </button>
-                    <div style="text-align:center; margin-top:1rem; font-size:0.875rem; color:var(--sadaya-text-muted);">
+                    <div class="text-center mt-3 small text-muted">
                         Sudah memiliki akun?
-                        <a href="/sadaya/login" style="color:var(--sadaya-primary); font-weight:600;">Masuk</a>
+                        <a href="/sadaya/login" class="fw-bold text-primary text-decoration-none">Masuk</a>
                     </div>
                 </div>
             </form>
@@ -600,15 +653,15 @@
         <t t-call="sadaya_auth.sadaya_layout_auth">
             <t t-set="title">Registrasi Berhasil</t>
 
-            <div style="text-align:center; padding: 2rem 0;">
-                <div style="font-size:4rem; margin-bottom:1rem;">✅</div>
-                <h2 class="sadaya-auth-title">Pendaftaran Berhasil!</h2>
-                <p style="color:var(--sadaya-text-muted); margin-bottom:1.5rem;">
+            <div class="text-center py-4">
+                <div class="fs-1 mb-3">✅</div>
+                <h3 class="fw-bold text-dark mb-2">Pendaftaran Berhasil!</h3>
+                <p class="text-muted small mb-4">
                     Terima kasih telah mendaftar di Sadaya.<br/>
                     Akun Anda sedang dalam proses verifikasi.
                 </p>
 
-                <div class="sadaya-alert sadaya-alert-info" style="text-align:left;">
+                <div class="alert alert-info text-start small">
                     📧 Kami akan menghubungi Anda melalui email
                     <t t-if="email">
                         <strong> <t t-esc="email"/> </strong>
@@ -616,8 +669,8 @@
                     setelah proses verifikasi selesai (biasanya 1-3 hari kerja).
                 </div>
 
-                <div style="margin-top:1.5rem;">
-                    <a href="/sadaya/login" class="sadaya-btn sadaya-btn-primary sadaya-btn-lg">
+                <div class="mt-4">
+                    <a href="/sadaya/login" class="btn btn-primary btn-lg fw-bold px-4">
                         Ke Halaman Login
                     </a>
                 </div>

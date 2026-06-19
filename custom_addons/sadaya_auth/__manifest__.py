@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Sadaya Auth - Register Login Logout',
-    'version': '19.0.1.0.0',
+    'version': '19.0.2.0.0',
     'category': 'Website',
     'summary': 'Custom authentication module for Sadaya application with Badan Usaha & Perorangan registration',
     'description': """

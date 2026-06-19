@@ -116,11 +116,11 @@ class SadayaTawarPaket(models.Model):
 
     def action_route_paket(self):
         for rec in self:
-            # 1. Validasi Status (Diambil dari branch main)
+            # 1. Validasi Status
             if rec.state not in ['published', 'eval']:
                 raise UserError("Paket hanya dapat diteruskan ke modul eksekusi jika sudah dipublikasikan atau dievaluasi.")
 
-            # 2. Tarik Data Sumber RUP (Diambil dari branch sadaya-tawar)
+            # 2. Tarik Data Sumber RUP
             rup = self.env['rancang.rup'].sudo().search([
                 ('name', '=', rec.name),
                 ('nilai_pagu', '=', rec.nilai_hps),
@@ -128,9 +128,8 @@ class SadayaTawarPaket(models.Model):
 
             if not rup:
                 raise UserError(
-                    "Data sumber RUP tidak ditemukan untuk paket '%s'. "
+                    f"Data sumber RUP tidak ditemukan untuk paket '{rec.name}'. "
                     "Pastikan paket ini berasal dari Sadaya Rancang."
-                    % rec.name
                 )
 
             unit_pemohon = False
@@ -161,52 +160,67 @@ class SadayaTawarPaket(models.Model):
             )
             keterangan_gabungan = f"{rec.deskripsi or ''}\n\n{info_rup}".strip()
 
-            # 4. Routing Berdasarkan Metode Pemilihan (Menggabungkan logika kedua branch)
-            if rec.metode_pemilihan == 'e_purchasing':
-                self.env['sadaya_rutin.procurement_package'].sudo().create({
-                    'name': rec.name,
-                    'item_name': rec.name,
-                    'proposing_unit': unit_pemohon or rec.unit_pengusul,
-                    'procurement_type': jenis_rutin_map.get(rec.jenis_pengadaan, 'goods'),
-                    'amount_total': rec.nilai_hps,
-                    'request_notes': keterangan_gabungan,
-                    'start_date': rup.tgl_mulai or rec.tgl_mulai,
-                    'end_date': rup.tgl_selesai or rec.tgl_selesai,
-                    'status': 'draft',
-                })
+            # 4. Routing Berdasarkan Metode Pemilihan dgn Proteksi Modul
+            try:
+                if rec.metode_pemilihan == 'e_purchasing':
+                    self.env['sadaya_rutin.procurement_package'].sudo().create({
+                        'name': rec.name,
+                        'item_name': rec.name,
+                        'proposing_unit': unit_pemohon or rec.unit_pengusul,
+                        'procurement_type': jenis_rutin_map.get(rec.jenis_pengadaan, 'goods'),
+                        'amount_total': rec.nilai_hps,
+                        'request_notes': keterangan_gabungan,
+                        'start_date': rup.tgl_mulai or rec.tgl_mulai,
+                        'end_date': rup.tgl_selesai or rec.tgl_selesai,
+                        'status': 'draft',
+                    })
 
-            elif rec.metode_pemilihan == 'pengadaan_langsung':
-                self.env['sadaya_langsung.paket'].sudo().create({
-                    'name': rec.name,
-                    'unit_pengusul': unit_pemohon or rec.unit_pengusul,
-                    'jenis_pengadaan': jenis_langsung_map.get(rec.jenis_pengadaan, 'barang'),
-                    'nilai_hps': rec.nilai_hps,
-                    'tanggal_mulai': rup.tgl_mulai or rec.tgl_mulai,
-                    'tanggal_selesai': rup.tgl_selesai or rec.tgl_selesai,
-                    'dokumen_kak': rec.dokumen_kak,
-                    'filename_kak': rec.filename_kak,
-                    'dokumen_rab': rec.dokumen_rab,
-                    'filename_rab': rec.filename_rab,
-                    'keterangan': keterangan_gabungan,
-                    'status_paket': 'draft',
-                })
+                elif rec.metode_pemilihan == 'pengadaan_langsung':
+                    self.env['sadaya_langsung.paket'].sudo().create({
+                        'name': rec.name,
+                        'unit_pengusul': unit_pemohon or rec.unit_pengusul,
+                        'jenis_pengadaan': jenis_langsung_map.get(rec.jenis_pengadaan, 'barang'),
+                        'nilai_hps': rec.nilai_hps,
+                        'tanggal_mulai': rup.tgl_mulai or rec.tgl_mulai,
+                        'tanggal_selesai': rup.tgl_selesai or rec.tgl_selesai,
+                        'dokumen_kak': rec.dokumen_kak,
+                        'filename_kak': rec.filename_kak,
+                        'dokumen_rab': rec.dokumen_rab,
+                        'filename_rab': rec.filename_rab,
+                        'keterangan': keterangan_gabungan,
+                        'status_paket': 'draft',
+                    })
 
-            elif rec.metode_pemilihan == 'tender':
-                self.env['sadaya_lelang.paket'].sudo().create({
-                    'name': rec.name,
-                    'hps': rec.nilai_hps,
-                    'description': keterangan_gabungan,
-                    'file_kebutuhan': rec.dokumen_kak,
-                    'status': 'draft',
-                    'metode_pemilihan': 'tender',
-                })
-            else:
-                raise UserError("Metode pemilihan tidak dikenali atau belum disetting.")
+                elif rec.metode_pemilihan == 'tender':
+                    self.env['sadaya_lelang.paket'].sudo().create({
+                        'name': rec.name,
+                        'hps': rec.nilai_hps,
+                        'description': keterangan_gabungan,
+                        'file_kebutuhan': rec.dokumen_kak,
+                        'status': 'draft',
+                        'metode_pemilihan': 'tender',
+                    })
+                else:
+                    raise UserError("Metode pemilihan tidak dikenali atau belum disetting.")
+                    
+            except KeyError:
+                raise UserError("Modul tujuan (Rutin/Langsung/Lelang) belum terpasang di sistem. Silakan install terlebih dahulu sebelum melakukan routing.")
 
             # Update status setelah routing berhasil
             rec.state = 'routed'
 
-        return True
+        # 5. Tampilkan Notifikasi Sukses (Dari branch sadaya-auth)
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Routing Berhasil!',
+                'message': 'Paket beserta dokumen terkait telah sukses dikirim ke modul eksekusi pengadaan.',
+                'type': 'success',
+                'sticky': False,
+            }
+        }
+      
     # =========================================================
     # BLOK VALIDASI LOGIKA METODE PEMILIHAN VS HPS
     # =========================================================

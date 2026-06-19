@@ -8,25 +8,25 @@
         <t t-call="sadaya_auth.sadaya_layout_auth">
             <t t-set="title">Masuk</t>
 
-            <div style="margin-bottom:2rem;">
-                <h2 class="sadaya-auth-title">Masuk ke Sadaya</h2>
-                <p class="sadaya-auth-subtitle">
+            <div class="text-center mb-4">
+                <h3 class="fw-bold text-dark mb-1">Masuk ke Sadaya</h3>
+                <p class="text-muted small">
                     Belum punya akun?
-                    <a href="/sadaya/register">Daftar sekarang</a>
+                    <a href="/sadaya/register" class="fw-bold text-primary text-decoration-none">Daftar sekarang</a>
                 </p>
             </div>
 
             <!-- Alert sukses logout -->
             <t t-if="request.params.get('success') == 'logout'">
-                <div class="sadaya-alert sadaya-alert-success">
-                    ✓ Anda telah berhasil keluar dari aplikasi.
+                <div class="alert alert-success d-flex align-items-center gap-2 mb-3">
+                    <span>✓</span> Anda telah berhasil keluar dari aplikasi.
                 </div>
             </t>
 
             <!-- Global Error -->
             <t t-if="error and error.get('general')">
-                <div class="sadaya-alert sadaya-alert-error">
-                    ⚠ <t t-esc="error['general']"/>
+                <div class="alert alert-danger d-flex align-items-center gap-2 mb-3">
+                    <span>⚠</span> <t t-esc="error['general']"/>
                 </div>
             </t>
 
@@ -35,76 +35,73 @@
                 <input type="hidden" name="redirect" t-att-value="redirect or '/sadaya/dashboard'"/>
 
                 <!-- Email -->
-                <div class="sadaya-form-group">
-                    <label class="sadaya-label" for="email">
-                        Email <span class="required">*</span>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark" for="email">
+                        Email <span class="text-danger">*</span>
                     </label>
                     <input type="email" id="email" name="email"
-                           class="sadaya-input"
-                           t-att-class="'sadaya-input is-invalid' if error and error.get('email') else 'sadaya-input'"
+                           class="form-control"
+                           t-att-class="'form-control is-invalid' if error and error.get('email') else 'form-control'"
                            placeholder="Masukkan email Anda"
                            t-att-value="form_data.get('email', '') if form_data else ''"
                            autocomplete="email"
                            required="required"
                            autofocus="autofocus"/>
                     <t t-if="error and error.get('email')">
-                        <div class="sadaya-field-error">⚠ <t t-esc="error['email']"/></div>
+                        <div class="text-danger small mt-1">⚠ <t t-esc="error['email']"/></div>
                     </t>
                 </div>
 
                 <!-- Kata Sandi -->
-                <div class="sadaya-form-group">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
-                        <label class="sadaya-label" for="password" style="margin-bottom:0;">
-                            Kata Sandi <span class="required">*</span>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="form-label fw-bold small text-dark mb-0" for="password">
+                            Kata Sandi <span class="text-danger">*</span>
                         </label>
-                        <a href="/web/reset_password" style="font-size:0.8rem; color:var(--sadaya-primary); text-decoration:none; font-weight:500;">
+                        <a href="/web/reset_password" class="small text-primary text-decoration-none">
                             Lupa kata sandi?
                         </a>
                     </div>
-                    <div style="position:relative;">
+                    <div class="input-group">
                         <input type="password" id="password" name="password"
-                               class="sadaya-input"
-                               t-att-class="'sadaya-input is-invalid' if error and error.get('password') else 'sadaya-input'"
+                               class="form-control"
+                               t-att-class="'form-control is-invalid' if error and error.get('password') else 'form-control'"
                                placeholder="Masukkan kata sandi"
                                autocomplete="current-password"
-                               required="required"
-                               style="padding-right:3rem;"/>
-                        <button type="button" data-sadaya-toggle-pwd="password"
-                                style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;"
+                               required="required"/>
+                        <button class="btn btn-outline-secondary" type="button" data-sadaya-toggle-pwd="password"
                                 aria-label="Tampilkan/sembunyikan kata sandi">
-                            👁️
+                            <i class="fa fa-eye"/>
                         </button>
                     </div>
                     <t t-if="error and error.get('password')">
-                        <div class="sadaya-field-error">⚠ <t t-esc="error['password']"/></div>
+                        <div class="text-danger small mt-1">⚠ <t t-esc="error['password']"/></div>
                     </t>
                 </div>
 
                 <!-- Remember me -->
-                <div class="sadaya-form-group" style="display:flex; align-items:center; gap:0.5rem;">
-                    <input type="checkbox" id="remember_me" name="remember_me"
-                           style="width:16px; height:16px; accent-color:var(--sadaya-primary); cursor:pointer;"/>
-                    <label for="remember_me" style="font-size:0.875rem; color:var(--sadaya-text-muted); cursor:pointer; margin:0;">
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="remember_me" name="remember_me" style="cursor:pointer;"/>
+                    <label class="form-check-label text-muted small" for="remember_me" style="cursor:pointer;">
                         Ingat saya
                     </label>
                 </div>
 
                 <!-- Submit -->
-                <div style="margin-top:1.25rem;">
-                    <button type="submit" class="sadaya-btn sadaya-btn-primary sadaya-btn-full sadaya-btn-lg sadaya-form-submit">
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary w-100 btn-lg fw-bold sadaya-form-submit">
                         Masuk
                     </button>
                 </div>
 
-                <div style="text-align:center; margin-top:1.25rem; font-size:0.875rem; color:var(--sadaya-text-muted);">
+                <div class="text-center mt-3 small text-muted">
                     Belum memiliki akun?
-                    <a href="/sadaya/register" style="color:var(--sadaya-primary); font-weight:600;">Daftar</a>
+                    <a href="/sadaya/register" class="fw-bold text-primary text-decoration-none">Daftar</a>
                 </div>
             </form>
 
             <!-- Info Box -->
-            <div class="sadaya-info-box" style="margin-top:1.5rem;">
+            <div class="alert alert-info small mt-4 mb-0">
                 <strong>ℹ️ Catatan:</strong> Akun Anda harus sudah diverifikasi oleh admin sebelum dapat masuk.
                 Jika belum menerima konfirmasi, hubungi <strong>support@sadaya.id</strong>
             </div>
