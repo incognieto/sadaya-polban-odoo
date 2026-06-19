@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- 1. John (Admin Sistem) -->
+        <record id="partner_john_admin" model="res.partner">
+            <field name="name">John</field>
+            <field name="email">john.admin@sadaya.example</field>
+        </record>
+        <record id="user_john_admin" model="res.users">
+            <field name="partner_id" ref="partner_john_admin"/>
+            <field name="login">john.admin@sadaya.example</field>
+            <field name="password">admin123</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 2. Jane (Manajemen) -->
+        <record id="partner_jane_manajemen" model="res.partner">
+            <field name="name">Jane</field>
+            <field name="email">jane.manajemen@sadaya.example</field>
+        </record>
+        <record id="user_jane_manajemen" model="res.users">
+            <field name="partner_id" ref="partner_jane_manajemen"/>
+            <field name="login">jane.manajemen@sadaya.example</field>
+            <field name="password">manajemen123</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 3. Smith (PPK) -->
+        <record id="partner_smith_ppk" model="res.partner">
+            <field name="name">Smith</field>
+            <field name="email">smith.ppk@sadaya.example</field>
+        </record>
+        <record id="user_smith_ppk" model="res.users">
+            <field name="partner_id" ref="partner_smith_ppk"/>
+            <field name="login">smith.ppk@sadaya.example</field>
+            <field name="password">ppk123</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 4. Alice (POKJA) -->
+        <record id="partner_alice_pokja" model="res.partner">
+            <field name="name">Alice</field>
+            <field name="email">alice.pokja@sadaya.example</field>
+        </record>
+        <record id="user_alice_pokja" model="res.users">
+            <field name="partner_id" ref="partner_alice_pokja"/>
+            <field name="login">alice.pokja@sadaya.example</field>
+            <field name="password">pokja123</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 5. Bob (Pejabat Pengadaan) -->
+        <record id="partner_bob_pejabatpengadaan" model="res.partner">
+            <field name="name">Bob</field>
+            <field name="email">bob.pejabatpengadaan@sadaya.example</field>
+        </record>
+        <record id="user_bob_pejabatpengadaan" model="res.users">
+            <field name="partner_id" ref="partner_bob_pejabatpengadaan"/>
+            <field name="login">bob.pejabatpengadaan@sadaya.example</field>
+            <field name="password">pejabatpengadaan123</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 6. Arthur (Tim Teknis PPK) -->
+        <record id="partner_arthur_timteknis" model="res.partner">
+            <field name="name">Arthur</field>
+            <field name="email">arthur.timteknis@sadaya.example</field>
+        </record>
+        <record id="user_arthur_timteknis" model="res.users">
+            <field name="partner_id" ref="partner_arthur_timteknis"/>
+            <field name="login">arthur.timteknis@sadaya.example</field>
+            <field name="password">timteknis123</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 7. Dave (Tim PPHP) -->
+        <record id="partner_dave_pphp" model="res.partner">
+            <field name="name">Dave</field>
+            <field name="email">dave.pphp@sadaya.example</field>
+        </record>
+        <record id="user_dave_pphp" model="res.users">
+            <field name="partner_id" ref="partner_dave_pphp"/>
+            <field name="login">dave.pphp@sadaya.example</field>
+            <field name="password">pphp123</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 8. Eve (User/Unit Kerja) -->
+        <record id="partner_eve_unitkerja" model="res.partner">
+            <field name="name">Eve</field>
+            <field name="email">eve.unitkerja@sadaya.example</field>
+        </record>
+        <record id="user_eve_unitkerja" model="res.users">
+            <field name="partner_id" ref="partner_eve_unitkerja"/>
+            <field name="login">eve.unitkerja@sadaya.example</field>
+            <field name="password">unitkerja123</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 9. Trent (Penyedia/Vendor) -->
+        <record id="partner_trent_vendor" model="res.partner">
+            <field name="name">Trent</field>
+            <field name="email">trent.vendor@sadaya.example</field>
+        </record>
+        <record id="user_trent_vendor" model="res.users">
+            <field name="partner_id" ref="partner_trent_vendor"/>
+            <field name="login">trent.vendor@sadaya.example</field>
+            <field name="password">vendor123</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 10. Glory (Penyedia/Vendor) -->
+        <record id="partner_glory_vendor" model="res.partner">
+            <field name="name">Glory</field>
+            <field name="email">glory.vendor@sadaya.example</field>
+        </record>
+        <record id="user_glory_vendor" model="res.users">
+            <field name="partner_id" ref="partner_glory_vendor"/>
+            <field name="login">glory.vendor@sadaya.example</field>
+            <field name="password">vendor123</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+    </data>
+</odoo>
