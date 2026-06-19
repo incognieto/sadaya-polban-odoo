@@ -4,37 +4,35 @@ from odoo.http import request
 
 class TenderPortal(http.Controller):
 
-    @http.route('/tender-portal/tenders', type='http', auth='public', website=False)
+    @http.route('/sadaya-lelang/tender', type='http', auth='public', website=True)
     def tender_list(self, **kwargs):
         tenders = request.env['sadaya_lelang.paket'].sudo().search([('status', 'not in', ['draft', 'menunggu_persetujuan'])])
         return request.render('sadaya_lelang.portal_tender_list', {
             'tenders': tenders
         })
 
-    @http.route(['/tenders/<model("sadaya_lelang.paket"):tender>'], type='http', auth='public', website=False)
+    @http.route(['/sadaya-lelang/tender/<model("sadaya_lelang.paket"):tender>'], type='http', auth='public', website=True)
     def tender_detail(self, tender, **kwargs):
         return request.render('sadaya_lelang.portal_tender_detail', {
             'tender': tender
         })
 
-    @http.route('/tender-portal/dashboard', type='http', auth='user', website=False)
+    @http.route('/sadaya-lelang/dashboard', type='http', auth='user', website=True)
     def my_tenders(self, **kwargs):
         partner = request.env.user.partner_id
-        if not partner.is_vendor_tender:
-            # We don't have portal_vendor_registration yet, just fallback or create it
-            return request.redirect('/my')
+        is_vendor = getattr(partner, 'is_vendor_tender', False) or getattr(partner, 'is_sadaya_mitra_vendor', False)
             
         bids = request.env['sadaya_lelang.penawaran'].sudo().search([('vendor_id', '=', partner.id)])
         return request.render('sadaya_lelang.portal_my_tenders', {
             'bids': bids,
-            'partner': partner
+            'partner': partner,
+            'is_vendor': is_vendor
         })
 
-    @http.route(['/tenders/<model("sadaya_lelang.paket"):tender>/submit_bid'], type='http', auth='user', website=False)
+    @http.route(['/sadaya-lelang/tender/<model("sadaya_lelang.paket"):tender>/submit_bid'], type='http', auth='user', website=True)
     def submit_bid(self, tender, **kwargs):
         partner = request.env.user.partner_id
-        if not getattr(partner, 'is_vendor_tender', True):
-            return request.redirect('/my')
+        is_vendor = getattr(partner, 'is_vendor_tender', False) or getattr(partner, 'is_sadaya_mitra_vendor', False)
             
         # Check if bid already exists
         existing_bid = request.env['sadaya_lelang.penawaran'].sudo().search([
@@ -44,13 +42,18 @@ class TenderPortal(http.Controller):
         
         return request.render('sadaya_lelang.portal_tender_submit_bid', {
             'tender': tender,
-            'existing_bid': existing_bid
+            'existing_bid': existing_bid,
+            'is_vendor': is_vendor
         })
 
-    @http.route(['/tenders/<model("sadaya_lelang.paket"):tender>/process_bid'], type='http', auth='user', methods=['POST'], website=False, csrf=False)
+    @http.route(['/sadaya-lelang/tender/<model("sadaya_lelang.paket"):tender>/process_bid'], type='http', auth='user', methods=['POST'], website=True, csrf=False)
     def process_bid(self, tender, **post):
         import base64
         partner = request.env.user.partner_id
+        is_vendor = getattr(partner, 'is_vendor_tender', False) or getattr(partner, 'is_sadaya_mitra_vendor', False)
+        
+        if not is_vendor:
+            return request.redirect('/sadaya-lelang/tender/%s' % tender.id)
         
         harga_penawaran = post.get('harga_penawaran')
         file_kualifikasi = post.get('file_kualifikasi')
@@ -77,4 +80,4 @@ class TenderPortal(http.Controller):
         else:
             request.env['sadaya_lelang.penawaran'].sudo().create(vals)
             
-        return request.redirect('/tender-portal/dashboard')
+        return request.redirect('/sadaya-lelang/dashboard')

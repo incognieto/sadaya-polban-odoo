@@ -1,107 +1,508 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- ========================================== -->
-    <!-- 0. BASE LAYOUT WITHOUT WEBSITE DEPENDENCY  -->
+    <!-- 0. BASE LAYOUT – SADAYA LELANG             -->
     <!-- ========================================== -->
     <template id="base_layout" name="Base Layout">
-        <html lang="en">
-            <head>
-                <meta charset="UTF-8"/>
-                <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-                <title>Sadaya Lelang - SPSE Portal</title>
+        <t t-call="website.layout">
+            <t t-set="title">Sadaya Lelang - Portal SPSE</t>
+            <t t-set="head">
+                <link rel="preconnect" href="https://fonts.googleapis.com"/>
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
                 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
                 <style>
+                    /* ── Design Tokens ── */
+                    :root {
+                        --sl-bg: #edf1f3;
+                        --sl-surface: #f8fbfc;
+                        --sl-surface-strong: #ffffff;
+                        --sl-text: #132238;
+                        --sl-muted: #5c6b7a;
+                        --sl-accent: #0d4f8b;
+                        --sl-accent-2: #c2410c;
+                        --sl-border: rgba(19, 34, 56, 0.14);
+                        --sl-shadow: 0 24px 60px rgba(19, 34, 56, 0.14);
+                    }
+
+                    *, *::before, *::after { box-sizing: border-box; }
+
                     body {
-                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                        background-color: #f8f9fa;
+                        font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                        margin: 0;
+                        padding: 0;
+                        color: var(--sl-text);
                     }
-                    .navbar {
-                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+                    .sl-app-shell {
+                        background:
+                            radial-gradient(circle at top left, rgba(13, 79, 139, 0.18), transparent 28%),
+                            radial-gradient(circle at top right, rgba(194, 65, 12, 0.14), transparent 26%),
+                            linear-gradient(180deg, var(--sl-bg) 0%, #f7f9fb 100%);
+                        min-height: 100vh;
                     }
-                    .sidebar-card {
-                        position: sticky;
-                        top: 20px;
+
+                    /* ── Header ── */
+                    .sl-app-header { padding: 1rem 0; }
+
+                    .sl-app-header__inner {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        gap: 1.5rem;
+                        padding: 1rem 1.25rem;
+                        border: 1px solid var(--sl-border);
+                        border-radius: 22px;
+                        background: rgba(255, 255, 255, 0.86);
+                        box-shadow: var(--sl-shadow);
+                        backdrop-filter: blur(14px);
+                        -webkit-backdrop-filter: blur(14px);
+                    }
+
+                    .sl-app-brand {
+                        color: var(--sl-text);
+                        font-size: 1.35rem;
+                        font-weight: 800;
+                        text-decoration: none;
+                    }
+                    .sl-app-brand:hover { color: var(--sl-accent); }
+
+                    .sl-app-eyebrow {
+                        margin-bottom: 0.15rem;
+                        font-size: 0.74rem;
+                        text-transform: uppercase;
+                        letter-spacing: 0.14em;
+                        color: var(--sl-muted);
+                    }
+
+                    .sl-app-nav {
+                        display: flex;
+                        gap: 0.6rem;
+                        flex-wrap: wrap;
+                        align-items: center;
+                    }
+
+                    .sl-app-nav a {
+                        text-decoration: none;
+                        color: var(--sl-text);
+                        padding: 0.55rem 0.9rem;
+                        border-radius: 999px;
+                        border: 1px solid transparent;
+                        background: transparent;
+                        font-size: 0.92rem;
+                        font-weight: 500;
+                        transition: all 0.2s ease;
+                    }
+
+                    .sl-app-nav a.active,
+                    .sl-app-nav a:hover {
+                        border-color: rgba(13, 79, 139, 0.18);
+                        background: rgba(13, 79, 139, 0.08);
+                    }
+
+                    .sl-app-nav .sl-user-badge {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 0.45rem;
+                        padding: 0.45rem 0.85rem;
+                        border-radius: 999px;
+                        background: rgba(13, 79, 139, 0.06);
+                        border: 1px solid rgba(13, 79, 139, 0.1);
+                        color: var(--sl-muted);
+                        font-size: 0.85rem;
+                        font-weight: 600;
+                    }
+
+                    /* ── Page Header / Hero ── */
+                    .sl-page-header { padding: 4rem 0 2rem; }
+
+                    .sl-kicker {
+                        text-transform: uppercase;
+                        letter-spacing: 0.18em;
+                        color: var(--sl-accent);
+                        font-size: 0.75rem;
+                        font-weight: 700;
+                        margin-bottom: 0.5rem;
+                    }
+
+                    .sl-lead {
+                        color: var(--sl-muted);
+                        max-width: 54rem;
+                        margin-top: 0.9rem;
+                        font-size: 1.05rem;
+                    }
+
+                    h1, h2, h3, h4 {
+                        color: var(--sl-text);
+                        margin-bottom: 0;
+                    }
+
+                    /* ── Sections ── */
+                    .sl-section { padding: 1.25rem 0 2rem; }
+                    .sl-section--form { padding-top: 0; }
+
+                    /* ── Cards ── */
+                    .sl-card {
+                        border: 1px solid var(--sl-border);
+                        border-radius: 24px;
+                        background: var(--sl-surface-strong);
+                        box-shadow: 0 16px 36px rgba(24, 33, 47, 0.08);
+                        transition: transform 0.2s ease, box-shadow 0.2s ease;
+                    }
+
+                    .sl-card:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 20px 44px rgba(24, 33, 47, 0.12);
+                    }
+
+                    .sl-card--detail { padding: 1.25rem 1.35rem; }
+
+                    .sl-card__top {
+                        display: flex;
+                        justify-content: space-between;
+                        gap: 1rem;
+                        align-items: start;
+                        margin-bottom: 1rem;
+                    }
+
+                    .sl-card__top strong {
+                        white-space: nowrap;
+                        color: var(--sl-accent);
+                        font-size: 1rem;
+                    }
+
+                    .sl-card--metric {
+                        padding: 1.25rem 1.4rem;
+                        min-height: 120px;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-between;
+                    }
+
+                    .sl-card--metric span {
+                        color: var(--sl-muted);
+                        font-size: 0.92rem;
+                    }
+
+                    .sl-card--metric strong {
+                        font-size: 2rem;
+                        line-height: 1;
+                    }
+
+                    /* ── Grid header ── */
+                    .sl-grid-header {
+                        display: flex;
+                        justify-content: space-between;
+                        gap: 1rem;
+                        align-items: end;
+                        margin-bottom: 1rem;
+                    }
+
+                    .sl-grid-header p {
+                        color: var(--sl-muted);
+                        margin-bottom: 0;
+                    }
+
+                    /* ── Labels / Badges ── */
+                    .sl-label {
+                        display: inline-flex;
+                        padding: 0.3rem 0.65rem;
+                        border-radius: 999px;
+                        background: rgba(194, 65, 12, 0.14);
+                        color: #9a3412;
+                        font-size: 0.77rem;
+                        font-weight: 700;
+                        margin-bottom: 0.75rem;
+                    }
+
+                    .sl-label--info {
+                        background: rgba(13, 79, 139, 0.12);
+                        color: var(--sl-accent);
+                    }
+
+                    /* ── Definition lists ── */
+                    .sl-dl {
+                        display: grid;
+                        grid-template-columns: repeat(2, minmax(0, 1fr));
+                        gap: 0.9rem 1rem;
+                        margin: 0;
+                    }
+
+                    .sl-dl div { min-width: 0; }
+
+                    .sl-dl dt {
+                        font-size: 0.78rem;
+                        text-transform: uppercase;
+                        letter-spacing: 0.08em;
+                        color: var(--sl-muted);
+                    }
+
+                    .sl-dl dd {
+                        margin: 0.2rem 0 0;
+                        font-weight: 600;
+                        word-break: break-word;
+                    }
+
+                    /* ── Form Styles ── */
+                    .sl-field-label {
+                        display: block;
+                        font-size: 0.8rem;
+                        text-transform: uppercase;
+                        letter-spacing: 0.08em;
+                        color: var(--sl-muted);
+                        margin-bottom: 0.35rem;
+                        font-weight: 600;
+                    }
+
+                    .sl-input {
+                        border-radius: 16px;
+                        border-color: rgba(24, 33, 47, 0.14);
+                        background-color: #fff;
+                        color: var(--sl-text);
+                        padding: 0.8rem 0.95rem;
+                        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+                    }
+
+                    .sl-input:focus {
+                        border-color: var(--sl-accent);
+                        box-shadow: 0 0 0 0.18rem rgba(13, 79, 139, 0.16);
+                    }
+
+                    .sl-submit {
+                        border-radius: 999px;
+                        padding: 0.8rem 1.25rem;
+                        background: linear-gradient(135deg, var(--sl-accent), #08335d);
+                        border-color: transparent;
+                        box-shadow: 0 10px 22px rgba(13, 79, 139, 0.24);
+                        color: #fff;
+                        font-weight: 700;
+                        transition: filter 0.2s ease;
+                    }
+
+                    .sl-submit:hover { filter: brightness(1.08); }
+
+                    /* ── Buttons ── */
+                    .btn-primary {
+                        background-color: var(--sl-accent);
+                        border-color: var(--sl-accent);
+                    }
+
+                    .btn-primary:hover {
+                        background-color: #08335d;
+                        border-color: #08335d;
+                    }
+
+                    .btn-outline-primary {
+                        color: var(--sl-accent);
+                        border-color: var(--sl-accent);
+                    }
+
+                    .btn-outline-primary:hover {
+                        background-color: var(--sl-accent);
+                        color: #fff;
+                    }
+
+                    /* ── Notice / Alert ── */
+                    .sl-notice {
+                        border-radius: 16px;
+                        border: 1px solid transparent;
+                        margin-bottom: 1rem;
+                    }
+
+                    /* ── Actions row ── */
+                    .sl-actions {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 0.55rem;
+                        margin-top: 1rem;
+                    }
+
+                    .sl-actions .btn {
+                        border-radius: 999px;
+                        font-weight: 600;
+                        padding: 0.4rem 0.8rem;
+                    }
+
+                    /* ── Table inside cards ── */
+                    .sl-table-card {
+                        border: 1px solid var(--sl-border);
+                        border-radius: 24px;
+                        background: var(--sl-surface-strong);
+                        box-shadow: 0 16px 36px rgba(24, 33, 47, 0.08);
+                        overflow: hidden;
+                    }
+
+                    .sl-table-card .table {
+                        margin-bottom: 0;
+                    }
+
+                    .sl-table-card .table thead th {
+                        background: rgba(13, 79, 139, 0.04);
+                        border-bottom: 1px solid var(--sl-border);
+                        font-size: 0.8rem;
+                        text-transform: uppercase;
+                        letter-spacing: 0.06em;
+                        color: var(--sl-muted);
+                        padding: 0.9rem 1rem;
+                        font-weight: 700;
+                    }
+
+                    .sl-table-card .table tbody td {
+                        padding: 0.85rem 1rem;
+                        border-bottom: 1px solid rgba(19, 34, 56, 0.06);
+                        vertical-align: middle;
+                    }
+
+                    .sl-table-card .table tbody tr:last-child td {
+                        border-bottom: none;
+                    }
+
+                    .sl-table-card .table tbody tr:hover {
+                        background: rgba(13, 79, 139, 0.03);
+                    }
+
+                    /* ── Pills ── */
+                    .sl-pill {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 0.3rem;
+                        padding: 0.35rem 0.75rem;
+                        border-radius: 999px;
+                        background: rgba(13, 79, 139, 0.09);
+                        color: var(--sl-accent);
+                        border: 1px solid rgba(13, 79, 139, 0.14);
+                        font-size: 0.82rem;
+                        font-weight: 600;
+                    }
+
+                    .sl-pill--info {
+                        background: rgba(6, 182, 212, 0.1);
+                        color: #0e7490;
+                        border-color: rgba(6, 182, 212, 0.2);
+                    }
+
+                    /* ── Empty state ── */
+                    .sl-empty-card,
+                    .sl-empty {
+                        color: var(--sl-muted);
+                        text-align: center;
+                        padding: 2rem 1rem;
+                    }
+
+                    /* ── Breadcrumb ── */
+                    .sl-breadcrumb {
+                        font-size: 0.88rem;
+                        color: var(--sl-muted);
+                        text-decoration: none;
+                        transition: color 0.2s;
+                    }
+
+                    .sl-breadcrumb:hover { color: var(--sl-accent); }
+
+                    /* ── Footer ── */
+                    .sl-app-footer { padding: 1rem 0 2rem; }
+
+                    .sl-app-footer__inner {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        gap: 1.5rem;
+                        padding: 1rem 1.25rem;
+                        border: 1px solid var(--sl-border);
+                        border-radius: 22px;
+                        background: rgba(255, 255, 255, 0.86);
+                        box-shadow: var(--sl-shadow);
+                        backdrop-filter: blur(14px);
+                        -webkit-backdrop-filter: blur(14px);
+                    }
+
+                    .sl-app-footer__meta {
+                        display: flex;
+                        gap: 1rem;
+                        flex-wrap: wrap;
+                        justify-content: end;
+                        color: var(--sl-muted);
+                        font-size: 0.92rem;
+                    }
+
+                    .sl-app-footer strong {
+                        display: block;
+                        margin-top: 0.15rem;
+                    }
+
+                    /* ── Responsive ── */
+                    @media (max-width: 767.98px) {
+                        .sl-app-header__inner,
+                        .sl-app-footer__inner,
+                        .sl-grid-header {
+                            flex-direction: column;
+                            align-items: start;
+                        }
+
+                        .sl-dl {
+                            grid-template-columns: 1fr;
+                        }
+
+                        .sl-page-header {
+                            padding: 2.5rem 0 1.5rem;
+                        }
+                    }
+
+                    /* ── Hide default website header and footer ── */
+                    .o_sadaya_lelang_frontend:has(.sl-app-shell) #wrapwrap > header,
+                    .o_sadaya_lelang_frontend:has(.sl-app-shell) #wrapwrap > footer,
+                    .o_sadaya_lelang_frontend:has(.sl-app-shell) header#top,
+                    .o_sadaya_lelang_frontend:has(.sl-app-shell) footer#bottom {
+                        display: none !important;
                     }
                 </style>
-            </head>
-            <body>
-                <!-- NAVBAR -->
-                <nav class="navbar navbar-expand-lg navbar-light bg-white">
-                    <div class="container-fluid px-4">
-                        <a class="navbar-brand fw-bold text-primary" href="/tender-portal/dashboard">
-                            <i class="fa fa-gavel me-2"></i>Sadaya Lelang
-                        </a>
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="collapse navbar-collapse" id="navbarNav">
-                            <ul class="navbar-nav ms-auto">
-                                <li class="nav-item">
-                                    <span class="nav-link"><i class="fa fa-user me-2"></i><t t-esc="env.user.name"/></span>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="/web/logout">Logout</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
-
-                <!-- MAIN CONTENT -->
-                <div id="wrap" class="bg-light pb-5" style="min-height: calc(100vh - 56px);">
-                    <div class="container-fluid pt-4 px-4">
-                        <div class="row">
-                            <!-- SIDEBAR MENU KIRI -->
-                            <div class="col-md-2 mb-4">
-                                <div class="card border-0 shadow-sm rounded-4 sidebar-card">
-                                    <div class="card-body p-3">
-                                        <div class="d-flex align-items-center mb-4 p-2">
-                                            <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 40px; height: 40px;">
-                                                <i class="fa fa-building"/>
-                                            </div>
-                                            <div>
-                                                <h6 class="mb-0 fw-bold text-truncate" style="max-width: 120px;"><t t-esc="env.user.name"/></h6>
-                                                <small class="text-muted">Vendor SPSE</small>
-                                            </div>
-                                        </div>
-                                        <p class="text-muted small fw-bold mb-2 px-2">MENU LELANG</p>
-                                        <div class="list-group list-group-flush border-0">
-                                            <a href="/tender-portal/dashboard" 
-                                               t-attf-class="list-group-item list-group-item-action border-0 rounded mb-2 #{'active bg-primary bg-opacity-25 text-primary fw-bold' if active_menu == 'dashboard' else 'text-secondary'}">
-                                                <i class="fa fa-th-large me-2"></i> Dashboard
-                                            </a>
-                                            <a href="/tender-portal/tenders" 
-                                               t-attf-class="list-group-item list-group-item-action border-0 rounded mb-2 #{'active bg-primary bg-opacity-25 text-primary fw-bold' if active_menu == 'tender' else 'text-secondary'}">
-                                                <i class="fa fa-gavel me-2"></i> Info Lelang
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
+            </t>
+            <div id="wrap" class="o_sadaya_lelang_frontend sl-app-shell">
+                    <!-- ── HEADER ── -->
+                    <header class="sl-app-header">
+                        <div class="container sl-app-header__inner">
+                            <div>
+                                <p class="sl-app-eyebrow">Sistem Pengadaan Secara Elektronik</p>
+                                <a href="/sadaya-lelang/tender" class="sl-app-brand">Sadaya Lelang</a>
                             </div>
+                            <nav class="sl-app-nav" aria-label="Navigasi utama">
+                                <a href="/sadaya-lelang/dashboard"
+                                   t-att-class="'active' if active_menu == 'dashboard' else ''">Dashboard</a>
+                                <a href="/sadaya-lelang/tender"
+                                   t-att-class="'active' if active_menu == 'tender' else ''">Info Lelang</a>
+                                <span class="sl-user-badge">
+                                    <i class="fa fa-user"></i>
+                                    <t t-esc="env.user.name"/>
+                                </span>
+                            </nav>
+                        </div>
+                    </header>
 
-                            <!-- KONTEN UTAMA KANAN -->
-                            <div class="col-md-10">
-                                <t t-out="0"/>
+                    <!-- ── MAIN CONTENT ── -->
+                    <t t-out="0"/>
+
+                    <!-- ── FOOTER ── -->
+                    <footer class="sl-app-footer">
+                        <div class="container sl-app-footer__inner">
+                            <div>
+                                <p class="sl-app-eyebrow">Sadaya Lelang</p>
+                                <strong>Portal pengadaan dan lelang elektronik Sadaya Polban.</strong>
+                            </div>
+                            <div class="sl-app-footer__meta">
+                                <span>© 2026 Politeknik Negeri Bandung</span>
+                                <span>Powered by Odoo</span>
                             </div>
                         </div>
-                    </div>
+                    </footer>
                 </div>
 
-                <!-- FOOTER -->
-                <footer class="bg-dark text-white py-4 text-center">
-                    <div class="container-fluid">
-                        <p class="mb-0">© 2026 Politeknik Negeri Bandung - Sadaya Lelang System</p>
-                    </div>
-                </footer>
-
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-            </body>
-        </html>
+        </t>
     </template>
 
     <!-- ========================================== -->
-    <!-- TEMPLATE LAYOUT SIDEBAR UTAMA           -->
+    <!-- TEMPLATE LAYOUT SIDEBAR UTAMA              -->
     <!-- ========================================== -->
     <template id="portal_sidebar_layout" name="Portal Sidebar Lelang">
         <t t-call="sadaya_lelang.base_layout">
@@ -109,195 +510,343 @@
         </t>
     </template>
 
-    <!-- Public Tender List -->
+    <!-- ========================================== -->
+    <!-- TENDER LIST                                -->
+    <!-- ========================================== -->
     <template id="portal_tender_list" name="Daftar Tender SPSE">
         <t t-call="sadaya_lelang.portal_sidebar_layout">
             <t t-set="active_menu" t-value="'tender'"/>
-            <div class="mb-4">
-                <h4 class="fw-bold mb-1">Sadaya Lelang</h4>
-                <p class="text-muted small">Daftar Paket Tender / Seleksi</p>
-            </div>
-            <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-body p-4">
-                    <div class="table-responsive">
-                        <table class="table align-middle">
-                            <thead class="table-light text-secondary text-center small">
-                                <tr>
-                                    <th>Kode</th>
-                                    <th>Nama Paket</th>
-                                    <th>HPS</th>
-                                    <th>Status</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <t t-foreach="tenders" t-as="tender">
-                                    <tr class="text-center">
-                                        <td><t t-esc="tender.kode_tender"/></td>
-                                        <td class="text-start fw-bold"><t t-esc="tender.name"/></td>
-                                        <td class="text-end fw-semibold text-primary"><t t-esc="tender.hps" t-options="{'widget': 'monetary', 'display_currency': tender.currency_id}"/></td>
-                                        <td><span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3"><t t-esc="tender.status"/></span></td>
-                                        <td>
-                                            <a t-attf-href="/tenders/#{tender.id}" class="btn btn-sm btn-outline-primary rounded-pill px-3">Detail</a>
-                                        </td>
-                                    </tr>
-                                </t>
-                            </tbody>
-                        </table>
+
+            <section class="sl-page-header">
+                <div class="container">
+                    <p class="sl-kicker">Portal Lelang</p>
+                    <h1>Daftar Paket Tender</h1>
+                    <p class="sl-lead">Informasi paket tender dan seleksi yang tersedia di Sadaya Polban.</p>
+                </div>
+            </section>
+
+            <section class="sl-section">
+                <div class="container">
+                    <div class="sl-grid-header">
+                        <div>
+                            <h2>Paket Tersedia</h2>
+                            <p>Semua paket tender yang dipublikasikan.</p>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <t t-foreach="tenders" t-as="tender">
+                            <div class="col-12 col-lg-6">
+                                <article class="sl-card sl-card--detail">
+                                    <div class="sl-card__top">
+                                        <div>
+                                            <span class="sl-label"><t t-esc="tender.status"/></span>
+                                            <h3><t t-esc="tender.name"/></h3>
+                                        </div>
+                                        <strong><t t-esc="tender.hps" t-options="{'widget': 'monetary', 'display_currency': tender.currency_id}"/></strong>
+                                    </div>
+                                    <dl class="sl-dl">
+                                        <div><dt>Kode</dt><dd><t t-esc="tender.kode_tender"/></dd></div>
+                                        <div><dt>Metode</dt><dd><t t-esc="tender.metode_pemilihan"/></dd></div>
+                                    </dl>
+                                    <div class="sl-actions">
+                                        <a t-attf-href="/sadaya-lelang/tender/#{tender.id}" class="btn btn-sm btn-outline-primary" style="border-radius:999px; padding: 0.4rem 1rem;">Detail</a>
+                                    </div>
+                                </article>
+                            </div>
+                        </t>
+                        <t t-if="not tenders">
+                            <div class="col-12">
+                                <div class="sl-card sl-empty-card">Belum ada paket tender yang dipublikasikan.</div>
+                            </div>
+                        </t>
                     </div>
                 </div>
-            </div>
+            </section>
         </t>
     </template>
 
-    <!-- Tender Detail -->
+    <!-- ========================================== -->
+    <!-- TENDER DETAIL                              -->
+    <!-- ========================================== -->
     <template id="portal_tender_detail" name="Detail Tender">
         <t t-call="sadaya_lelang.portal_sidebar_layout">
             <t t-set="active_menu" t-value="'tender'"/>
-            <div class="card border-0 shadow-sm rounded-4 mb-4">
-                <div class="card-body p-4">
-                    <h3 class="fw-bold text-primary mb-3"><t t-esc="tender.name"/></h3>
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <strong>Kode Tender:</strong> <t t-esc="tender.kode_tender"/><br/>
-                            <strong>Metode:</strong> <t t-esc="tender.metode_pemilihan"/><br/>
-                            <strong>HPS:</strong> <t t-esc="tender.hps" t-options="{'widget': 'monetary', 'display_currency': tender.currency_id}"/><br/>
+
+            <section class="sl-page-header">
+                <div class="container">
+                    <a href="/sadaya-lelang/tender" class="sl-breadcrumb">
+                        <i class="fa fa-arrow-left me-1"></i> Kembali ke Daftar Tender
+                    </a>
+                    <p class="sl-kicker" style="margin-top: 1rem;">Detail Paket Tender</p>
+                    <h1><t t-esc="tender.name"/></h1>
+                </div>
+            </section>
+
+            <section class="sl-section">
+                <div class="container">
+                    <div class="row g-3">
+                        <!-- Informasi Tender -->
+                        <div class="col-12 col-lg-7">
+                            <article class="sl-card sl-card--detail">
+                                <div class="sl-card__top">
+                                    <div>
+                                        <span class="sl-label"><t t-esc="tender.status"/></span>
+                                        <h3>Informasi Tender</h3>
+                                    </div>
+                                </div>
+                                <dl class="sl-dl">
+                                    <div><dt>Kode Tender</dt><dd><t t-esc="tender.kode_tender"/></dd></div>
+                                    <div><dt>Metode</dt><dd><t t-esc="tender.metode_pemilihan"/></dd></div>
+                                    <div><dt>HPS</dt><dd><t t-esc="tender.hps" t-options="{'widget': 'monetary', 'display_currency': tender.currency_id}"/></dd></div>
+                                    <div><dt>Status</dt><dd><t t-esc="tender.status"/></dd></div>
+                                </dl>
+                            </article>
                         </div>
-                        <div class="col-md-6">
-                            <strong>Status:</strong> <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3"><t t-esc="tender.status"/></span>
+
+                        <!-- Aksi -->
+                        <div class="col-12 col-lg-5">
+                            <article class="sl-card sl-card--detail">
+                                <h3 style="margin-bottom: 1rem;">Aksi Penawaran</h3>
+
+                                <div t-if="request.env.user.id != request.env.ref('base.public_user').id">
+                                    <t t-set="partner_id" t-value="request.env.user.partner_id.id"/>
+                                    <t t-set="has_bid" t-value="request.env['sadaya_lelang.penawaran'].sudo().search_count([('paket_id', '=', tender.id), ('vendor_id', '=', partner_id)])"/>
+
+                                    <div t-if="has_bid > 0" class="sl-actions" style="flex-direction: column; gap: 0.65rem;">
+                                        <a href="/sadaya-lelang/dashboard" class="btn btn-outline-primary" style="border-radius:999px; width:100%; text-align:center;">Lihat Penawaran Saya</a>
+                                        <a t-attf-href="/sadaya-lelang/tender/#{tender.id}/submit_bid" class="btn btn-primary" style="border-radius:999px; width:100%; text-align:center;">Ubah Penawaran</a>
+                                    </div>
+                                    <div t-else="" class="sl-actions">
+                                        <a t-attf-href="/sadaya-lelang/tender/#{tender.id}/submit_bid" class="btn btn-primary sl-submit" style="width:100%; text-align:center;">Ajukan Penawaran Sekarang</a>
+                                    </div>
+                                </div>
+                                <div t-else="">
+                                    <div class="alert alert-warning sl-notice" role="alert">
+                                        <i class="fa fa-lock me-1"></i> Silahkan <a href="/web/login">Login</a> untuk mengikuti lelang ini.
+                                    </div>
+                                </div>
+                            </article>
                         </div>
-                    </div>
-                    
-                    <hr/>
-                    <h5 class="fw-bold mb-3">Jadwal Tahapan</h5>
-                    <table class="table table-sm align-middle">
-                        <thead class="table-light small">
-                            <tr>
-                                <th>Tahapan</th>
-                                <th>Mulai</th>
-                                <th>Selesai</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <t t-foreach="tender.jadwal_ids" t-as="jadwal">
-                                <tr>
-                                    <td><t t-esc="jadwal.name"/></td>
-                                    <td><t t-esc="jadwal.start_date"/></td>
-                                    <td><t t-esc="jadwal.end_date"/></td>
-                                </tr>
-                            </t>
-                        </tbody>
-                    </table>
-                    
-                    <div t-if="request.env.user.id != request.env.ref('base.public_user').id" class="mt-4">
-                        <t t-set="partner_id" t-value="request.env.user.partner_id.id"/>
-                        <t t-set="has_bid" t-value="request.env['sadaya_lelang.penawaran'].sudo().search_count([('paket_id', '=', tender.id), ('vendor_id', '=', partner_id)])"/>
-                        
-                        <div t-if="has_bid > 0">
-                            <a href="/my/tenders" class="btn btn-outline-primary rounded-pill px-4 fw-bold me-2">Lihat Penawaran Saya</a>
-                            <a t-attf-href="/tenders/#{tender.id}/submit_bid" class="btn btn-primary rounded-pill px-4 fw-bold">Ubah Penawaran</a>
-                        </div>
-                        <div t-else="">
-                            <a t-attf-href="/tenders/#{tender.id}/submit_bid" class="btn btn-primary rounded-pill px-4 fw-bold">Ajukan Penawaran Sekarang</a>
-                        </div>
-                    </div>
-                    <div t-else="" class="mt-4">
-                        <p class="text-danger small"><i class="fa fa-lock me-1"></i> Silahkan <a href="/web/login">Login</a> untuk mengikuti lelang ini.</p>
                     </div>
                 </div>
-            </div>
+            </section>
+
+            <!-- Jadwal Tahapan -->
+            <section class="sl-section">
+                <div class="container">
+                    <div class="sl-grid-header">
+                        <div>
+                            <h2>Jadwal Tahapan</h2>
+                            <p>Timeline proses lelang untuk paket ini.</p>
+                        </div>
+                    </div>
+                    <div class="sl-table-card">
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Tahapan</th>
+                                        <th>Mulai</th>
+                                        <th>Selesai</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="tender.jadwal_ids" t-as="jadwal">
+                                        <tr>
+                                            <td class="fw-bold"><t t-esc="jadwal.name"/></td>
+                                            <td><t t-esc="jadwal.start_date"/></td>
+                                            <td><t t-esc="jadwal.end_date"/></td>
+                                        </tr>
+                                    </t>
+                                    <tr t-if="not tender.jadwal_ids">
+                                        <td colspan="3" class="text-center py-4 text-muted">Belum ada jadwal tahapan.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </t>
     </template>
-    
-    <!-- My Tenders Dashboard -->
+
+    <!-- ========================================== -->
+    <!-- MY TENDERS DASHBOARD                       -->
+    <!-- ========================================== -->
     <template id="portal_my_tenders" name="Dashboard Vendor">
         <t t-call="sadaya_lelang.portal_sidebar_layout">
             <t t-set="active_menu" t-value="'dashboard'"/>
-            <div class="mb-4">
-                <h4 class="fw-bold mb-1">Riwayat Penawaran Lelang</h4>
-            </div>
-            
-            <div t-if="partner.vendor_status != 'verified'" class="alert alert-warning border-0 rounded-4">
-                <i class="fa fa-exclamation-triangle me-2"></i> <strong>Perhatian!</strong> Status verifikasi Anda saat ini: <b><t t-esc="partner.vendor_status"/></b>. Anda belum bisa mengajukan penawaran.
-            </div>
-            
-            <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-body p-4">
-                    <table class="table align-middle">
-                        <thead class="table-light text-secondary text-center small">
-                            <tr>
-                                <th>Tender</th>
-                                <th>No Penawaran</th>
-                                <th>Harga Penawaran</th>
-                                <th>Status Evaluasi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <t t-foreach="bids" t-as="bid">
-                                <tr class="text-center">
-                                    <td class="text-start fw-bold"><t t-esc="bid.paket_id.name"/></td>
-                                    <td><t t-esc="bid.name"/></td>
-                                    <td class="text-end fw-semibold"><t t-esc="bid.harga_penawaran" t-options="{'widget': 'monetary', 'display_currency': bid.currency_id}"/></td>
-                                    <td><span class="badge bg-info bg-opacity-10 text-info rounded-pill px-3"><t t-esc="bid.status"/></span></td>
-                                </tr>
-                            </t>
-                            <tr t-if="not bids">
-                                <td colspan="4" class="text-center py-4 text-muted">Belum ada penawaran yang diajukan.</td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+            <section class="sl-page-header">
+                <div class="container">
+                    <p class="sl-kicker">Dashboard Vendor</p>
+                    <h1>Riwayat Penawaran Lelang</h1>
+                    <p class="sl-lead">Pantau status penawaran yang telah Anda ajukan.</p>
                 </div>
-            </div>
+            </section>
+
+            <section class="sl-section sl-section--form">
+                <div class="container">
+                    <t t-if="not is_vendor">
+                        <div class="alert alert-warning sl-notice" role="alert">
+                            <i class="fa fa-exclamation-triangle me-2"></i>
+                            <strong>Perhatian!</strong> Akun Anda belum terverifikasi penuh sebagai Vendor. Anda tidak dapat mengikuti tender. Silakan hubungi admin.
+                        </div>
+                    </t>
+                    <t t-elif="partner.vendor_status != 'verified'">
+                        <div class="alert alert-warning sl-notice" role="alert">
+                            <i class="fa fa-exclamation-triangle me-2"></i>
+                            <strong>Perhatian!</strong> Status verifikasi Anda saat ini: <b><t t-esc="partner.vendor_status"/></b>. Anda belum bisa mengajukan penawaran.
+                        </div>
+                    </t>
+                </div>
+            </section>
+
+            <section class="sl-section">
+                <div class="container">
+                    <div class="sl-grid-header">
+                        <div>
+                            <h2>Daftar Penawaran</h2>
+                            <p>Penawaran yang sudah Anda kirimkan.</p>
+                        </div>
+                        <a href="/sadaya-lelang/tender" style="color: var(--sl-accent); text-decoration: none; font-weight: 600;">Lihat semua tender</a>
+                    </div>
+                    <div class="sl-table-card">
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Tender</th>
+                                        <th>No Penawaran</th>
+                                        <th class="text-end">Harga Penawaran</th>
+                                        <th class="text-center">Status Evaluasi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="bids" t-as="bid">
+                                        <tr>
+                                            <td class="fw-bold"><t t-esc="bid.paket_id.name"/></td>
+                                            <td><t t-esc="bid.name"/></td>
+                                            <td class="text-end fw-semibold" style="color: var(--sl-accent);">
+                                                <t t-esc="bid.harga_penawaran" t-options="{'widget': 'monetary', 'display_currency': bid.currency_id}"/>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="sl-pill sl-pill--info"><t t-esc="bid.status"/></span>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <tr t-if="not bids">
+                                        <td colspan="4" class="text-center py-4 text-muted">Belum ada penawaran yang diajukan.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </t>
     </template>
-    
-    <!-- Submit Bid Form -->
+
+    <!-- ========================================== -->
+    <!-- SUBMIT BID FORM                            -->
+    <!-- ========================================== -->
     <template id="portal_tender_submit_bid" name="Submit Penawaran">
         <t t-call="sadaya_lelang.portal_sidebar_layout">
             <t t-set="active_menu" t-value="'tender'"/>
-            <div class="mb-4">
-                <a t-attf-href="/tenders/#{tender.id}" class="text-decoration-none text-secondary small"><i class="fa fa-arrow-left me-1"></i> Kembali ke Detail Tender</a>
-                <h4 class="fw-bold mt-3 mb-1">Pengajuan Penawaran</h4>
-                <p class="text-muted small"><t t-esc="tender.name"/></p>
-            </div>
-            
-            <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-body p-4">
-                    <div t-if="existing_bid" class="alert alert-info border-0 rounded-4">
-                        <i class="fa fa-info-circle me-2"></i> Anda sudah pernah mengirimkan penawaran sebesar <strong><t t-esc="existing_bid.harga_penawaran" t-options="{'widget': 'monetary', 'display_currency': tender.currency_id}"/></strong>. 
-                        Mengisi form ini akan menimpa data penawaran Anda sebelumnya.
-                    </div>
-                    
-                    <form t-attf-action="/tenders/#{tender.id}/process_bid" method="post" enctype="multipart/form-data">
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Nilai Penawaran (Rp) <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light border-end-0">Rp</span>
-                                <input type="number" class="form-control border-start-0" name="harga_penawaran" required="1" placeholder="Masukkan angka tanpa titik (contoh: 150000000)" t-att-value="existing_bid.harga_penawaran if existing_bid else ''"/>
-                            </div>
-                            <div class="form-text text-muted">Nilai HPS: <t t-esc="tender.hps" t-options="{'widget': 'monetary', 'display_currency': tender.currency_id}"/></div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Dokumen Kualifikasi <span class="text-danger" t-if="not existing_bid">*</span></label>
-                            <input class="form-control" type="file" name="file_kualifikasi" accept=".pdf,.zip,.rar" t-att-required="'1' if not existing_bid else None"/>
-                            <div class="form-text text-muted">Unggah dokumen SIUP, TDP, Akta Perusahaan, dsb (Format: PDF/ZIP). <t t-if="existing_bid"><span class="text-success">Biarkan kosong jika tidak ingin mengubah file yang sudah ada.</span></t></div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Dokumen Teknis &amp; Harga <span class="text-danger" t-if="not existing_bid">*</span></label>
-                            <input class="form-control" type="file" name="file_penawaran" accept=".pdf,.zip,.rar,.xls,.xlsx" t-att-required="'1' if not existing_bid else None"/>
-                            <div class="form-text text-muted">Unggah spesifikasi teknis dan rincian RAB penawaran. <t t-if="existing_bid"><span class="text-success">Biarkan kosong jika tidak ingin mengubah file yang sudah ada.</span></t></div>
-                        </div>
-                        
-                        <hr class="my-4"/>
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a t-attf-href="/tenders/#{tender.id}" class="btn btn-light rounded-pill px-4">Batal</a>
-                            <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold"><i class="fa fa-paper-plane me-2"></i> Kirim Penawaran</button>
-                        </div>
-                    </form>
+
+            <section class="sl-page-header">
+                <div class="container">
+                    <a t-attf-href="/sadaya-lelang/tender/#{tender.id}" class="sl-breadcrumb">
+                        <i class="fa fa-arrow-left me-1"></i> Kembali ke Detail Tender
+                    </a>
+                    <p class="sl-kicker" style="margin-top: 1rem;">Pengajuan Penawaran</p>
+                    <h1><t t-esc="tender.name"/></h1>
+                    <p class="sl-lead">Silakan lengkapi data penawaran di bawah ini.</p>
                 </div>
-            </div>
+            </section>
+
+            <section class="sl-section">
+                <div class="container">
+                    <div class="row g-3">
+                        <div class="col-12 col-lg-8">
+                            <article class="sl-card sl-card--detail">
+                                <h3 style="margin-bottom: 1.25rem;">Form Penawaran</h3>
+
+                                <div t-if="not is_vendor" class="alert alert-danger sl-notice" role="alert">
+                                    <i class="fa fa-ban me-2"></i> Akun Anda belum terverifikasi sebagai Vendor. Anda tidak memiliki izin untuk mengirim penawaran.
+                                </div>
+                                <div t-elif="existing_bid" class="alert alert-info sl-notice" role="alert">
+                                    <i class="fa fa-info-circle me-2"></i> Anda sudah pernah mengirimkan penawaran sebesar
+                                    <strong><t t-esc="existing_bid.harga_penawaran" t-options="{'widget': 'monetary', 'display_currency': tender.currency_id}"/></strong>.
+                                    Mengisi form ini akan menimpa data penawaran Anda sebelumnya.
+                                </div>
+
+                                <form t-attf-action="/sadaya-lelang/tender/#{tender.id}/process_bid" method="post" enctype="multipart/form-data">
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="sl-field-label">Nilai Penawaran (Rp) <span style="color: #dc2626;">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text" style="border-radius: 16px 0 0 16px; border-color: rgba(24,33,47,0.14); background: rgba(13,79,139,0.04); font-weight: 700; color: var(--sl-accent);">Rp</span>
+                                                <input type="number" class="form-control sl-input" style="border-radius: 0 16px 16px 0;" name="harga_penawaran" required="1" placeholder="Masukkan angka tanpa titik (contoh: 150000000)" t-att-value="existing_bid.harga_penawaran if existing_bid else ''"/>
+                                            </div>
+                                            <small style="color: var(--sl-muted); margin-top: 0.35rem; display: block;">
+                                                Nilai HPS: <t t-esc="tender.hps" t-options="{'widget': 'monetary', 'display_currency': tender.currency_id}"/>
+                                            </small>
+                                        </div>
+
+                                        <div class="col-12 col-lg-6">
+                                            <label class="sl-field-label">
+                                                Dokumen Kualifikasi
+                                                <span style="color: #dc2626;" t-if="not existing_bid">*</span>
+                                            </label>
+                                            <input class="form-control sl-input" type="file" name="file_kualifikasi" accept=".pdf,.zip,.rar" t-att-required="'1' if not existing_bid else None"/>
+                                            <small style="color: var(--sl-muted); margin-top: 0.35rem; display: block;">
+                                                SIUP, TDP, Akta Perusahaan, dsb (PDF/ZIP).
+                                                <t t-if="existing_bid"><span style="color: #16a34a;"> Biarkan kosong jika tidak ingin mengubah.</span></t>
+                                            </small>
+                                        </div>
+
+                                        <div class="col-12 col-lg-6">
+                                            <label class="sl-field-label">
+                                                Dokumen Teknis &amp; Harga
+                                                <span style="color: #dc2626;" t-if="not existing_bid">*</span>
+                                            </label>
+                                            <input class="form-control sl-input" type="file" name="file_penawaran" accept=".pdf,.zip,.rar,.xls,.xlsx" t-att-required="'1' if not existing_bid else None"/>
+                                            <small style="color: var(--sl-muted); margin-top: 0.35rem; display: block;">
+                                                Spesifikasi teknis dan rincian RAB.
+                                                <t t-if="existing_bid"><span style="color: #16a34a;"> Biarkan kosong jika tidak ingin mengubah.</span></t>
+                                            </small>
+                                        </div>
+
+                                        <div class="col-12" style="margin-top: 1.5rem; border-top: 1px dashed var(--sl-border); padding-top: 1.25rem;">
+                                            <div style="display: flex; gap: 0.75rem; justify-content: flex-end; flex-wrap: wrap;">
+                                                <a t-attf-href="/sadaya-lelang/tender/#{tender.id}" class="btn btn-outline-primary" style="border-radius: 999px; padding: 0.65rem 1.5rem;">Batal</a>
+                                                <button type="submit" class="btn sl-submit" t-att-disabled="'disabled' if not is_vendor else None">
+                                                    <i class="fa fa-paper-plane me-2"></i> Kirim Penawaran
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </article>
+                        </div>
+
+                        <!-- Side info card -->
+                        <div class="col-12 col-lg-4">
+                            <article class="sl-card sl-card--detail" style="position: sticky; top: 1.5rem;">
+                                <h4 style="margin-bottom: 1rem; font-size: 1rem;">Info Paket</h4>
+                                <dl class="sl-dl" style="grid-template-columns: 1fr;">
+                                    <div><dt>Kode Tender</dt><dd><t t-esc="tender.kode_tender"/></dd></div>
+                                    <div><dt>Metode</dt><dd><t t-esc="tender.metode_pemilihan"/></dd></div>
+                                    <div><dt>HPS</dt><dd><t t-esc="tender.hps" t-options="{'widget': 'monetary', 'display_currency': tender.currency_id}"/></dd></div>
+                                    <div><dt>Status</dt><dd><span class="sl-label"><t t-esc="tender.status"/></span></dd></div>
+                                </dl>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </t>
     </template>
+
 </odoo>
