@@ -176,7 +176,6 @@ class SadayaRegistration(models.Model):
             except Exception as e:
                 _logger.warning('Gagal membuat sadaya_mitra.penyedia: %s', e)
 
-
     def action_reject(self):
         for rec in self:
             rec.state = 'rejected'

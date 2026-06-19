@@ -25,6 +25,7 @@
     'data': [
         'security/sadaya_security.xml',
         'security/ir.model.access.csv',
+        'views/registration_views.xml',
         'views/sadaya_layout_templates.xml',
         'views/sadaya_register_templates.xml',
         'views/sadaya_login_templates.xml',

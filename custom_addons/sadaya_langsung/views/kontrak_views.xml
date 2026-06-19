@@ -134,5 +134,11 @@
       <field name="target">self</field>
     </record>
 
+    <record model="ir.actions.act_window" id="action_sadaya_langsung_kontrak_admin">
+      <field name="name">Kontrak Sadaya Langsung</field>
+      <field name="res_model">sadaya_langsung.kontrak</field>
+      <field name="view_mode">list,form</field>
+    </record>
+
   </data>
 </odoo>
