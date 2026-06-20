@@ -9,7 +9,7 @@
     'author': "Politeknik Negeri Bandung",
     'category': 'Procurement',
     'version': '1.0',
-    'depends': ['base', 'sadaya_rutin', 'sadaya_langsung', 'sadaya_lelang', 'website'],
+    'depends': ['base', 'sadaya_rutin', 'sadaya_langsung', 'sadaya_lelang', 'sadaya_mitra', 'website'],
     'data': [
         'security/ir.model.access.csv',
         'views/views.xml',

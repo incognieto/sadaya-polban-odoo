@@ -234,13 +234,15 @@ class SadayaTawarPeserta(models.Model):
         required=True,
         ondelete='cascade'
     )
+    
     vendor_id = fields.Many2one(
-        'res.partner',
-        string='Vendor',
-        required=True,
-        domain="[('is_company', '=', True)]",
-        index=True
+    'res.partner',
+    string='Vendor',
+    required=True,
+    domain="[('is_sadaya_mitra_vendor', '=', True)]",
+    index=True
     )
+
     tanggal_daftar = fields.Datetime(
         string='Tanggal Daftar',
         default=fields.Datetime.now,
