@@ -11,6 +11,7 @@
         "base",
         "mail",
         "website",
+        "sadaya_auth",
     ],
     "data": [
         "security/security.xml",
