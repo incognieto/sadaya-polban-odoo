@@ -7,25 +7,25 @@
               id="menu_sadaya_langsung_root"
               sequence="50"/>
 
-    <!-- Dashboard -->
-    <menuitem name="Dashboard"
-              id="menu_sadaya_langsung_dashboard"
-              parent="menu_sadaya_langsung_root"
-              action="action_sadaya_langsung_dashboard_url"
-              sequence="10"/>
-
     <!-- Paket Penyedia -->
     <menuitem name="Paket"
               id="menu_sadaya_langsung_paket"
               parent="menu_sadaya_langsung_root"
-              action="action_sadaya_langsung_paket_url"
-              sequence="20"/>
+              action="action_sadaya_langsung_paket_admin"
+              sequence="10"/>
 
     <!-- Kontrak -->
     <menuitem name="Kontrak"
               id="menu_sadaya_langsung_kontrak"
               parent="menu_sadaya_langsung_root"
-              action="action_sadaya_langsung_kontrak_url"
+              action="action_sadaya_langsung_kontrak_admin"
+              sequence="20"/>
+
+    <!-- Dashboard Website -->
+    <menuitem name="Dashboard Website"
+              id="menu_sadaya_langsung_dashboard"
+              parent="menu_sadaya_langsung_root"
+              action="action_sadaya_langsung_dashboard_url"
               sequence="30"/>
 
   </data>

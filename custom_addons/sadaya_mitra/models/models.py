@@ -13,22 +13,88 @@ class SadayaMitraPenyedia(models.Model):
     partner_id = fields.Many2one(
         'res.partner', string='Partner', ondelete='set null', index=True
     )
+    registration_id = fields.Many2one('sadaya.registration', string='Registrasi Sadaya Auth', ondelete='set null')
+
     jenis_penyedia = fields.Selection([
         ('badan_usaha', 'Badan Usaha'),
         ('perorangan', 'Perorangan')
-    ], required=True)
+    ], string='Jenis Penyedia', compute='_compute_jenis_penyedia', store=True, readonly=False)
 
-    nama_badan_usaha = fields.Char(required=True)
-    email = fields.Char()
-    nomor_telepon = fields.Char()
-    nomor_whatsapp = fields.Char()
-    narahubung = fields.Char()
-    nomor_nik_narahubung = fields.Char()
-    alamat = fields.Text()
-    kata_sandi = fields.Char()
-    swafoto_narahubung = fields.Binary()
-    nomor_npwp_perusahaan = fields.Char()
-    bukti_npwp = fields.Binary()
+    nama_badan_usaha = fields.Char(string='Nama Badan Usaha', compute='_compute_nama_badan_usaha', store=True, readonly=False)
+    email = fields.Char(string='Email', compute='_compute_email', store=True, readonly=False)
+    nomor_telepon = fields.Char(string='Nomor Telepon', compute='_compute_nomor_telepon', store=True, readonly=False)
+    nomor_whatsapp = fields.Char(string='Nomor WhatsApp', compute='_compute_nomor_whatsapp', store=True, readonly=False)
+    narahubung = fields.Char(string='Narahubung', compute='_compute_narahubung', store=True, readonly=False)
+    nomor_nik_narahubung = fields.Char(string='Nomor NIK Narahubung', compute='_compute_nomor_nik_narahubung', store=True, readonly=False)
+    alamat = fields.Text(string='Alamat')
+    kata_sandi = fields.Char(string='Kata Sandi')
+    swafoto_narahubung = fields.Binary(string='Swafoto Narahubung', compute='_compute_swafoto_narahubung', store=True, readonly=False)
+    nomor_npwp_perusahaan = fields.Char(string='Nomor NPWP Perusahaan', compute='_compute_nomor_npwp_perusahaan', store=True, readonly=False)
+    bukti_npwp = fields.Binary(string='Bukti NPWP', compute='_compute_bukti_npwp', store=True, readonly=False)
+
+    @api.depends('registration_id')
+    def _compute_jenis_penyedia(self):
+        for rec in self:
+            if rec.registration_id:
+                rec.jenis_penyedia = rec.registration_id.tipe_pendaftar
+
+    @api.depends('registration_id', 'registration_id.nama_badan_usaha', 'registration_id.nama_lengkap', 'jenis_penyedia')
+    def _compute_nama_badan_usaha(self):
+        for rec in self:
+            if rec.registration_id:
+                if rec.jenis_penyedia == 'badan_usaha':
+                    rec.nama_badan_usaha = rec.registration_id.nama_badan_usaha
+                else:
+                    rec.nama_badan_usaha = rec.registration_id.nama_lengkap
+
+    @api.depends('registration_id.email')
+    def _compute_email(self):
+        for rec in self:
+            if rec.registration_id:
+                rec.email = rec.registration_id.email
+
+    @api.depends('registration_id.telepon_badan_usaha')
+    def _compute_nomor_telepon(self):
+        for rec in self:
+            if rec.registration_id:
+                rec.nomor_telepon = rec.registration_id.telepon_badan_usaha
+
+    @api.depends('registration_id.whatsapp_narahubung')
+    def _compute_nomor_whatsapp(self):
+        for rec in self:
+            if rec.registration_id:
+                rec.nomor_whatsapp = rec.registration_id.whatsapp_narahubung
+
+    @api.depends('registration_id.nama_lengkap')
+    def _compute_narahubung(self):
+        for rec in self:
+            if rec.registration_id:
+                rec.narahubung = rec.registration_id.nama_lengkap
+
+    @api.depends('registration_id.nik_narahubung')
+    def _compute_nomor_nik_narahubung(self):
+        for rec in self:
+            if rec.registration_id:
+                rec.nomor_nik_narahubung = rec.registration_id.nik_narahubung
+
+    @api.depends('registration_id.swafoto_ktp')
+    def _compute_swafoto_narahubung(self):
+        for rec in self:
+            if rec.registration_id:
+                rec.swafoto_narahubung = rec.registration_id.swafoto_ktp
+
+    @api.depends('registration_id.npwp_perusahaan')
+    def _compute_nomor_npwp_perusahaan(self):
+        for rec in self:
+            if rec.registration_id:
+                rec.nomor_npwp_perusahaan = rec.registration_id.npwp_perusahaan
+
+    @api.depends('registration_id.bukti_npwp')
+    def _compute_bukti_npwp(self):
+        for rec in self:
+            if rec.registration_id:
+                rec.bukti_npwp = rec.registration_id.bukti_npwp
+
     # 1:1
     landasan_hukum_id = fields.One2many('sadaya_mitra.landasan.hukum', 'penyedia_id')
     keuangan_id = fields.One2many('sadaya_mitra.keuangan', 'penyedia_id')

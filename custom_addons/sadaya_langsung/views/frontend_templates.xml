@@ -8,12 +8,12 @@
           <div class="container sl-app-header__inner">
             <div>
               <p class="sl-app-eyebrow">Sistem Informasi Pengadaan Langsung</p>
-              <a href="/sadaya_langsung" class="sl-app-brand">Sadaya Langsung</a>
+              <a href="/sadaya-langsung" class="sl-app-brand">Sadaya Langsung</a>
             </div>
             <nav class="sl-app-nav" aria-label="Navigasi utama">
-              <a href="/sadaya_langsung" t-att-class="'active' if active_page == 'dashboard' else ''">Dashboard</a>
-              <a href="/sadaya_langsung/paket" t-att-class="'active' if active_page == 'paket' else ''">Paket</a>
-              <a href="/sadaya_langsung/kontrak" t-att-class="'active' if active_page == 'kontrak' else ''">Kontrak</a>
+              <a href="/sadaya-langsung" t-att-class="'active' if active_page == 'dashboard' else ''">Dashboard</a>
+              <a href="/sadaya-langsung/paket" t-att-class="'active' if active_page == 'paket' else ''">Paket</a>
+              <a href="/sadaya-langsung/kontrak" t-att-class="'active' if active_page == 'kontrak' else ''">Kontrak</a>
             </nav>
           </div>
         </header>
@@ -44,8 +44,8 @@
                 </div>
               </div>
               <div class="sl-hero__actions">
-                <a href="/sadaya_langsung/paket" class="btn btn-primary">Lihat Paket</a>
-                <a href="/sadaya_langsung/kontrak" class="btn btn-outline-primary">Lihat Kontrak</a>
+                <a href="/sadaya-langsung/paket" class="btn btn-primary">Lihat Paket</a>
+                <a href="/sadaya-langsung/kontrak" class="btn btn-outline-primary">Lihat Kontrak</a>
               </div>
             </div>
           </div>
@@ -110,7 +110,7 @@
                 <h2>Paket Terbaru</h2>
                 <p>Data terakhir yang masuk ke sistem.</p>
               </div>
-              <a href="/sadaya_langsung/paket">Buka semua paket</a>
+              <a href="/sadaya-langsung/paket">Buka semua paket</a>
             </div>
             <div class="row g-3">
               <t t-foreach="recent_paket" t-as="paket">
@@ -148,7 +148,7 @@
                 <h2>Kontrak Terbaru</h2>
                 <p>Ringkasan kontrak dan statusnya.</p>
               </div>
-              <a href="/sadaya_langsung/kontrak">Buka semua kontrak</a>
+              <a href="/sadaya-langsung/kontrak">Buka semua kontrak</a>
             </div>
             <div class="row g-3">
               <t t-foreach="recent_kontrak" t-as="kontrak">
@@ -203,12 +203,12 @@
           <div class="container sl-app-header__inner">
             <div>
               <p class="sl-app-eyebrow">Sistem Informasi Pengadaan Langsung</p>
-              <a href="/sadaya_langsung" class="sl-app-brand">Sadaya Langsung</a>
+              <a href="/sadaya-langsung" class="sl-app-brand">Sadaya Langsung</a>
             </div>
             <nav class="sl-app-nav" aria-label="Navigasi utama">
-              <a href="/sadaya_langsung">Dashboard</a>
-              <a href="/sadaya_langsung/paket" class="active">Paket</a>
-              <a href="/sadaya_langsung/kontrak">Kontrak</a>
+              <a href="/sadaya-langsung">Dashboard</a>
+              <a href="/sadaya-langsung/paket" class="active">Paket</a>
+              <a href="/sadaya-langsung/kontrak">Kontrak</a>
             </nav>
           </div>
         </header>
@@ -258,7 +258,7 @@
                     </dl>
                     <div class="sl-actions" t-if="paket['actions']">
                       <t t-foreach="paket['actions']" t-as="action">
-                        <form t-attf-action="/sadaya_langsung/paket/{{ paket['id'] }}/workflow" method="post">
+                        <form t-attf-action="/sadaya-langsung/paket/{{ paket['id'] }}/workflow" method="post">
                           <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                           <input type="hidden" name="action" t-att-value="action['key']"/>
                           <button type="submit" t-att-class="'btn btn-sm ' + action['class']">
@@ -271,7 +271,7 @@
                     <details class="sl-inline-panel">
                       <summary>Edit Paket &amp; Kelola Penawaran</summary>
                       <div class="sl-inline-panel__body">
-                        <form class="sl-form sl-form--inline" t-attf-action="/sadaya_langsung/paket/{{ paket['id'] }}/update" method="post" enctype="multipart/form-data">
+                        <form class="sl-form sl-form--inline" t-attf-action="/sadaya-langsung/paket/{{ paket['id'] }}/update" method="post" enctype="multipart/form-data">
                           <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                           <div class="row g-2">
                             <div class="col-12 col-lg-6">
@@ -350,7 +350,7 @@
 
                         <div class="sl-subsection">
                           <h4>Tambah Penawaran Vendor</h4>
-                          <form class="sl-form sl-form--inline" t-attf-action="/sadaya_langsung/paket/{{ paket['id'] }}/penawaran/create" method="post" enctype="multipart/form-data">
+                          <form class="sl-form sl-form--inline" t-attf-action="/sadaya-langsung/paket/{{ paket['id'] }}/penawaran/create" method="post" enctype="multipart/form-data">
                             <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                             <div class="row g-2">
                               <div class="col-12 col-lg-5">
@@ -397,7 +397,7 @@
                                 <p class="sl-penawaran-meta">Status: <t t-esc="row['status_penawaran']"/> | Evaluasi: <t t-esc="row['lulus_evaluasi']"/></p>
 
 
-                                <form class="sl-inline-grid" t-attf-action="/sadaya_langsung/penawaran/{{ row['id'] }}/evaluate" method="post">
+                                <form class="sl-inline-grid" t-attf-action="/sadaya-langsung/penawaran/{{ row['id'] }}/evaluate" method="post">
                                   <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                   <select class="form-select sl-input" name="evaluasi_administrasi">
                                     <option value="">Administrasi</option>
@@ -432,7 +432,7 @@
                       </div>
                         <div class="sl-subsection">
                           <h4>Daftar Item Paket</h4>
-                          <form class="sl-form sl-form--inline" t-attf-action="/sadaya_langsung/paket/{{ paket['id'] }}/item/create" method="post">
+                          <form class="sl-form sl-form--inline" t-attf-action="/sadaya-langsung/paket/{{ paket['id'] }}/item/create" method="post">
                             <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                             <div class="row g-2">
                               <div class="col-12 col-lg-5">
@@ -474,7 +474,7 @@
                                   </div>
                                   <div>
                                     <span><t t-esc="item['subtotal']"/></span>
-                                    <form t-attf-action="/sadaya_langsung/paket/{{ paket['id'] }}/item/{{ item['id'] }}/delete" method="post" style="display:inline-block;margin-left:8px;">
+                                    <form t-attf-action="/sadaya-langsung/paket/{{ paket['id'] }}/item/{{ item['id'] }}/delete" method="post" style="display:inline-block;margin-left:8px;">
                                       <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                       <button type="submit" class="btn btn-sm btn-outline-danger">Hapus</button>
                                     </form>
@@ -520,12 +520,12 @@
           <div class="container sl-app-header__inner">
             <div>
               <p class="sl-app-eyebrow">Sistem Informasi Pengadaan Langsung</p>
-              <a href="/sadaya_langsung" class="sl-app-brand">Sadaya Langsung</a>
+              <a href="/sadaya-langsung" class="sl-app-brand">Sadaya Langsung</a>
             </div>
             <nav class="sl-app-nav" aria-label="Navigasi utama">
-              <a href="/sadaya_langsung">Dashboard</a>
-              <a href="/sadaya_langsung/paket">Paket</a>
-              <a href="/sadaya_langsung/kontrak" class="active">Kontrak</a>
+              <a href="/sadaya-langsung">Dashboard</a>
+              <a href="/sadaya-langsung/paket">Paket</a>
+              <a href="/sadaya-langsung/kontrak" class="active">Kontrak</a>
             </nav>
           </div>
         </header>
@@ -575,7 +575,7 @@
                     </dl>
                     <div class="sl-actions" t-if="kontrak['actions']">
                       <t t-foreach="kontrak['actions']" t-as="action">
-                        <form t-attf-action="/sadaya_langsung/kontrak/{{ kontrak['id'] }}/workflow" method="post">
+                        <form t-attf-action="/sadaya-langsung/kontrak/{{ kontrak['id'] }}/workflow" method="post">
                           <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                           <input type="hidden" name="action" t-att-value="action['key']"/>
                           <button type="submit" t-att-class="'btn btn-sm ' + action['class']">
@@ -588,7 +588,7 @@
                     <details class="sl-inline-panel">
                       <summary>Edit Kontrak</summary>
                       <div class="sl-inline-panel__body">
-                        <form class="sl-form sl-form--inline" t-attf-action="/sadaya_langsung/kontrak/{{ kontrak['id'] }}/update" method="post">
+                        <form class="sl-form sl-form--inline" t-attf-action="/sadaya-langsung/kontrak/{{ kontrak['id'] }}/update" method="post">
                           <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                           <div class="row g-2">
                             <div class="col-12 col-lg-6">

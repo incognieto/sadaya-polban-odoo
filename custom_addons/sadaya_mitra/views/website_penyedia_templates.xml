@@ -1,14 +1,35 @@
 <odoo>
     <template id="sadaya_mitra_penyedia_form" name="SadayaMitra Form Penyedia">
         <t t-call="website.layout">
-            <section class="container my-5">
-                <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <h1 class="mb-3">Form Pendaftaran Penyedia</h1>
-                        <p class="text-muted">Lengkapi data penyedia untuk melanjutkan ke data lanjutan.</p>
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+            <t t-set="title">Form Pendaftaran Penyedia</t>
+            <div id="wrap" class="o_sadaya_frontend sl-app-shell">
+                <header class="sl-app-header">
+                    <div class="container sl-app-header__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sistem Informasi Mitra</p>
+                            <a href="/sadaya-mitra" class="sl-app-brand">Sadaya Mitra</a>
+                        </div>
+                        <nav class="sl-app-nav" aria-label="Navigasi utama">
+                            <a href="/sadaya-mitra">Data Lanjutan</a>
+                            <a href="/sadaya-mitra/profil">Profil &amp; Status</a>
+                        </nav>
+                    </div>
+                </header>
 
+                <section class="sl-page-header">
+                    <div class="container">
+                        <p class="sl-kicker">Portal Mitra</p>
+                        <h1>Form Pendaftaran Penyedia</h1>
+                        <p class="sl-lead">Lengkapi data penyedia untuk melanjutkan ke data lanjutan.</p>
+                    </div>
+                </section>
+
+                <section class="sl-section sl-section--form">
+                    <div class="container">
                         <t t-if="errors">
-                            <div class="alert alert-danger" role="alert">
+                            <div class="alert alert-danger sl-notice" role="alert">
                                 <ul class="mb-0">
                                     <t t-foreach="errors" t-as="error">
                                         <li><t t-esc="error"/></li>
@@ -17,101 +38,95 @@
                             </div>
                         </t>
 
-                        <form action="/sadaya_mitra/penyedia/submit" method="post" enctype="multipart/form-data" class="o_website_form">
-                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <article class="sl-card sl-card--detail">
+                            <form action="/sadaya-mitra/penyedia/submit" method="post" enctype="multipart/form-data" class="sl-form o_website_form">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
 
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Jenis Penyedia</label>
-                                    <select class="form-select" name="jenis_penyedia" required="required">
-                                        <option value="">Pilih</option>
-                                        <option value="badan_usaha" t-att-selected="values.get('jenis_penyedia') == 'badan_usaha'">Badan Usaha</option>
-                                        <option value="perorangan" t-att-selected="values.get('jenis_penyedia') == 'perorangan'">Perorangan</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Nama Badan Usaha</label>
-                                    <input type="text" class="form-control" name="nama_badan_usaha" required="required" t-att-value="values.get('nama_badan_usaha')"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" name="email" required="required" t-att-value="values.get('email')"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Kata Sandi</label>
-                                    <input type="password" class="form-control" name="kata_sandi" required="required"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Konfirmasi Kata Sandi</label>
-                                    <input type="password" class="form-control" name="kata_sandi_confirm" required="required"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Nomor Telepon</label>
-                                    <input type="text" class="form-control" name="nomor_telepon" required="required" t-att-value="values.get('nomor_telepon')"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Nomor WhatsApp</label>
-                                    <input type="text" class="form-control" name="nomor_whatsapp" required="required" t-att-value="values.get('nomor_whatsapp')"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Nama Narahubung</label>
-                                    <input type="text" class="form-control" name="narahubung" required="required" t-att-value="values.get('narahubung')"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Nomor NIK Narahubung</label>
-                                    <input type="text"
-                                        class="form-control"
-                                        name="nomor_nik_narahubung"
-                                        required="required"
-                                        maxlength="16"
-                                        inputmode="numeric"
-                                        t-att-value="values.get('nomor_nik_narahubung')"
-                                        oninput="this.value=this.value.replace(/[^0-9]/g,'')"/>
-                                    <div class="form-text text-muted">NIK harus diisi tepat 16 angka</div>
-                                    <div class="invalid-feedback">
-                                        NIK wajib diisi dan harus tepat 16 digit angka
+                                <div class="row g-2">
+                                    <div class="col-12 col-md-6">
+                                        <label class="sl-field-label">Jenis Penyedia</label>
+                                        <select class="form-select sl-input" name="jenis_penyedia" required="required">
+                                            <option value="">Pilih</option>
+                                            <option value="badan_usaha" t-att-selected="values.get('jenis_penyedia') == 'badan_usaha'">Badan Usaha</option>
+                                            <option value="perorangan" t-att-selected="values.get('jenis_penyedia') == 'perorangan'">Perorangan</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="sl-field-label">Nama Badan Usaha</label>
+                                        <input type="text" class="form-control sl-input" name="nama_badan_usaha" required="required" t-att-value="values.get('nama_badan_usaha')"/>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="sl-field-label">Email</label>
+                                        <input type="email" class="form-control sl-input" name="email" required="required" t-att-value="values.get('email')"/>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="sl-field-label">Kata Sandi <t t-if="is_edit"><small class="text-muted">(Opsional jika tidak ingin diubah)</small></t></label>
+                                        <input type="password" class="form-control sl-input" name="kata_sandi" t-att-required="not is_edit"/>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="sl-field-label">Konfirmasi Kata Sandi</label>
+                                        <input type="password" class="form-control sl-input" name="kata_sandi_confirm" t-att-required="not is_edit"/>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="sl-field-label">Nomor Telepon</label>
+                                        <input type="text" class="form-control sl-input" name="nomor_telepon" required="required" t-att-value="values.get('nomor_telepon')"/>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="sl-field-label">Nomor WhatsApp</label>
+                                        <input type="text" class="form-control sl-input" name="nomor_whatsapp" required="required" t-att-value="values.get('nomor_whatsapp')"/>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="sl-field-label">Nama Narahubung</label>
+                                        <input type="text" class="form-control sl-input" name="narahubung" required="required" t-att-value="values.get('narahubung')"/>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="sl-field-label">Nomor NIK Narahubung</label>
+                                        <input type="text"
+                                            class="form-control sl-input"
+                                            name="nomor_nik_narahubung"
+                                            required="required"
+                                            maxlength="16"
+                                            inputmode="numeric"
+                                            t-att-value="values.get('nomor_nik_narahubung')"
+                                            oninput="this.value=this.value.replace(/[^0-9]/g,'')"/>
+                                        <div class="form-text text-muted">NIK harus diisi tepat 16 angka</div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="sl-field-label">Swafoto Narahubung (Memegang KTP) <t t-if="is_edit"><small class="text-muted">(Opsional jika tidak ingin diubah)</small></t></label>
+                                        <input type="file" class="form-control" name="swafoto_narahubung" t-att-required="not is_edit" accept="image/jpeg, image/png"/>
+                                        <div class="form-text text-muted">Format file harus .jpg, .jpeg, atau .png</div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="sl-field-label">Alamat</label>
+                                        <textarea class="form-control sl-input" name="alamat" required="required" rows="3"><t t-esc="values.get('alamat')"/></textarea>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="sl-field-label">Nomor NPWP Perusahaan</label>
+                                        <input type="text"
+                                            class="form-control sl-input"
+                                            name="nomor_npwp_perusahaan"
+                                            required="required"
+                                            maxlength="16"
+                                            inputmode="numeric"
+                                            t-att-value="values.get('nomor_npwp_perusahaan')"
+                                            oninput="this.value=this.value.replace(/[^0-9]/g,'')"/>
+                                        <div class="form-text text-muted">NPWP harus diisi 15 atau 16 angka</div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="sl-field-label">Bukti NPWP <t t-if="is_edit"><small class="text-muted">(Opsional jika tidak ingin diubah)</small></t></label>
+                                        <input type="file" class="form-control" name="bukti_npwp" t-att-required="not is_edit" accept="application/pdf"/>
+                                        <div class="form-text text-muted">Format file harus .pdf</div>
+                                    </div>
+                                    <div class="col-12 mt-4">
+                                        <button type="submit" class="btn btn-primary sl-submit">
+                                            <t t-if="is_edit">Simpan Perubahan</t>
+                                            <t t-else="">Kirim Pendaftaran</t>
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Swafoto Narahubung (Memegang KTP)</label>
-                                    <input type="file" class="form-control" name="swafoto_narahubung" required="required" accept="image/jpeg, image/png"/>
-                                    <div class="form-text text-muted">Format file harus .jpg, .jpeg, atau .png</div>
-                                    <div class="invalid-feedback">
-                                        Swafoto wajib diisi dengan format JPG/JPEG atau PNG
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label">Alamat</label>
-                                    <textarea class="form-control" name="alamat" required="required" rows="3"><t t-esc="values.get('alamat')"/></textarea>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Nomor NPWP Perusahaan</label>
-                                    <input type="text"
-                                        class="form-control"
-                                        name="nomor_npwp_perusahaan"
-                                        required="required"
-                                        maxlength="16"
-                                        inputmode="numeric"
-                                        t-att-value="values.get('nomor_npwp_perusahaan')"
-                                        oninput="this.value=this.value.replace(/[^0-9]/g,'')"/>
-                                    <div class="form-text text-muted">NPWP harus diisi 15 atau 16 angka</div>
-                                    <div class="invalid-feedback">
-                                        NPWP wajib diisi dan harus tepat 15 atau 16 digit angka
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Bukti NPWP</label>
-                                    <input type="file" class="form-control" name="bukti_npwp" required="required" accept="application/pdf"/>
-                                    <div class="form-text text-muted">Format file harus .pdf</div>
-                                    <div class="invalid-feedback">
-                                        Bukti NPWP wajib diisi dengan format PDF
-                                    </div>
-                                </div>
-                                <div class="mt-4 d-flex justify-content-end">
-                                    <button type="submit" class="btn btn-primary">Kirim Pendaftaran</button>
-                                </div>
-                            </div>
+
                             </form>
+                        </article>
 
                         <script>
                             document.addEventListener('DOMContentLoaded', function() {
@@ -212,25 +227,192 @@
                                 });
                             });
                         </script>
-
                     </div>
-                </div>
-            </section>
+                </section>
+                
+                <footer class="sl-app-footer">
+                    <div class="container sl-app-footer__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sadaya Mitra</p>
+                            <strong>Pendaftaran penyedia untuk pengadaan Polban.</strong>
+                        </div>
+                    </div>
+                </footer>
+            </div>
         </t>
     </template>
 
     <template id="sadaya_mitra_penyedia_success" name="SadayaMitra Form Penyedia Sukses">
         <t t-call="website.layout">
-            <section class="container my-5">
-                <div class="row justify-content-center">
-                    <div class="col-lg-6 text-center">
-                        <h1 class="mb-3">Pendaftaran Berhasil</h1>
-                        <p class="text-muted">Terima kasih. Data penyedia sudah tersimpan.</p>
-                        <p class="mb-4">Silakan lanjutkan pengisian data lanjutan.</p>
-                        <a class="btn btn-primary" href="/sadaya_mitra/lanjutan">Ke Data Lanjutan</a>
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+            <t t-set="title">Pendaftaran Berhasil</t>
+            <div id="wrap" class="o_sadaya_frontend sl-app-shell">
+                <header class="sl-app-header">
+                    <div class="container sl-app-header__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sistem Informasi Mitra</p>
+                            <a href="/sadaya-mitra" class="sl-app-brand">Sadaya Mitra</a>
+                        </div>
+                        <nav class="sl-app-nav" aria-label="Navigasi utama">
+                            <a href="/sadaya-mitra">Data Lanjutan</a>
+                            <a href="/sadaya-mitra/profil">Profil &amp; Status</a>
+                        </nav>
                     </div>
-                </div>
-            </section>
+                </header>
+
+                <section class="sl-hero">
+                    <div class="container">
+                        <div class="sl-hero__inner">
+                            <div>
+                                <p class="sl-kicker">Status</p>
+                                <h1>Pendaftaran Berhasil</h1>
+                                <p class="sl-lead">
+                                    Terima kasih. Data penyedia sudah tersimpan. Silakan lanjutkan pengisian data lanjutan.
+                                </p>
+                            </div>
+                            <div class="sl-hero__actions">
+                                <a class="btn btn-primary" href="/sadaya-mitra">Ke Data Lanjutan</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <footer class="sl-app-footer">
+                    <div class="container sl-app-footer__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sadaya Mitra</p>
+                            <strong>Pendaftaran penyedia untuk pengadaan Polban.</strong>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </t>
+    </template>
+
+    <template id="sadaya_mitra_profil" name="SadayaMitra Profil Vendor">
+        <t t-call="website.layout">
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+            <t t-set="title">Profil Vendor</t>
+            <div id="wrap" class="o_sadaya_frontend sl-app-shell">
+                <header class="sl-app-header">
+                    <div class="container sl-app-header__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sistem Informasi Mitra</p>
+                            <a href="/sadaya-mitra" class="sl-app-brand">Sadaya Mitra</a>
+                        </div>
+                        <nav class="sl-app-nav" aria-label="Navigasi utama">
+                            <a href="/sadaya-mitra">Data Lanjutan</a>
+                            <a href="/sadaya-mitra/profil" class="active">Profil &amp; Status</a>
+                        </nav>
+                    </div>
+                </header>
+
+                <section class="sl-page-header">
+                    <div class="container">
+                        <p class="sl-kicker">Dasbor Mitra</p>
+                        <h1>Profil Vendor &amp; Status Pendaftaran</h1>
+                        <p class="sl-lead">Berikut adalah ringkasan data yang Anda ajukan.</p>
+                    </div>
+                </section>
+
+                <section class="sl-section">
+                    <div class="container">
+                        <div class="row g-4">
+                            <!-- Detail Info Card -->
+                            <div class="col-12 col-lg-8">
+                                <article class="sl-card sl-card--detail h-100">
+                                    <div class="sl-card__top">
+                                        <h4>Informasi Dasar</h4>
+                                    </div>
+                                    <dl class="sl-dl">
+                                        <div>
+                                            <dt>Nama Badan Usaha</dt>
+                                            <dd><t t-esc="penyedia.nama_badan_usaha"/></dd>
+                                        </div>
+                                        <div>
+                                            <dt>Jenis Penyedia</dt>
+                                            <dd><t t-esc="penyedia.jenis_penyedia and penyedia.jenis_penyedia.upper() or '-'"/></dd>
+                                        </div>
+                                        <div>
+                                            <dt>Email</dt>
+                                            <dd><t t-esc="penyedia.email"/></dd>
+                                        </div>
+                                        <div>
+                                            <dt>Telepon</dt>
+                                            <dd><t t-esc="penyedia.nomor_telepon"/></dd>
+                                        </div>
+                                        <div>
+                                            <dt>Narahubung</dt>
+                                            <dd><t t-esc="penyedia.narahubung"/></dd>
+                                        </div>
+                                        <div>
+                                            <dt>NPWP Perusahaan</dt>
+                                            <dd><t t-esc="penyedia.nomor_npwp_perusahaan"/></dd>
+                                        </div>
+                                        <div class="col-span-2" style="grid-column: span 2;">
+                                            <dt>Alamat</dt>
+                                            <dd><t t-esc="penyedia.alamat"/></dd>
+                                        </div>
+                                    </dl>
+                                </article>
+                            </div>
+
+                            <!-- Status Card -->
+                            <div class="col-12 col-lg-4">
+                                <article class="sl-card sl-card--metric h-100">
+                                    <div>
+                                        <span class="sl-field-label d-block mb-3">Status Verifikasi</span>
+                                        <t t-if="penyedia.status_verifikasi == 'approved'">
+                                            <div class="alert alert-success sl-notice" role="alert">
+                                                <div>
+                                                    <strong>Disetujui</strong><br/>
+                                                    <small><t t-esc="penyedia.tanggal_verifikasi"/></small>
+                                                </div>
+                                            </div>
+                                        </t>
+                                        <t t-elif="penyedia.status_verifikasi == 'rejected'">
+                                            <div class="alert alert-danger sl-notice" role="alert">
+                                                <div>
+                                                    <strong>Ditolak</strong>
+                                                </div>
+                                            </div>
+                                            <p class="mt-3 text-danger"><strong>Catatan Penolakan:</strong><br/><t t-esc="penyedia.catatan_verifikasi"/></p>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="alert alert-warning sl-notice" role="alert">
+                                                <div>
+                                                    <strong>Sedang Direview</strong><br/>
+                                                    <small>Data Anda sedang dalam proses verifikasi.</small>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <div class="mt-4">
+                                        <span class="sl-field-label d-block mb-2">Kelengkapan Data Lanjutan</span>
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <strong><t t-esc="penyedia.data_lengkap_count"/></strong>
+                                            <a href="/sadaya-mitra" class="text-decoration-none">
+                                                Lengkapi
+                                            </a>
+                                        </div>
+                                    </div>
+                                </article>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <footer class="sl-app-footer">
+                    <div class="container sl-app-footer__inner">
+                        <div>
+                            <p class="sl-app-eyebrow">Sadaya Mitra</p>
+                            <strong>Pendaftaran penyedia untuk pengadaan Polban.</strong>
+                        </div>
+                    </div>
+                </footer>
+            </div>
         </t>
     </template>
 </odoo>

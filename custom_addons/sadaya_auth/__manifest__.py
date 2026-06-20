@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Sadaya Auth - Register Login Logout',
-    'version': '19.0.1.0.0',
+    'version': '19.0.2.0.0',
     'category': 'Website',
     'summary': 'Custom authentication module for Sadaya application with Badan Usaha & Perorangan registration',
     'description': """
@@ -23,7 +23,10 @@
         'mail',
     ],
     'data': [
+        'data/res_users_seed.xml',
         'security/sadaya_security.xml',
+        'security/ir.model.access.csv',
+        'views/registration_views.xml',
         'views/sadaya_layout_templates.xml',
         'views/sadaya_register_templates.xml',
         'views/sadaya_login_templates.xml',

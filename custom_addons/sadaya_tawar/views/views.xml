@@ -15,7 +15,7 @@
             <list>
                 <field name="kode_paket"/>
                 <field name="name"/>
-                <field name="metode_pemilihan"/>
+                <field name="jenis_pengadaan"/> <field name="metode_pemilihan"/>
                 <field name="nilai_hps"/>
                 <field name="jenis_kontrak"/>
                 <field name="state"/>
@@ -42,15 +42,24 @@
                         <group>
                             <field name="name"/>
                             <field name="nilai_hps"/>
-                            <field name="jenis_kontrak"/>
+                            <field name="jenis_pengadaan"/> <field name="jenis_kontrak"/>
                         </group>
                         <group>
                             <field name="metode_pemilihan"/>
                             <field name="batas_pendaftaran"/>
+                            <field name="unit_pengusul"/>
+                            <field name="tgl_mulai"/>
+                            <field name="tgl_selesai"/>
                         </group>
                     </group>
                     <notebook>
                         <page string="Dokumen Persiapan">
+                            <group>
+                                <field name="deskripsi" placeholder="Tuliskan deskripsi atau ruang lingkup singkat..."/>
+                                <!-- Tambahan Field Persyaratan -->
+                                <field name="syarat_kbli" placeholder="Contoh: 6201, 6202"/>
+                                <field name="syarat_dokumen" placeholder="Sebutkan dokumen administratif atau teknis tambahan yang perlu disiapkan vendor..."/>
+                            </group>
                             <group>
                                 <field name="deskripsi" placeholder="Tuliskan deskripsi atau ruang lingkup singkat..."/>
                             </group>
@@ -100,6 +109,16 @@
                                         <field name="keterangan"/>
                                     </group>
                                 </form>
+                            </field>
+                        </page>
+
+                        <page string="Jadwal Tahapan">
+                            <field name="jadwal_ids">
+                                <list editable="bottom">
+                                    <field name="name" placeholder="Misal: Penjelasan (Aanwijzing), Upload Penawaran..."/>
+                                    <field name="start_date"/>
+                                    <field name="end_date"/>
+                                </list>
                             </field>
                         </page>
                     </notebook>

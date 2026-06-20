@@ -6,13 +6,14 @@
         <field name="name">sadaya.registration.list</field>
         <field name="model">sadaya.registration</field>
         <field name="arch" type="xml">
-            <list string="Registrations">
+            <list string="Registrations" decoration-info="state=='draft'" decoration-warning="state=='pending'" decoration-success="state=='approved'" decoration-danger="state=='rejected'">
                 <field name="nama_lengkap"/>
                 <field name="email"/>
+                <field name="tipe_pendaftar"/>
                 <field name="whatsapp_narahubung" string="WhatsApp"/>
                 <field name="nik_narahubung" string="NIK"/>
-                <field name="tipe_pendaftar"/>
-                <field name="state"/>
+                <field name="state" widget="badge"/>
+                <field name="create_date" string="Tanggal Daftar"/>
             </list>
         </field>
     </record>
@@ -23,16 +24,48 @@
         <field name="model">sadaya.registration</field>
         <field name="arch" type="xml">
             <form string="Registration">
+                <header>
+                    <button name="action_submit" string="Ajukan" type="object"
+                            invisible="state != 'draft'"
+                            class="btn-primary"/>
+                    <button name="action_approve" string="Setujui" type="object"
+                            invisible="state != 'pending'"
+                            class="btn-success"/>
+                    <button name="action_reject" string="Tolak" type="object"
+                            invisible="state not in ('pending', 'draft')"
+                            class="btn-danger"/>
+                    <button name="action_reset_draft" string="Reset ke Draft" type="object"
+                            invisible="state not in ('rejected')"
+                            class="btn-secondary"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,pending,approved"/>
+                </header>
                 <sheet>
-                    <group>
+                    <group string="Informasi Umum">
+                        <field name="tipe_pendaftar"/>
                         <field name="nama_lengkap"/>
                         <field name="email"/>
                         <field name="whatsapp_narahubung" string="WhatsApp"/>
                         <field name="nik_narahubung" string="NIK"/>
-                        <field name="tipe_pendaftar"/>
-                        <field name="state"/>
+                    </group>
+                    <group string="Badan Usaha" invisible="tipe_pendaftar != 'badan_usaha'">
+                        <field name="nama_badan_usaha"/>
+                        <field name="telepon_badan_usaha"/>
+                        <field name="npwp_perusahaan"/>
+                        <field name="bukti_npwp" filename="bukti_npwp_filename"/>
+                    </group>
+                    <group string="Dokumen">
+                        <field name="swafoto_ktp" widget="image" filename="swafoto_ktp_filename"/>
+                    </group>
+                    <group string="Relasi">
+                        <field name="user_id" readonly="1"/>
+                        <field name="rejection_reason" invisible="state != 'rejected'"/>
                     </group>
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
             </form>
         </field>
     </record>
@@ -42,13 +75,19 @@
         <field name="name">sadaya.registration.search</field>
         <field name="model">sadaya.registration</field>
         <field name="arch" type="xml">
-            <search string="Search Registrations">
+            <search string="Cari Registrasi">
                 <field name="nama_lengkap"/>
                 <field name="email"/>
-                <field name="whatsapp_narahubung" string="WhatsApp"/>
-                <filter string="Pending" name="pending" domain="[('state','=','pending')]"/>
-                <filter string="Approved" name="approved" domain="[('state','=','approved')]"/>
-                <filter string="Rejected" name="rejected" domain="[('state','=','rejected')]"/>
+                <field name="whatsapp_narahubung"/>
+                <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                <filter string="Menunggu Verifikasi" name="pending" domain="[('state','=','pending')]"/>
+                <filter string="Disetujui" name="approved" domain="[('state','=','approved')]"/>
+                <filter string="Ditolak" name="rejected" domain="[('state','=','rejected')]"/>
+                <separator/>
+                <filter string="Badan Usaha" name="badan_usaha" domain="[('tipe_pendaftar','=','badan_usaha')]"/>
+                <filter string="Perorangan" name="perorangan" domain="[('tipe_pendaftar','=','perorangan')]"/>
+                <filter name="group_tipe" string="Tipe Pendaftar" context="{'group_by': 'tipe_pendaftar'}"/>
+                <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
             </search>
         </field>
     </record>
@@ -59,14 +98,16 @@
         <field name="res_model">sadaya.registration</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_sadaya_registration_search"/>
+        <field name="context">{'search_default_pending': 1}</field>
     </record>
 
     <!-- MENU -->
     <menuitem id="menu_sadaya_root"
-              name="Sadaya"/>
+              name="Sadaya"
+              groups="base.group_system"/>
 
     <menuitem id="menu_sadaya_registration"
-              name="Registrations"
+              name="Registrasi"
               parent="menu_sadaya_root"
               action="action_sadaya_registration"/>
 

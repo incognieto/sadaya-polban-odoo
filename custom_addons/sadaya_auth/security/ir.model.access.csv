@@ -2,3 +2,4 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_sadaya_registration_admin,sadaya.registration admin,sadaya_auth.model_sadaya_registration,base.group_system,1,1,1,1
 access_sadaya_registration_user,sadaya.registration user,sadaya_auth.model_sadaya_registration,base.group_user,1,1,1,0
 access_sadaya_registration_portal,sadaya.registration portal,sadaya_auth.model_sadaya_registration,base.group_portal,1,0,0,0
+access_sadaya_registration_public,sadaya.registration public,sadaya_auth.model_sadaya_registration,base.group_public,0,0,1,0
