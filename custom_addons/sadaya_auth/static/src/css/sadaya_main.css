@@ -126,3 +126,65 @@
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+/* Multi-step Registration Wizard */
+.sadaya-register-progress {
+    display: flex;
+    gap: 8px;
+    margin: 1.5rem 0 1rem 0;
+}
+
+.progress-bar-segment {
+    height: 4px;
+    flex: 1;
+    border-radius: 2px;
+    background-color: var(--sadaya-border);
+    transition: background-color 0.3s ease;
+}
+
+.progress-bar-segment.active {
+    background-color: #ff3b30; /* Coral Red matching screenshot */
+}
+
+.progress-bar-segment.completed {
+    background-color: #198754; /* Green for completed steps */
+}
+
+.sadaya-step-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #212529;
+    margin-bottom: 1.5rem;
+}
+
+.register-step {
+    transition: opacity 0.2s ease-in-out;
+}
+
+.register-step.d-none {
+    display: none !important;
+    opacity: 0;
+}
+
+.register-step:not(.d-none) {
+    animation: sadayaFadeIn 0.3s ease-out forwards;
+}
+
+.btn-outline-light.is-invalid {
+    border-color: var(--sadaya-error) !important;
+}
+
+/* Force error labels inside input groups to wrap below the group */
+.input-group {
+    flex-wrap: wrap !important;
+}
+
+.input-group .sadaya-field-error {
+    width: 100% !important;
+    display: block !important;
+    margin-top: 0.25rem;
+    color: var(--sadaya-error);
+    font-size: 0.875rem;
+}
+
+

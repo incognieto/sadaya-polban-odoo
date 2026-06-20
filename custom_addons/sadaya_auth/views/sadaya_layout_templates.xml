@@ -9,7 +9,7 @@
             <t t-set="no_header" t-value="True"/>
             <t t-set="no_footer" t-value="True"/>
             <t t-set="head">
-                <link rel="stylesheet" t-att-href="'/sadaya_auth/static/src/css/sadaya_main.css?v=1.0.4'"/>
+                <link rel="stylesheet" t-att-href="'/sadaya_auth/static/src/css/sadaya_main.css?v=1.0.9'"/>
             </t>
 
             <div class="sadaya-auth-page d-flex min-vh-100 bg-light">
@@ -66,8 +66,8 @@
                 </div>
             </div>
 
-            <script t-att-src="'/sadaya_auth/static/src/js/sadaya_auth.js?v=1.0.4'"/>
-            <script t-att-src="'/sadaya_auth/static/src/js/sadaya_register.js?v=1.0.4'"/>
+            <script t-att-src="'/sadaya_auth/static/src/js/sadaya_auth.js?v=1.0.9'"/>
+            <script t-att-src="'/sadaya_auth/static/src/js/sadaya_register.js?v=1.0.9'"/>
         </t>
     </template>
 
@@ -77,7 +77,7 @@
     <template id="sadaya_layout_app" name="Sadaya App Layout">
         <t t-call="website.layout">
             <t t-set="head">
-                <link rel="stylesheet" t-att-href="'/sadaya_auth/static/src/css/sadaya_main.css?v=1.0.4'"/>
+                <link rel="stylesheet" t-att-href="'/sadaya_auth/static/src/css/sadaya_main.css?v=1.0.9'"/>
             </t>
 
             <div id="wrap" class="oe_structure oe_empty">
@@ -127,7 +127,7 @@
                 </div>
             </div>
 
-            <script t-att-src="'/sadaya_auth/static/src/js/sadaya_auth.js?v=1.0.4'"/>
+            <script t-att-src="'/sadaya_auth/static/src/js/sadaya_auth.js?v=1.0.9'"/>
         </t>
     </template>
 

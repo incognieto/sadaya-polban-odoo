@@ -91,6 +91,20 @@
                 </p>
             </div>
 
+            <!-- Progress Bar -->
+            <div class="sadaya-register-progress">
+                <div class="progress-bar-segment active" data-step="1"></div>
+                <div class="progress-bar-segment" data-step="2"></div>
+                <div class="progress-bar-segment" data-step="3"></div>
+            </div>
+
+            <!-- Centered Step Title -->
+            <div class="text-center">
+                <h5 class="sadaya-step-title fw-bold text-dark d-flex align-items-center justify-content-center gap-2">
+                    🏢 Informasi Badan Usaha
+                </h5>
+            </div>
+
             <!-- Global Error -->
             <t t-if="error and error.get('general')">
                 <div class="alert alert-danger d-flex align-items-center gap-2 mb-3">
@@ -103,274 +117,290 @@
                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                 <input type="hidden" name="tipe_pendaftar" value="badan_usaha"/>
 
-                <!-- ===== INFORMASI BADAN USAHA ===== -->
-                <h5 class="text-primary fw-bold border-bottom pb-2 my-4">🏢 Informasi Badan Usaha</h5>
-
-                <!-- Nama Badan Usaha -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold small text-dark" for="nama_badan_usaha">
-                        Nama Badan Usaha <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" id="nama_badan_usaha" name="nama_badan_usaha"
-                           class="form-control"
-                           t-att-class="'form-control is-invalid' if error and error.get('nama_badan_usaha') else 'form-control'"
-                           placeholder="Nama Badan Usaha"
-                           t-att-value="form_data.get('nama_badan_usaha', '')"
-                           required="required"/>
-                    <t t-if="error and error.get('nama_badan_usaha')">
-                        <div class="text-danger small mt-1">⚠ <t t-esc="error['nama_badan_usaha']"/></div>
-                    </t>
-                </div>
-
-                <!-- Email -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold small text-dark" for="email">
-                        Email <span class="text-danger">*</span>
-                    </label>
-                    <input type="email" id="email" name="email"
-                           class="form-control"
-                           t-att-class="'form-control is-invalid' if error and error.get('email') else 'form-control'"
-                           placeholder="Email"
-                           t-att-value="form_data.get('email', '')"
-                           required="required"/>
-                    <t t-if="error and error.get('email')">
-                        <div class="text-danger small mt-1">⚠ <t t-esc="error['email']"/></div>
-                    </t>
-                </div>
-
-                <!-- Kata Sandi -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold small text-dark" for="password">
-                        Kata Sandi <span class="text-danger">*</span>
-                    </label>
-                    <div class="input-group">
-                        <input type="password" id="password" name="password"
+                <!-- ===== STEP 1: INFORMASI BADAN USAHA ===== -->
+                <div class="register-step" data-step="1" data-title="🏢 Informasi Badan Usaha">
+                    <!-- Nama Badan Usaha -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-dark" for="nama_badan_usaha">
+                            Nama Badan Usaha <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" id="nama_badan_usaha" name="nama_badan_usaha"
                                class="form-control"
-                               t-att-class="'form-control is-invalid' if error and error.get('password') else 'form-control'"
-                               placeholder="Kata Sandi"
+                               t-att-class="'form-control is-invalid' if error and error.get('nama_badan_usaha') else 'form-control'"
+                               placeholder="Nama Badan Usaha"
+                               t-att-value="form_data.get('nama_badan_usaha', '')"
                                required="required"/>
-                        <button class="btn btn-outline-secondary" type="button" data-sadaya-toggle-pwd="password">
-                            <i class="fa fa-eye"/>
+                        <t t-if="error and error.get('nama_badan_usaha')">
+                            <div class="text-danger small mt-1">⚠ <t t-esc="error['nama_badan_usaha']"/></div>
+                        </t>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-dark" for="email">
+                            Email <span class="text-danger">*</span>
+                        </label>
+                        <input type="email" id="email" name="email"
+                               class="form-control"
+                               t-att-class="'form-control is-invalid' if error and error.get('email') else 'form-control'"
+                               placeholder="Email"
+                               t-att-value="form_data.get('email', '')"
+                               required="required"/>
+                        <t t-if="error and error.get('email')">
+                            <div class="text-danger small mt-1">⚠ <t t-esc="error['email']"/></div>
+                        </t>
+                    </div>
+
+                    <!-- Kata Sandi -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-dark" for="password">
+                            Kata Sandi <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <input type="password" id="password" name="password"
+                                   class="form-control"
+                                   t-att-class="'form-control is-invalid' if error and error.get('password') else 'form-control'"
+                                   placeholder="Kata Sandi"
+                                   required="required"/>
+                            <button class="btn btn-outline-secondary" type="button" data-sadaya-toggle-pwd="password">
+                                <i class="fa fa-eye"/>
+                            </button>
+                        </div>
+                        <div class="sadaya-pwd-strength mt-2">
+                            <div class="sadaya-pwd-bars d-flex gap-1 mb-1">
+                                <div class="sadaya-pwd-bar flex-grow-1" style="height: 4px; border-radius: 2px; background: #dee2e6;"></div>
+                                <div class="sadaya-pwd-bar flex-grow-1" style="height: 4px; border-radius: 2px; background: #dee2e6;"></div>
+                                <div class="sadaya-pwd-bar flex-grow-1" style="height: 4px; border-radius: 2px; background: #dee2e6;"></div>
+                                <div class="sadaya-pwd-bar flex-grow-1" style="height: 4px; border-radius: 2px; background: #dee2e6;"></div>
+                            </div>
+                            <div class="sadaya-pwd-label text-muted small" style="font-size: 0.75rem;">
+                                Harus berisi setidaknya satu angka dan satu huruf besar dan kecil, dan setidaknya 8 karakter atau lebih, contoh: 1Rstigapuluh
+                            </div>
+                        </div>
+                        <t t-if="error and error.get('password')">
+                            <div class="text-danger small mt-1">⚠ <t t-esc="error['password']"/></div>
+                        </t>
+                    </div>
+
+                    <!-- Konfirmasi Kata Sandi -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-dark" for="password_confirm">
+                            Konfirmasi Kata Sandi <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <input type="password" id="password_confirm" name="password_confirm"
+                                   class="form-control"
+                                   t-att-class="'form-control is-invalid' if error and error.get('password_confirm') else 'form-control'"
+                                   placeholder="Konfirmasi Kata Sandi"
+                                   required="required"/>
+                            <button class="btn btn-outline-secondary" type="button" data-sadaya-toggle-pwd="password_confirm">
+                                <i class="fa fa-eye"/>
+                            </button>
+                        </div>
+                        <t t-if="error and error.get('password_confirm')">
+                            <div class="text-danger small mt-1">⚠ <t t-esc="error['password_confirm']"/></div>
+                        </t>
+                    </div>
+
+                    <!-- Telepon Badan Usaha -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-dark" for="telepon_badan_usaha">
+                            Telepon Badan Usaha <span class="text-danger">*</span>
+                        </label>
+                        <input type="tel" id="telepon_badan_usaha" name="telepon_badan_usaha"
+                               class="form-control"
+                               t-att-class="'form-control is-invalid' if error and error.get('telepon_badan_usaha') else 'form-control'"
+                               placeholder="+628123456789"
+                               t-att-value="form_data.get('telepon_badan_usaha', '')"
+                               data-sadaya-phone="1"
+                               required="required"/>
+                        <div class="text-muted small mt-1" style="font-size: 0.75rem;">Contoh: +628123456789</div>
+                        <t t-if="error and error.get('telepon_badan_usaha')">
+                            <div class="text-danger small mt-1">⚠ <t t-esc="error['telepon_badan_usaha']"/></div>
+                        </t>
+                    </div>
+
+                    <!-- Next Button -->
+                    <div class="mt-4">
+                        <button type="button" class="btn btn-primary w-100 fw-bold next-step">
+                            Selanjutnya
                         </button>
                     </div>
-                    <div class="sadaya-pwd-strength mt-2">
-                        <div class="sadaya-pwd-bars d-flex gap-1 mb-1">
-                            <div class="sadaya-pwd-bar flex-grow-1" style="height: 4px; border-radius: 2px; background: #dee2e6;"></div>
-                            <div class="sadaya-pwd-bar flex-grow-1" style="height: 4px; border-radius: 2px; background: #dee2e6;"></div>
-                            <div class="sadaya-pwd-bar flex-grow-1" style="height: 4px; border-radius: 2px; background: #dee2e6;"></div>
-                            <div class="sadaya-pwd-bar flex-grow-1" style="height: 4px; border-radius: 2px; background: #dee2e6;"></div>
-                        </div>
-                        <div class="sadaya-pwd-label text-muted small" style="font-size: 0.75rem;">
-                            Harus berisi setidaknya satu angka dan satu huruf besar dan kecil, dan setidaknya 8 karakter atau lebih, contoh: 1Rstigapuluh
-                        </div>
-                    </div>
-                    <t t-if="error and error.get('password')">
-                        <div class="text-danger small mt-1">⚠ <t t-esc="error['password']"/></div>
-                    </t>
                 </div>
 
-                <!-- Konfirmasi Kata Sandi -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold small text-dark" for="password_confirm">
-                        Konfirmasi Kata Sandi <span class="text-danger">*</span>
-                    </label>
-                    <div class="input-group">
-                        <input type="password" id="password_confirm" name="password_confirm"
+                <!-- ===== STEP 2: INFORMASI NARAHUBUNG ===== -->
+                <div class="register-step d-none" data-step="2" data-title="👤 Informasi Narahubung">
+                    <!-- Nama Lengkap Narahubung -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-dark" for="nama_lengkap">
+                            Nama Lengkap Narahubung <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" id="nama_lengkap" name="nama_lengkap"
                                class="form-control"
-                               t-att-class="'form-control is-invalid' if error and error.get('password_confirm') else 'form-control'"
-                               placeholder="Konfirmasi Kata Sandi"
+                               t-att-class="'form-control is-invalid' if error and error.get('nama_lengkap') else 'form-control'"
+                               placeholder="Nama Lengkap Narahubung"
+                               t-att-value="form_data.get('nama_lengkap', '')"
                                required="required"/>
-                        <button class="btn btn-outline-secondary" type="button" data-sadaya-toggle-pwd="password_confirm">
-                            <i class="fa fa-eye"/>
+                        <t t-if="error and error.get('nama_lengkap')">
+                            <div class="text-danger small mt-1">⚠ <t t-esc="error['nama_lengkap']"/></div>
+                        </t>
+                    </div>
+
+                    <!-- WhatsApp Narahubung -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-dark" for="whatsapp_narahubung">
+                            Nomor WhatsApp Narahubung <span class="text-danger">*</span>
+                        </label>
+                        <input type="tel" id="whatsapp_narahubung" name="whatsapp_narahubung"
+                               class="form-control"
+                               t-att-class="'form-control is-invalid' if error and error.get('whatsapp_narahubung') else 'form-control'"
+                               placeholder="+628123456789"
+                               t-att-value="form_data.get('whatsapp_narahubung', '')"
+                               data-sadaya-phone="1"
+                               required="required"/>
+                        <div class="text-muted small mt-1" style="font-size: 0.75rem;">Contoh: +628123456789</div>
+                        <t t-if="error and error.get('whatsapp_narahubung')">
+                            <div class="text-danger small mt-1">⚠ <t t-esc="error['whatsapp_narahubung']"/></div>
+                        </t>
+                    </div>
+
+                    <!-- NIK Narahubung -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-dark" for="nik_narahubung">
+                            Nomor NIK Narahubung <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" id="nik_narahubung" name="nik_narahubung"
+                               class="form-control"
+                               t-att-class="'form-control is-invalid' if error and error.get('nik_narahubung') else 'form-control'"
+                               placeholder="Nomor NIK Narahubung"
+                               t-att-value="form_data.get('nik_narahubung', '')"
+                               data-sadaya-nik="1"
+                               maxlength="16"
+                               required="required"/>
+                        <div class="text-muted small mt-1" style="font-size: 0.75rem;">Panjang NIK harus terdiri dari 16 digit.</div>
+                        <t t-if="error and error.get('nik_narahubung')">
+                            <div class="text-danger small mt-1">⚠ <t t-esc="error['nik_narahubung']"/></div>
+                        </t>
+                    </div>
+
+                    <!-- Swafoto Narahubung (KTP) -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-dark">
+                            Swafoto Narahubung (Memegang KTP) <span class="text-danger">*</span>
+                        </label>
+                        <div class="sadaya-file-container d-flex align-items-center gap-2">
+                            <!-- State Normal -->
+                            <div class="upload-state-normal position-relative" style="display: inline-block;">
+                                <input type="file" id="swafoto_ktp" name="swafoto_ktp"
+                                       accept=".jpg,.jpeg,.png" required="required"
+                                       style="position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 2;"/>
+                                <button type="button" t-attf-class="btn btn-outline-light border text-primary d-flex align-items-center gap-2 px-3 py-2 fw-medium bg-white #{'is-invalid border-danger' if error and error.get('swafoto_ktp') else ''}" style="border-color: #dee2e6 !important;">
+                                    <i class="fa fa-upload"/> Tambahkan file
+                                </button>
+                            </div>
+                            
+                            <!-- State Uploaded -->
+                            <div class="upload-state-uploaded d-none d-flex align-items-center gap-2">
+                                <div class="d-flex align-items-center gap-2 border rounded px-2 py-1 bg-white" style="border-color: #dee2e6; max-width: 250px;">
+                                    <span class="badge bg-danger p-1 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+                                        <i class="fa fa-image text-white"/>
+                                    </span>
+                                    <span class="file-name-label text-truncate text-primary fw-medium small" style="max-width: 150px;">nama_file.jpg</span>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-secondary border-0 p-1 d-flex align-items-center justify-content-center clear-file-btn" style="width: 24px; height: 24px;">
+                                    <i class="fa fa-times"/>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="sadaya-file-preview small text-success mt-1 fw-bold" id="swafoto_ktp_preview"></div>
+                        <t t-if="error and error.get('swafoto_ktp')">
+                            <div class="text-danger small mt-1" id="swafoto_error">⚠ <t t-esc="error['swafoto_ktp']"/></div>
+                        </t>
+                        <t t-else="">
+                            <div id="swafoto_error" class="text-danger small mt-1"></div>
+                        </t>
+                        <div class="text-muted small mt-1" style="font-size: 0.75rem;">
+                            Harap unggah dokumen dengan ekstensi JPEG/JPG/PNG dengan ukuran maksimal 10 mb
+                        </div>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="d-flex gap-3 mt-4">
+                        <button type="button" class="btn btn-outline-secondary flex-grow-1 fw-bold prev-step">
+                            <i class="fa fa-arrow-left me-2"/> Kembali
+                        </button>
+                        <button type="button" class="btn btn-primary flex-grow-1 fw-bold next-step">
+                            Selanjutnya <i class="fa fa-arrow-right ms-2"/>
                         </button>
                     </div>
-                    <t t-if="error and error.get('password_confirm')">
-                        <div class="text-danger small mt-1">⚠ <t t-esc="error['password_confirm']"/></div>
-                    </t>
                 </div>
 
-                <!-- Telepon Badan Usaha -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold small text-dark" for="telepon_badan_usaha">
-                        Telepon Badan Usaha <span class="text-danger">*</span>
-                    </label>
-                    <input type="tel" id="telepon_badan_usaha" name="telepon_badan_usaha"
-                           class="form-control"
-                           t-att-class="'form-control is-invalid' if error and error.get('telepon_badan_usaha') else 'form-control'"
-                           placeholder="+628123456789"
-                           t-att-value="form_data.get('telepon_badan_usaha', '')"
-                           data-sadaya-phone="1"
-                           required="required"/>
-                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">Contoh: +628123456789</div>
-                    <t t-if="error and error.get('telepon_badan_usaha')">
-                        <div class="text-danger small mt-1">⚠ <t t-esc="error['telepon_badan_usaha']"/></div>
-                    </t>
-                </div>
+                <!-- ===== STEP 3: DOKUMEN NPWP ===== -->
+                <div class="register-step d-none" data-step="3" data-title="📄 Dokumen NPWP">
+                    <!-- Nomor NPWP -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-dark" for="npwp_perusahaan">Nomor NPWP Perusahaan</label>
+                        <input type="text" id="npwp_perusahaan" name="npwp_perusahaan"
+                               class="form-control"
+                               t-att-class="'form-control is-invalid' if error and error.get('npwp_perusahaan') else 'form-control'"
+                               placeholder="16 digit NPWP"
+                               t-att-value="form_data.get('npwp_perusahaan', '')"
+                               data-sadaya-npwp="1"
+                               maxlength="16"/>
+                        <div class="text-muted small mt-1" style="font-size: 0.75rem;">Panjang NPWP harus terdiri dari 16 digit.</div>
+                        <t t-if="error and error.get('npwp_perusahaan')">
+                            <div class="text-danger small mt-1">⚠ <t t-esc="error['npwp_perusahaan']"/></div>
+                        </t>
+                    </div>
 
-                <!-- ===== NARAHUBUNG ===== -->
-                <h5 class="text-primary fw-bold border-bottom pb-2 my-4">👤 Informasi Narahubung</h5>
-
-                <!-- Nama Lengkap Narahubung -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold small text-dark" for="nama_lengkap">
-                        Nama Lengkap Narahubung <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" id="nama_lengkap" name="nama_lengkap"
-                           class="form-control"
-                           t-att-class="'form-control is-invalid' if error and error.get('nama_lengkap') else 'form-control'"
-                           placeholder="Nama Lengkap Narahubung"
-                           t-att-value="form_data.get('nama_lengkap', '')"
-                           required="required"/>
-                    <t t-if="error and error.get('nama_lengkap')">
-                        <div class="text-danger small mt-1">⚠ <t t-esc="error['nama_lengkap']"/></div>
-                    </t>
-                </div>
-
-                <!-- WhatsApp Narahubung -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold small text-dark" for="whatsapp_narahubung">
-                        Nomor WhatsApp Narahubung <span class="text-danger">*</span>
-                    </label>
-                    <input type="tel" id="whatsapp_narahubung" name="whatsapp_narahubung"
-                           class="form-control"
-                           t-att-class="'form-control is-invalid' if error and error.get('whatsapp_narahubung') else 'form-control'"
-                           placeholder="+628123456789"
-                           t-att-value="form_data.get('whatsapp_narahubung', '')"
-                           data-sadaya-phone="1"
-                           required="required"/>
-                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">Contoh: +628123456789</div>
-                    <t t-if="error and error.get('whatsapp_narahubung')">
-                        <div class="text-danger small mt-1">⚠ <t t-esc="error['whatsapp_narahubung']"/></div>
-                    </t>
-                </div>
-
-                <!-- NIK Narahubung -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold small text-dark" for="nik_narahubung">
-                        Nomor NIK Narahubung <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" id="nik_narahubung" name="nik_narahubung"
-                           class="form-control"
-                           t-att-class="'form-control is-invalid' if error and error.get('nik_narahubung') else 'form-control'"
-                           placeholder="Nomor NIK Narahubung"
-                           t-att-value="form_data.get('nik_narahubung', '')"
-                           data-sadaya-nik="1"
-                           maxlength="16"
-                           required="required"/>
-                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">Panjang NIK harus terdiri dari 16 digit.</div>
-                    <t t-if="error and error.get('nik_narahubung')">
-                        <div class="text-danger small mt-1">⚠ <t t-esc="error['nik_narahubung']"/></div>
-                    </t>
-                </div>
-
-                <!-- Swafoto Narahubung (KTP) -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold small text-dark">
-                        Swafoto Narahubung (Memegang KTP) <span class="text-danger">*</span>
-                    </label>
-                    <div class="sadaya-file-container d-flex align-items-center gap-2">
-                        <!-- State Normal -->
-                        <div class="upload-state-normal position-relative" style="display: inline-block;">
-                            <input type="file" id="swafoto_ktp" name="swafoto_ktp"
-                                   accept=".jpg,.jpeg,.png" required="required"
-                                   style="position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 2;"/>
-                            <button type="button" t-attf-class="btn btn-outline-light border text-primary d-flex align-items-center gap-2 px-3 py-2 fw-medium bg-white #{'is-invalid border-danger' if error and error.get('swafoto_ktp') else ''}" style="border-color: #dee2e6 !important;">
-                                <i class="fa fa-upload"/> Tambahkan file
-                            </button>
-                        </div>
-                        
-                        <!-- State Uploaded -->
-                        <div class="upload-state-uploaded d-none d-flex align-items-center gap-2">
-                            <div class="d-flex align-items-center gap-2 border rounded px-2 py-1 bg-white" style="border-color: #dee2e6; max-width: 250px;">
-                                <span class="badge bg-danger p-1 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
-                                    <i class="fa fa-image text-white"/>
-                                </span>
-                                <span class="file-name-label text-truncate text-primary fw-medium small" style="max-width: 150px;">nama_file.jpg</span>
+                    <!-- Bukti NPWP -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-dark">
+                            Bukti NPWP
+                        </label>
+                        <div class="sadaya-file-container d-flex align-items-center gap-2">
+                            <!-- State Normal -->
+                            <div class="upload-state-normal position-relative" style="display: inline-block;">
+                                <input type="file" id="bukti_npwp" name="bukti_npwp" accept=".pdf"
+                                       style="position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 2;"/>
+                                <button type="button" t-attf-class="btn btn-outline-light border text-primary d-flex align-items-center gap-2 px-3 py-2 fw-medium bg-white #{'is-invalid border-danger' if error and error.get('bukti_npwp') else ''}" style="border-color: #dee2e6 !important;">
+                                    <i class="fa fa-upload"/> Tambahkan file
+                                </button>
                             </div>
-                            <button type="button" class="btn btn-sm btn-outline-secondary border-0 p-1 d-flex align-items-center justify-content-center clear-file-btn" style="width: 24px; height: 24px;">
-                                <i class="fa fa-times"/>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="sadaya-file-preview small text-success mt-1 fw-bold" id="swafoto_ktp_preview"></div>
-                    <t t-if="error and error.get('swafoto_ktp')">
-                        <div class="text-danger small mt-1" id="swafoto_error">⚠ <t t-esc="error['swafoto_ktp']"/></div>
-                    </t>
-                    <t t-else="">
-                        <div id="swafoto_error" class="text-danger small mt-1"></div>
-                    </t>
-                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">
-                        Harap unggah dokumen dengan ekstensi JPEG/JPG/PNG dengan ukuran maksimal 10 mb
-                    </div>
-                </div>
 
-                <!-- ===== NPWP (Opsional) ===== -->
-                <h5 class="text-primary fw-bold border-bottom pb-2 my-4">📄 Dokumen NPWP <span class="text-muted fw-normal small">(Opsional)</span></h5>
-
-                <!-- Nomor NPWP -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold small text-dark" for="npwp_perusahaan">Nomor NPWP Perusahaan</label>
-                    <input type="text" id="npwp_perusahaan" name="npwp_perusahaan"
-                           class="form-control"
-                           t-att-class="'form-control is-invalid' if error and error.get('npwp_perusahaan') else 'form-control'"
-                           placeholder="16 digit NPWP"
-                           t-att-value="form_data.get('npwp_perusahaan', '')"
-                           data-sadaya-npwp="1"
-                           maxlength="16"/>
-                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">Panjang NPWP harus terdiri dari 16 digit.</div>
-                    <t t-if="error and error.get('npwp_perusahaan')">
-                        <div class="text-danger small mt-1">⚠ <t t-esc="error['npwp_perusahaan']"/></div>
-                    </t>
-                </div>
-
-                <!-- Bukti NPWP -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold small text-dark">
-                        Bukti NPWP
-                    </label>
-                    <div class="sadaya-file-container d-flex align-items-center gap-2">
-                        <!-- State Normal -->
-                        <div class="upload-state-normal position-relative" style="display: inline-block;">
-                            <input type="file" id="bukti_npwp" name="bukti_npwp" accept=".pdf"
-                                   style="position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 2;"/>
-                            <button type="button" t-attf-class="btn btn-outline-light border text-primary d-flex align-items-center gap-2 px-3 py-2 fw-medium bg-white #{'is-invalid border-danger' if error and error.get('bukti_npwp') else ''}" style="border-color: #dee2e6 !important;">
-                                <i class="fa fa-upload"/> Tambahkan file
-                            </button>
-                        </div>
-
-                        <!-- State Uploaded -->
-                        <div class="upload-state-uploaded d-none d-flex align-items-center gap-2">
-                            <div class="d-flex align-items-center gap-2 border rounded px-2 py-1 bg-white" style="border-color: #dee2e6; max-width: 250px;">
-                                <span class="badge bg-danger p-1 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
-                                    <i class="fa fa-file-pdf text-white"/>
-                                </span>
-                                <span class="file-name-label text-truncate text-primary fw-medium small" style="max-width: 150px;">nama_file.pdf</span>
+                            <!-- State Uploaded -->
+                            <div class="upload-state-uploaded d-none d-flex align-items-center gap-2">
+                                <div class="d-flex align-items-center gap-2 border rounded px-2 py-1 bg-white" style="border-color: #dee2e6; max-width: 250px;">
+                                    <span class="badge bg-danger p-1 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+                                        <i class="fa fa-file-pdf text-white"/>
+                                    </span>
+                                    <span class="file-name-label text-truncate text-primary fw-medium small" style="max-width: 150px;">nama_file.pdf</span>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-secondary border-0 p-1 d-flex align-items-center justify-content-center clear-file-btn" style="width: 24px; height: 24px;">
+                                    <i class="fa fa-times"/>
+                                </button>
                             </div>
-                            <button type="button" class="btn btn-sm btn-outline-secondary border-0 p-1 d-flex align-items-center justify-content-center clear-file-btn" style="width: 24px; height: 24px;">
-                                <i class="fa fa-times"/>
-                            </button>
+                        </div>
+                        <div class="sadaya-file-preview small text-success mt-1 fw-bold" id="bukti_npwp_preview"></div>
+                        <t t-if="error and error.get('bukti_npwp')">
+                            <div class="text-danger small mt-1" id="bukti_npwp_error">⚠ <t t-esc="error['bukti_npwp']"/></div>
+                        </t>
+                        <t t-else="">
+                            <div id="bukti_npwp_error" class="text-danger small mt-1"></div>
+                        </t>
+                        <div class="text-muted small mt-1" style="font-size: 0.75rem;">
+                            Harap unggah dokumen dengan ekstensi PDF dengan ukuran maksimal 10 mb
                         </div>
                     </div>
-                    <div class="sadaya-file-preview small text-success mt-1 fw-bold" id="bukti_npwp_preview"></div>
-                    <t t-if="error and error.get('bukti_npwp')">
-                        <div class="text-danger small mt-1" id="bukti_npwp_error">⚠ <t t-esc="error['bukti_npwp']"/></div>
-                    </t>
-                    <t t-else="">
-                        <div id="bukti_npwp_error" class="text-danger small mt-1"></div>
-                    </t>
-                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">
-                        Harap unggah dokumen dengan ekstensi PDF dengan ukuran maksimal 10 mb
-                    </div>
-                </div>
 
-                <!-- Submit -->
-                <div class="mt-4">
-                    <button type="submit" class="btn btn-primary w-100 btn-lg fw-bold sadaya-form-submit">
-                        Daftar
-                    </button>
-                    <div class="text-center mt-3 small text-muted">
-                        Sudah memiliki akun?
-                        <a href="/sadaya/login" class="fw-bold text-primary text-decoration-none">Masuk</a>
+                    <!-- Navigation Buttons -->
+                    <div class="d-flex gap-3 mt-4">
+                        <button type="button" class="btn btn-outline-secondary flex-grow-1 fw-bold prev-step">
+                            <i class="fa fa-arrow-left me-2"/> Kembali
+                        </button>
+                        <button type="submit" class="btn btn-primary flex-grow-1 fw-bold sadaya-form-submit">
+                            Daftar
+                        </button>
                     </div>
                 </div>
             </form>
@@ -402,6 +432,20 @@
                 </p>
             </div>
 
+            <!-- Progress Bar -->
+            <div class="sadaya-register-progress">
+                <div class="progress-bar-segment active" data-step="1"></div>
+                <div class="progress-bar-segment" data-step="2"></div>
+                <div class="progress-bar-segment" data-step="3"></div>
+            </div>
+
+            <!-- Centered Step Title -->
+            <div class="text-center">
+                <h5 class="sadaya-step-title fw-bold text-dark d-flex align-items-center justify-content-center gap-2">
+                    👤 Informasi Akun
+                </h5>
+            </div>
+
             <!-- Global Error -->
             <t t-if="error and error.get('general')">
                 <div class="alert alert-danger d-flex align-items-center gap-2 mb-3">
@@ -413,6 +457,9 @@
                   method="post" enctype="multipart/form-data" novalidate="novalidate">
                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                 <input type="hidden" name="tipe_pendaftar" value="perorangan"/>
+
+                <!-- ===== STEP 1: INFORMASI AKUN ===== -->
+                <div class="register-step" data-step="1" data-title="👤 Informasi Akun">
 
                 <!-- Nama -->
                 <div class="mb-3">
@@ -515,7 +562,17 @@
                     </t>
                 </div>
 
-                <!-- NIK -->
+                    <!-- Next Button -->
+                    <div class="mt-4">
+                        <button type="button" class="btn btn-primary w-100 fw-bold next-step">
+                            Selanjutnya
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== STEP 2: IDENTITAS DIRI ===== -->
+                <div class="register-step d-none" data-step="2" data-title="🆔 Identitas Diri">
+                    <!-- NIK -->
                 <div class="mb-3">
                     <label class="form-label fw-bold small text-dark" for="nik_narahubung">
                         NIK <span class="text-danger">*</span>
@@ -575,8 +632,19 @@
                     </div>
                 </div>
 
-                <!-- NPWP Opsional -->
-                <h5 class="text-primary fw-bold border-bottom pb-2 my-4">📄 NPWP <span class="text-muted fw-normal small">(Opsional)</span></h5>
+                    <!-- Navigation Buttons -->
+                    <div class="d-flex gap-3 mt-4">
+                        <button type="button" class="btn btn-outline-secondary flex-grow-1 fw-bold prev-step">
+                            <i class="fa fa-arrow-left me-2"/> Kembali
+                        </button>
+                        <button type="button" class="btn btn-primary flex-grow-1 fw-bold next-step">
+                            Selanjutnya <i class="fa fa-arrow-right ms-2"/>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== STEP 3: DOKUMEN NPWP ===== -->
+                <div class="register-step d-none" data-step="3" data-title="📄 Dokumen NPWP">
 
                 <div class="mb-3">
                     <label class="form-label fw-bold small text-dark" for="npwp_perusahaan">Nomor NPWP</label>
@@ -632,14 +700,14 @@
                     </div>
                 </div>
 
-                <!-- Submit -->
-                <div class="mt-4">
-                    <button type="submit" class="btn btn-primary w-100 btn-lg fw-bold sadaya-form-submit">
-                        Daftar
-                    </button>
-                    <div class="text-center mt-3 small text-muted">
-                        Sudah memiliki akun?
-                        <a href="/sadaya/login" class="fw-bold text-primary text-decoration-none">Masuk</a>
+                    <!-- Navigation Buttons -->
+                    <div class="d-flex gap-3 mt-4">
+                        <button type="button" class="btn btn-outline-secondary flex-grow-1 fw-bold prev-step">
+                            <i class="fa fa-arrow-left me-2"/> Kembali
+                        </button>
+                        <button type="submit" class="btn btn-primary flex-grow-1 fw-bold sadaya-form-submit">
+                            Daftar
+                        </button>
                     </div>
                 </div>
             </form>
