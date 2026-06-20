@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <record id="group_langsung_paket" model="res.groups">
+            <field name="name">Admin Paket Langsung</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="user_ids" eval="[(4, ref('sadaya_auth.user_john_admin')), (4, ref('base.user_admin'))]"/>
+        </record>
+
         <record id="group_langsung_pokja" model="res.groups">
             <field name="name">POKJA Langsung (Admin Lelang)</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="user_ids" eval="[(4, ref('sadaya_auth.user_alice_pokja')), (4, ref('base.user_admin'))]"/>
         </record>
 
         <record id="group_langsung_unit_kerja" model="res.groups">
             <field name="name">Unit Kerja Langsung (Viewer)</field>
-        </record>
-
-        <record id="sadaya_auth.user_alice_pokja" model="res.users">
-            <field name="groups_id" eval="[(4, ref('sadaya_langsung.group_langsung_pokja'))]"/>
-        </record>
-
-        <record id="sadaya_auth.user_eve_unitkerja" model="res.users">
-            <field name="groups_id" eval="[(4, ref('sadaya_langsung.group_langsung_unit_kerja'))]"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="user_ids" eval="[(4, ref('sadaya_auth.user_eve_unitkerja'))]"/>
         </record>
     </data>
 </odoo>
