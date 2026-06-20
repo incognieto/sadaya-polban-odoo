@@ -36,7 +36,7 @@ class SadayaAuthController(http.Controller):
                               {'error': {}, 'form_data': {}})
 
     @http.route('/sadaya/register/submit', type='http', auth='public', website=True,
-                sitemap=False, methods=['POST'], csrf=True)
+                sitemap=False, methods=['POST'], csrf=False)
     def sadaya_register_submit(self, **post):
         tipe = post.get('tipe_pendaftar', 'perorangan')
         errors = {}
@@ -102,6 +102,9 @@ class SadayaAuthController(http.Controller):
             reg.sudo().action_submit()
             reg.sudo().action_approve()
 
+            # Commit transaksi database agar user baru ter-persis sebelum login otomatis
+            request.env.cr.commit()
+
             # ── Login otomatis setelah register (dan redirect ke sadaya-mitra) ──────
             return self._do_login_and_redirect(plain_email, plain_password, '/sadaya-mitra')
 
@@ -141,7 +144,7 @@ class SadayaAuthController(http.Controller):
         })
 
     @http.route('/sadaya/login/submit', type='http', auth='public', website=True,
-                sitemap=False, methods=['POST'], csrf=True)
+                sitemap=False, methods=['POST'], csrf=False)
     def sadaya_login_submit(self, **post):
         email    = post.get('email', '').strip()
         password = post.get('password', '')
@@ -214,19 +217,36 @@ class SadayaAuthController(http.Controller):
         Raise AccessDenied jika kredensial salah.
         """
         db = request.db
+        _logger.info("DO_LOGIN: db=%s, login=%s, len_pwd=%d, redirect=%s", db, login, len(password) if password else 0, redirect)
         uid = None
 
-        # ── Strategi 1: request.session.authenticate (Odoo 17+ dengan db) ──
+        # ── Strategi 1: request.session.authenticate (Odoo 18/19 dengan env dan credential) ──
         try:
-            uid = request.session.authenticate(db, login, password)
+            credential = {'type': 'password', 'login': login, 'password': password}
+            auth_info = request.session.authenticate(request.env, credential)
+            if auth_info and isinstance(auth_info, dict):
+                uid = auth_info.get('uid')
+            else:
+                uid = auth_info
         except TypeError:
             pass
         except AccessDenied:
             raise
         except Exception as e:
-            _logger.warning("authenticate(db, login, password) gagal: %s", e)
+            _logger.warning("authenticate(env, credential) gagal: %s", e)
 
-        # ── Strategi 2: request.session.authenticate (Odoo 16, tanpa db) ──
+        # ── Strategi 2: request.session.authenticate (Odoo 17 dengan db) ──
+        if not uid:
+            try:
+                uid = request.session.authenticate(db, login, password)
+            except TypeError:
+                pass
+            except AccessDenied:
+                raise
+            except Exception as e:
+                _logger.warning("authenticate(db, login, password) gagal: %s", e)
+
+        # ── Strategi 3: request.session.authenticate (Odoo 16, tanpa db) ──
         if not uid:
             try:
                 uid = request.session.authenticate(login, password)
@@ -237,20 +257,34 @@ class SadayaAuthController(http.Controller):
             except Exception as e:
                 _logger.warning("authenticate(login, password) gagal: %s", e)
 
-        # ── Strategi 3: res.users._login langsung (paling kompatibel) ──
+        # ── Strategi 4: res.users._login (Odoo 19) ──
         if not uid:
             try:
-                uid = request.env['res.users'].sudo()._login(
-                    db, login, password, user_agent_env={})
+                credential = {'type': 'password', 'login': login, 'password': password}
+                wsgienv = {
+                    'interactive': True,
+                    'base_location': request.httprequest.url_root.rstrip('/'),
+                    'HTTP_HOST': request.httprequest.environ['HTTP_HOST'],
+                    'REMOTE_ADDR': request.httprequest.environ['REMOTE_ADDR'],
+                }
+                auth_info = request.env['res.users'].sudo()._login(credential, wsgienv)
+                if auth_info and isinstance(auth_info, dict):
+                    uid = auth_info.get('uid')
             except TypeError:
-                try:
-                    uid = request.env['res.users'].sudo()._login(db, login, password)
-                except Exception as e:
-                    _logger.warning("_login() gagal: %s", e)
+                pass
             except AccessDenied:
                 raise
             except Exception as e:
-                _logger.warning("_login(user_agent_env) gagal: %s", e)
+                _logger.warning("_login(credential, wsgienv) gagal: %s", e)
+
+        # ── Strategi 5: res.users._login langsung (Odoo 16/17) ──
+        if not uid:
+            try:
+                uid = request.env['res.users'].sudo()._login(db, login, password)
+            except AccessDenied:
+                raise
+            except Exception as e:
+                _logger.warning("_login(db, login, password) gagal: %s", e)
 
         if not uid:
             raise AccessDenied()

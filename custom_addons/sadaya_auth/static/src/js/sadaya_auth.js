@@ -175,18 +175,26 @@ function initPasswordToggle(inputEl, toggleBtn) {
 // =====================
 function showFieldError(fieldEl, message) {
     fieldEl.classList.add('is-invalid');
-    let errorEl = fieldEl.parentElement.querySelector('.sadaya-field-error');
+    let errorParent = fieldEl.parentElement;
+    if (errorParent.classList.contains('input-group')) {
+        errorParent = errorParent.parentElement;
+    }
+    let errorEl = errorParent.querySelector('.sadaya-field-error');
     if (!errorEl) {
         errorEl = document.createElement('div');
-        errorEl.className = 'sadaya-field-error';
-        fieldEl.parentElement.appendChild(errorEl);
+        errorEl.className = 'sadaya-field-error text-danger small mt-1';
+        errorParent.appendChild(errorEl);
     }
     errorEl.textContent = '⚠ ' + message;
 }
 
 function clearFieldError(fieldEl) {
     fieldEl.classList.remove('is-invalid');
-    const errorEl = fieldEl.parentElement.querySelector('.sadaya-field-error');
+    let errorParent = fieldEl.parentElement;
+    if (errorParent.classList.contains('input-group')) {
+        errorParent = errorParent.parentElement;
+    }
+    const errorEl = errorParent.querySelector('.sadaya-field-error');
     if (errorEl) errorEl.textContent = '';
 }
 
