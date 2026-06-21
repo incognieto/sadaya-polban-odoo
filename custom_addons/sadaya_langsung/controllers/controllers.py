@@ -130,10 +130,14 @@ class SadayaLangsungController(http.Controller):
 			)
 		return rows
 
+	def _check_edit_permission(self):
+		return request.env.user.has_group('sadaya_langsung.group_langsung_paket') or request.env.user.has_group('sadaya_langsung.group_langsung_pokja')
+
 	def _build_paket_cards(self, records):
 		cards = []
 		Paket = request.env["sadaya_langsung.paket"]
 		Penawaran = request.env["sadaya_langsung.penawaran"]
+		is_editor = self._check_edit_permission()
 		for record in records:
 			status_options = self._selection_options(Paket, "status_paket")
 			penawaran_records = record.penawaran_ids.sorted(lambda p: (p.harga_penawaran, p.id))
@@ -176,7 +180,7 @@ class SadayaLangsungController(http.Controller):
 						for item in record.item_ids.sorted(key=lambda r: r.id)
 					],
 					"evaluasi_options": self._selection_options(Penawaran, "evaluasi_administrasi"),
-					"actions": self._paket_actions(record),
+					"actions": self._paket_actions(record) if is_editor else [],
 				}
 			)
 		return cards
@@ -299,6 +303,8 @@ class SadayaLangsungController(http.Controller):
 		methods=["POST"],
 	)
 	def create_paket(self, **post):
+		if not self._check_edit_permission():
+			return self._redirect_with_message("/sadaya-langsung/paket", error="Anda tidak memiliki hak akses untuk membuat paket.")
 		Paket = request.env["sadaya_langsung.paket"].sudo()
 		jenis_options = self._selection_options(Paket, "jenis_pengadaan")
 		values = {
@@ -346,6 +352,8 @@ class SadayaLangsungController(http.Controller):
 		methods=["POST"],
 	)
 	def update_paket(self, paket_id, **post):
+		if not self._check_edit_permission():
+			return self._redirect_with_message("/sadaya-langsung/paket", error="Anda tidak memiliki hak akses untuk mengubah paket.")
 		Paket = request.env["sadaya_langsung.paket"].sudo()
 		record = Paket.browse(paket_id)
 		if not record.exists():
@@ -460,6 +468,8 @@ class SadayaLangsungController(http.Controller):
 		methods=["POST"],
 	)
 	def evaluate_penawaran(self, penawaran_id, **post):
+		if not self._check_edit_permission():
+			return self._redirect_with_message("/sadaya-langsung/paket", error="Anda tidak memiliki hak akses untuk melakukan evaluasi.")
 		Penawaran = request.env["sadaya_langsung.penawaran"].sudo()
 		record = Penawaran.browse(penawaran_id)
 		if not record.exists():
@@ -492,6 +502,8 @@ class SadayaLangsungController(http.Controller):
 		methods=["POST"],
 	)
 	def penawaran_action(self, penawaran_id, **post):
+		if not self._check_edit_permission():
+			return self._redirect_with_message("/sadaya-langsung/paket", error="Anda tidak memiliki hak akses untuk memproses penawaran ini.")
 		action_map = {
 			"pilih": "action_pilih_pemenang",
 			"tolak": "action_tolak",
@@ -526,6 +538,8 @@ class SadayaLangsungController(http.Controller):
 		methods=["POST"],
 	)
 	def paket_workflow(self, paket_id, **post):
+		if not self._check_edit_permission():
+			return self._redirect_with_message("/sadaya-langsung/paket", error="Anda tidak memiliki hak akses untuk mengubah status paket.")
 		action_map = {
 			"kirim_undangan": "action_kirim_undangan",
 			"tunggu_penawaran": "action_tunggu_penawaran",
@@ -566,6 +580,8 @@ class SadayaLangsungController(http.Controller):
 		methods=["POST"],
 	)
 	def paket_item_create(self, paket_id, **post):
+		if not self._check_edit_permission():
+			return self._redirect_with_message("/sadaya-langsung/paket", error="Anda tidak memiliki hak akses untuk menambah item.")
 		Paket = request.env["sadaya_langsung.paket"].sudo()
 		paket = Paket.browse(paket_id)
 		if not paket.exists():
@@ -594,6 +610,8 @@ class SadayaLangsungController(http.Controller):
 		methods=["POST"],
 	)
 	def paket_item_update(self, paket_id, item_id, **post):
+		if not self._check_edit_permission():
+			return self._redirect_with_message("/sadaya-langsung/paket", error="Anda tidak memiliki hak akses untuk mengubah item.")
 		item = request.env["sadaya_langsung.paket.line"].sudo().browse(item_id)
 		if not item.exists() or item.paket_id.id != paket_id:
 			return self._redirect_with_message("/sadaya-langsung/paket", error="Item tidak ditemukan")
@@ -618,6 +636,8 @@ class SadayaLangsungController(http.Controller):
 		methods=["POST"],
 	)
 	def paket_item_delete(self, paket_id, item_id, **post):
+		if not self._check_edit_permission():
+			return self._redirect_with_message("/sadaya-langsung/paket", error="Anda tidak memiliki hak akses untuk menghapus item.")
 		item = request.env["sadaya_langsung.paket.line"].sudo().browse(item_id)
 		if not item.exists() or item.paket_id.id != paket_id:
 			return self._redirect_with_message("/sadaya-langsung/paket", error="Item tidak ditemukan")

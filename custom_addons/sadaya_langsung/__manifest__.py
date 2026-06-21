@@ -17,10 +17,12 @@
         "mail",
         "website",
         "sadaya_mitra",
+        "sadaya_auth",
     ],
     "data": [
-        "security/ir.model.access.csv",
+        "security/security.xml",
         "security/sadaya_langsung_groups.xml",
+        "security/ir.model.access.csv",
         "views/frontend_templates.xml",
         "views/paket_views.xml",
         "views/kontrak_views.xml",
