@@ -18,5 +18,6 @@
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
             <field name="user_ids" eval="[(4, ref('sadaya_auth.user_eve_unitkerja'))]"/>
         </record>
+
     </data>
 </odoo>
