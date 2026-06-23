@@ -19,3 +19,5 @@ access_sadaya_langsung_penawaran_pphp,sadaya_langsung.penawaran,model_sadaya_lan
 access_sadaya_langsung_kontrak_pphp,sadaya_langsung.kontrak,model_sadaya_langsung_kontrak,group_langsung_pphp,1,1,1,1
 access_sadaya_langsung_paket_unit,Akses Paket Unit Kerja,model_sadaya_langsung_paket,group_langsung_unit_kerja,1,0,0,0
 access_sadaya_langsung_paket_manajemen,Akses Paket Manajemen,model_sadaya_langsung_paket,group_langsung_manajemen,1,0,0,0
+access_sadaya_langsung_kontrak_portal,Akses Kontrak Portal,model_sadaya_langsung_kontrak,base.group_portal,1,1,0,0
+
