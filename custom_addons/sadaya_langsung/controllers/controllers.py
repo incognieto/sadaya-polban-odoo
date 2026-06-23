@@ -46,48 +46,58 @@ class SadayaLangsungController(http.Controller):
 
 	def _paket_actions(self, record):
 		actions = []
-		if record.status_paket == "draft":
+		user = request.env.user
+		is_ppk = user.has_group('sadaya_langsung.group_langsung_ppk')
+		is_pp = user.has_group('sadaya_langsung.group_langsung_pp')
+		is_pphp = user.has_group('sadaya_langsung.group_langsung_pphp')
+		is_user = user.has_group('sadaya_langsung.group_langsung_unit_kerja')
+
+		if record.status_paket == "draft" and is_ppk:
 			actions.append({"key": "ajukan", "label": "Ajukan Persetujuan", "class": "btn-primary"})
-		elif record.status_paket == "menunggu_persetujuan":
+		elif record.status_paket == "menunggu_persetujuan" and is_pp:
 			actions.append({"key": "pengumuman", "label": "Publikasikan Pengumuman", "class": "btn-primary"})
 			actions.append({"key": "revisi", "label": "Minta Revisi", "class": "btn-outline-warning"})
-		elif record.status_paket == "pengumuman":
+		elif record.status_paket == "pengumuman" and is_ppk:
 			actions.append({"key": "buat_spk", "label": "Terbitkan SPK", "class": "btn-success"})
-		elif record.status_paket == "spk_dibuat":
+		elif record.status_paket == "spk_dibuat" and is_ppk:
 			actions.append({"key": "pam", "label": "Pre-Award Meeting (PAM)", "class": "btn-primary"})
-		elif record.status_paket == "pam":
+		elif record.status_paket == "pam" and is_ppk:
 			actions.append({"key": "persiapan_kontrak", "label": "Persiapan Kontrak", "class": "btn-primary"})
-		elif record.status_paket == "persiapan_kontrak":
+		elif record.status_paket == "persiapan_kontrak" and is_ppk:
 			actions.append({"key": "proses_kontrak", "label": "Proses Kontrak", "class": "btn-primary"})
-		elif record.status_paket == "proses_kontrak":
+		elif record.status_paket == "proses_kontrak" and is_ppk:
 			actions.append({"key": "pelaksanaan", "label": "Mulai Pelaksanaan", "class": "btn-primary"})
-		elif record.status_paket == "pelaksanaan":
+		elif record.status_paket == "pelaksanaan" and is_pphp:
 			actions.append({"key": "pemeriksaan", "label": "Pemeriksaan (PPHP)", "class": "btn-primary"})
-		elif record.status_paket == "pemeriksaan":
+		elif record.status_paket == "pemeriksaan" and is_user:
 			actions.append({"key": "selesai", "label": "Selesai", "class": "btn-success"})
-		elif record.status_paket == "selesai":
+		elif record.status_paket == "selesai" and is_ppk:
 			actions.append({"key": "addendum", "label": "Addendum Kontrak", "class": "btn-warning"})
-		elif record.status_paket == "addendum_kontrak":
+		elif record.status_paket == "addendum_kontrak" and is_ppk:
 			actions.append({"key": "selesai", "label": "Selesaikan Addendum", "class": "btn-success"})
-		elif record.status_paket == "revisi":
+		elif record.status_paket == "revisi" and is_ppk:
 			actions.append({"key": "reset_draft", "label": "Reset ke Draft", "class": "btn-outline-secondary"})
 
-		if record.status_paket not in ("selesai", "batal", "revisi"):
+		if record.status_paket not in ("selesai", "batal", "revisi") and is_ppk:
 			actions.append({"key": "batal", "label": "Batalkan", "class": "btn-outline-danger"})
-		if record.status_paket == "batal":
+		if record.status_paket == "batal" and is_ppk:
 			actions.append({"key": "reset_draft", "label": "Reset ke Draft", "class": "btn-outline-secondary"})
 		return actions
 
 	def _kontrak_actions(self, record):
 		actions = []
-		if record.status_kontrak == "persiapan_kontrak":
+		user = request.env.user
+		is_ppk = user.has_group('sadaya_langsung.group_langsung_ppk')
+		is_pphp = user.has_group('sadaya_langsung.group_langsung_pphp')
+
+		if record.status_kontrak == "persiapan_kontrak" and is_ppk:
 			actions.append({"key": "proses_kontrak", "label": "Proses Kontrak", "class": "btn-primary"})
-		elif record.status_kontrak == "proses_kontrak":
+		elif record.status_kontrak == "proses_kontrak" and is_pphp:
 			actions.append({"key": "selesai_kontrak", "label": "Selesai Kontrak", "class": "btn-success"})
-		elif record.status_kontrak == "selesai_kontrak":
+		elif record.status_kontrak == "selesai_kontrak" and is_ppk:
 			actions.append({"key": "addendum", "label": "Addendum", "class": "btn-warning"})
 
-		if record.status_kontrak not in ("selesai_kontrak", "revisi"):
+		if record.status_kontrak not in ("selesai_kontrak", "revisi") and (is_ppk or is_pphp):
 			actions.append({"key": "revisi", "label": "Revisi", "class": "btn-outline-secondary"})
 		return actions
 
@@ -142,7 +152,10 @@ class SadayaLangsungController(http.Controller):
 		return rows
 
 	def _check_edit_permission(self):
-		return request.env.user.has_group('sadaya_langsung.group_langsung_paket') or request.env.user.has_group('sadaya_langsung.group_langsung_pokja')
+		return (
+			request.env.user.has_group('sadaya_langsung.group_langsung_ppk') or
+			request.env.user.has_group('sadaya_langsung.group_langsung_pp')
+		)
 
 	def _build_paket_cards(self, records):
 		cards = []
@@ -352,7 +365,7 @@ class SadayaLangsungController(http.Controller):
 		methods=["POST"],
 	)
 	def create_paket(self, **post):
-		if not self._check_edit_permission():
+		if not request.env.user.has_group('sadaya_langsung.group_langsung_ppk'):
 			return self._redirect_with_message("/sadaya-langsung/paket", error="Anda tidak memiliki hak akses untuk membuat paket.")
 		Paket = request.env["sadaya_langsung.paket"].sudo()
 		jenis_options = self._selection_options(Paket, "jenis_pengadaan")
@@ -401,7 +414,7 @@ class SadayaLangsungController(http.Controller):
 		methods=["POST"],
 	)
 	def update_paket(self, paket_id, **post):
-		if not self._check_edit_permission():
+		if not (request.env.user.has_group('sadaya_langsung.group_langsung_ppk') or request.env.user.has_group('sadaya_langsung.group_langsung_pp')):
 			return self._redirect_with_message("/sadaya-langsung/paket", error="Anda tidak memiliki hak akses untuk mengubah paket.")
 		Paket = request.env["sadaya_langsung.paket"].sudo()
 		record = Paket.browse(paket_id)
@@ -467,6 +480,11 @@ class SadayaLangsungController(http.Controller):
 		methods=["POST"],
 	)
 	def create_penawaran(self, paket_id, **post):
+		is_ppk = request.env.user.has_group('sadaya_langsung.group_langsung_ppk')
+		is_pp = request.env.user.has_group('sadaya_langsung.group_langsung_pp')
+		is_vendor = self._is_vendor_user()
+		if not (is_ppk or is_pp or is_vendor):
+			return self._redirect_with_message("/sadaya-langsung/paket", error="Anda tidak memiliki hak akses untuk menambahkan penawaran.")
 		paket = request.env["sadaya_langsung.paket"].sudo().browse(paket_id)
 		if not paket.exists():
 			return self._redirect_with_message(
@@ -517,7 +535,7 @@ class SadayaLangsungController(http.Controller):
 		methods=["POST"],
 	)
 	def evaluate_penawaran(self, penawaran_id, **post):
-		if not self._check_edit_permission():
+		if not request.env.user.has_group('sadaya_langsung.group_langsung_pp'):
 			return self._redirect_with_message("/sadaya-langsung/paket", error="Anda tidak memiliki hak akses untuk melakukan evaluasi.")
 		Penawaran = request.env["sadaya_langsung.penawaran"].sudo()
 		record = Penawaran.browse(penawaran_id)
@@ -551,7 +569,7 @@ class SadayaLangsungController(http.Controller):
 		methods=["POST"],
 	)
 	def penawaran_action(self, penawaran_id, **post):
-		if not self._check_edit_permission():
+		if not request.env.user.has_group('sadaya_langsung.group_langsung_pp'):
 			return self._redirect_with_message("/sadaya-langsung/paket", error="Anda tidak memiliki hak akses untuk memproses penawaran ini.")
 		action_map = {
 			"pilih": "action_pilih_pemenang",
@@ -587,8 +605,25 @@ class SadayaLangsungController(http.Controller):
 		methods=["POST"],
 	)
 	def paket_workflow(self, paket_id, **post):
-		if not self._check_edit_permission():
-			return self._redirect_with_message("/sadaya-langsung/paket", error="Anda tidak memiliki hak akses untuk mengubah status paket.")
+		action_key = post.get("action")
+		user = request.env.user
+		is_ppk = user.has_group('sadaya_langsung.group_langsung_ppk')
+		is_pp = user.has_group('sadaya_langsung.group_langsung_pp')
+		is_pphp = user.has_group('sadaya_langsung.group_langsung_pphp')
+		is_user = user.has_group('sadaya_langsung.group_langsung_unit_kerja')
+
+		allowed = False
+		if action_key in ("ajukan", "buat_spk", "pam", "persiapan_kontrak", "proses_kontrak", "pelaksanaan", "addendum", "reset_draft", "batal"):
+			allowed = is_ppk
+		elif action_key in ("pengumuman", "revisi"):
+			allowed = is_pp
+		elif action_key == "pemeriksaan":
+			allowed = is_pphp
+		elif action_key == "selesai":
+			allowed = is_user
+
+		if not allowed:
+			return self._redirect_with_message("/sadaya-langsung/paket", error="Anda tidak memiliki hak akses untuk melakukan aksi ini.")
 		action_map = {
 			"ajukan": "action_ajukan",
 			"pengumuman": "action_pengumuman",
@@ -633,7 +668,7 @@ class SadayaLangsungController(http.Controller):
 		methods=["POST"],
 	)
 	def paket_item_create(self, paket_id, **post):
-		if not self._check_edit_permission():
+		if not request.env.user.has_group('sadaya_langsung.group_langsung_ppk'):
 			return self._redirect_with_message("/sadaya-langsung/paket", error="Anda tidak memiliki hak akses untuk menambah item.")
 		Paket = request.env["sadaya_langsung.paket"].sudo()
 		paket = Paket.browse(paket_id)
@@ -663,7 +698,7 @@ class SadayaLangsungController(http.Controller):
 		methods=["POST"],
 	)
 	def paket_item_update(self, paket_id, item_id, **post):
-		if not self._check_edit_permission():
+		if not request.env.user.has_group('sadaya_langsung.group_langsung_ppk'):
 			return self._redirect_with_message("/sadaya-langsung/paket", error="Anda tidak memiliki hak akses untuk mengubah item.")
 		item = request.env["sadaya_langsung.paket.line"].sudo().browse(item_id)
 		if not item.exists() or item.paket_id.id != paket_id:
@@ -689,7 +724,7 @@ class SadayaLangsungController(http.Controller):
 		methods=["POST"],
 	)
 	def paket_item_delete(self, paket_id, item_id, **post):
-		if not self._check_edit_permission():
+		if not request.env.user.has_group('sadaya_langsung.group_langsung_ppk'):
 			return self._redirect_with_message("/sadaya-langsung/paket", error="Anda tidak memiliki hak akses untuk menghapus item.")
 		item = request.env["sadaya_langsung.paket.line"].sudo().browse(item_id)
 		if not item.exists() or item.paket_id.id != paket_id:
@@ -740,6 +775,8 @@ class SadayaLangsungController(http.Controller):
 		methods=["POST"],
 	)
 	def create_kontrak(self, **post):
+		if not request.env.user.has_group('sadaya_langsung.group_langsung_ppk'):
+			return self._redirect_with_message("/sadaya-langsung/kontrak", error="Anda tidak memiliki hak akses untuk membuat kontrak.")
 		paket_id = self._safe_int(post.get("paket_id"))
 		paket = False
 		if paket_id:
@@ -776,6 +813,8 @@ class SadayaLangsungController(http.Controller):
 		methods=["POST"],
 	)
 	def update_kontrak(self, kontrak_id, **post):
+		if not request.env.user.has_group('sadaya_langsung.group_langsung_ppk'):
+			return self._redirect_with_message("/sadaya-langsung/kontrak", error="Anda tidak memiliki hak akses untuk mengubah kontrak.")
 		Kontrak = request.env["sadaya_langsung.kontrak"].sudo()
 		record = Kontrak.browse(kontrak_id)
 		if not record.exists():
@@ -819,6 +858,21 @@ class SadayaLangsungController(http.Controller):
 		methods=["POST"],
 	)
 	def kontrak_workflow(self, kontrak_id, **post):
+		action_key = post.get("action")
+		user = request.env.user
+		is_ppk = user.has_group('sadaya_langsung.group_langsung_ppk')
+		is_pphp = user.has_group('sadaya_langsung.group_langsung_pphp')
+
+		allowed = False
+		if action_key in ("proses_kontrak", "addendum"):
+			allowed = is_ppk
+		elif action_key == "selesai_kontrak":
+			allowed = is_pphp
+		elif action_key == "revisi":
+			allowed = is_ppk or is_pphp
+
+		if not allowed:
+			return self._redirect_with_message("/sadaya-langsung/kontrak", error="Anda tidak memiliki hak akses untuk memproses kontrak ini.")
 		action_map = {
 			"proses_kontrak": "action_proses_kontrak",
 			"selesai_kontrak": "action_selesai_kontrak",

@@ -268,7 +268,7 @@
                       </t>
                     </div>
 
-                    <details class="sl-inline-panel" t-if="env.user.has_group('sadaya_langsung.group_langsung_paket') or env.user.has_group('sadaya_langsung.group_langsung_pokja')">
+                    <details class="sl-inline-panel" t-if="env.user.has_group('sadaya_langsung.group_langsung_ppk') or env.user.has_group('sadaya_langsung.group_langsung_pp')">
                       <summary>Edit Paket &amp; Kelola Penawaran</summary>
                       <div class="sl-inline-panel__body">
                         <form class="sl-form sl-form--inline" t-attf-action="/sadaya-langsung/paket/{{ paket['id'] }}/update" method="post" enctype="multipart/form-data">
@@ -585,7 +585,7 @@
                       </t>
                     </div>
 
-                    <details class="sl-inline-panel">
+                    <details class="sl-inline-panel" t-if="env.user.has_group('sadaya_langsung.group_langsung_ppk')">
                       <summary>Edit Kontrak</summary>
                       <div class="sl-inline-panel__body">
                         <form class="sl-form sl-form--inline" t-attf-action="/sadaya-langsung/kontrak/{{ kontrak['id'] }}/update" method="post">
