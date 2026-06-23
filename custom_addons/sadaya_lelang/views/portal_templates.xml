@@ -619,13 +619,25 @@
                                     <t t-set="partner_id" t-value="request.env.user.partner_id.id"/>
                                     <t t-set="has_bid" t-value="request.env['sadaya_lelang.penawaran'].sudo().search_count([('paket_id', '=', tender.id), ('vendor_id', '=', partner_id)])"/>
 
-                                    <div t-if="has_bid > 0" class="sl-actions" style="flex-direction: column; gap: 0.65rem;">
-                                        <a href="/sadaya-lelang/dashboard" class="btn btn-outline-primary" style="border-radius:999px; width:100%; text-align:center;">Lihat Penawaran Saya</a>
-                                        <a t-attf-href="/sadaya-lelang/tender/#{tender.id}/submit_bid" class="btn btn-primary" style="border-radius:999px; width:100%; text-align:center;">Ubah Penawaran</a>
-                                    </div>
-                                    <div t-else="" class="sl-actions">
-                                        <a t-attf-href="/sadaya-lelang/tender/#{tender.id}/submit_bid" class="btn btn-primary sl-submit" style="width:100%; text-align:center;">Ajukan Penawaran Sekarang</a>
-                                    </div>
+                                    <t t-if="tender.status == 'pemasukan_penawaran'">
+                                        <div t-if="has_bid > 0" class="sl-actions" style="flex-direction: column; gap: 0.65rem;">
+                                            <a href="/sadaya-lelang/dashboard" class="btn btn-outline-primary" style="border-radius:999px; width:100%; text-align:center;">Lihat Penawaran Saya</a>
+                                            <a t-attf-href="/sadaya-lelang/tender/#{tender.id}/submit_bid" class="btn btn-primary" style="border-radius:999px; width:100%; text-align:center;">Ubah Penawaran</a>
+                                        </div>
+                                        <div t-else="" class="sl-actions">
+                                            <a t-attf-href="/sadaya-lelang/tender/#{tender.id}/submit_bid" class="btn btn-primary sl-submit" style="width:100%; text-align:center;">Ajukan Penawaran Sekarang</a>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="alert alert-secondary sl-notice" role="alert">
+                                            <i class="fa fa-info-circle me-1"></i> 
+                                            <span t-if="tender.status in ['draft', 'pengumuman', 'penjelasan']">Jadwal Pemasukan Penawaran belum dibuka.</span>
+                                            <span t-else="">Masa Pemasukan Penawaran telah berakhir.</span>
+                                        </div>
+                                        <div t-if="has_bid > 0" class="sl-actions mt-3">
+                                            <a href="/sadaya-lelang/dashboard" class="btn btn-outline-primary" style="border-radius:999px; width:100%; text-align:center;">Lihat Penawaran Saya</a>
+                                        </div>
+                                    </t>
                                 </div>
                                 <div t-else="">
                                     <div class="alert alert-warning sl-notice" role="alert">
