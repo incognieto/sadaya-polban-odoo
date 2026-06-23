@@ -153,11 +153,23 @@ class SadayaMitraPenyedia(models.Model):
             'tanggal_verifikasi': fields.Datetime.now(),
         })
         
-        # Tambahkan secara otomatis user terkait ke grup Vendor
-        group_mitra_vendor = self.env.ref('sadaya_mitra.group_mitra_vendor', raise_if_not_found=False)
+        # Tambahkan secara otomatis user terkait ke seluruh grup Vendor lintas modul
+        target_groups = [
+            'sadaya_mitra.group_mitra_vendor',
+            'sadaya_tawar.group_tawar_vendor',
+            'sadaya_langsung.group_langsung_vendor',
+            'sadaya_lelang.group_lelang_vendor'
+        ]
+        
         for rec in self:
-            if rec.partner_id and rec.partner_id.user_ids and group_mitra_vendor:
-                group_mitra_vendor.sudo().write({'users': [(4, user.id) for user in rec.partner_id.user_ids]})
+            user = self.env['res.users'].sudo().search(['|', ('login', '=', rec.email), ('email', '=', rec.email)], limit=1)
+            if user:
+                # Menyesuaikan dengan standar Odoo 17/18/19 pada sadaya_registration.py
+                group_field = 'group_ids' if 'group_ids' in self.env['res.users']._fields else 'groups_id'
+                for group_xml_id in target_groups:
+                    group = self.env.ref(group_xml_id, raise_if_not_found=False)
+                    if group:
+                        user.sudo().write({group_field: [(4, group.id)]})
 
     def action_reject(self):
         return {
