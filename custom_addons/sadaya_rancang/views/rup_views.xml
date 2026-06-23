@@ -124,6 +124,6 @@
     </record>
 
     <!-- Menu -->
-    <menuitem id="menu_rancang_rup" name="Perencanaan PPK" parent="menu_rancang_root" action="action_rancang_rup" sequence="30"/>
+    <menuitem id="menu_rancang_rup" name="Perencanaan PPK" parent="menu_rancang_root" action="action_rancang_rup" sequence="30" groups="sadaya_rancang.group_rancang_ppk"/>
 
 </odoo>

@@ -316,7 +316,7 @@
                                     </div>
                                     <div class="col-12">
                                         <label for="deskripsi_kebutuhan" class="sl-field-label">Deskripsi Kebutuhan</label>
-                                        <textarea class="form-control sl-input" id="deskripsi_kebutuhan" name="deskripsi_kebutuhan" rows="3"></textarea>
+                                        <textarea class="form-control sl-input" id="deskripsi_kebutuhan" name="deskripsi_kebutuhan" rows="3" required="1"></textarea>
                                     </div>
                                     <div class="col-12">
                                         <label for="kak" class="sl-field-label">File KAK (Hanya PDF)</label>

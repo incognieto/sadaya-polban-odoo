@@ -107,7 +107,7 @@
 
     <!-- Menus -->
     <menuitem id="menu_rancang_root" name="Sadaya Rancang" sequence="5"/>
-    <menuitem id="menu_rancang_usulan_user" name="Pengajuan Kebutuhan" parent="menu_rancang_root" action="action_rancang_usulan_user" sequence="10"/>
-    <menuitem id="menu_rancang_usulan_manajemen" name="Persetujuan Manajemen" parent="menu_rancang_root" action="action_rancang_usulan_manajemen" sequence="20"/>
+    <menuitem id="menu_rancang_usulan_user" name="Pengajuan Kebutuhan" parent="menu_rancang_root" action="action_rancang_usulan_user" sequence="10" groups="sadaya_rancang.group_rancang_user"/>
+    <menuitem id="menu_rancang_usulan_manajemen" name="Persetujuan Manajemen" parent="menu_rancang_root" action="action_rancang_usulan_manajemen" sequence="20" groups="sadaya_rancang.group_rancang_manajemen"/>
 
 </odoo>
