@@ -3,13 +3,26 @@ from odoo.http import request
 
 class SadayaTawarPortal(http.Controller):
     def _is_vendor_eligible(self, partner):
-        if not partner or not partner.is_company:
+        if not partner:
             return False
-        if 'is_sadaya_mitra_vendor' in partner._fields:
-            return bool(partner.is_sadaya_mitra_vendor)
-        if 'sadaya_mitra_penyedia_id' in partner._fields:
-            return bool(partner.sadaya_mitra_penyedia_id)
-        return True
+            
+        # 1. Cek apakah partner memiliki relasi ke penyedia (Alur standar)
+        if 'sadaya_mitra_penyedia_id' in partner._fields and partner.sadaya_mitra_penyedia_id:
+            return True
+            
+        # 2. Fallback: Tangani isu "Dummy Partner" & Vendor Perorangan
+        PenyediaModel = request.env.get('sadaya_mitra.penyedia')
+        if PenyediaModel is not None:
+            # Lacak status vendor menggunakan email akun yang login
+            penyedia = PenyediaModel.sudo().search([
+                ('email', '=', partner.email), 
+                ('status_verifikasi', '=', 'approved')
+            ], limit=1)
+            
+            if penyedia:
+                return True
+                
+        return False
 
     # 1. Endpoint Utama diubah menjadi /sadaya-tawar
     @http.route(['/sadaya-tawar'], type='http', auth="public", website=True)
