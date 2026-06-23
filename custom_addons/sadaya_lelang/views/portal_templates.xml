@@ -811,6 +811,81 @@
                         </div>
                     </div>
                 </section>
+            <!-- Pengumuman Pemenang & Kontrak -->
+            <t t-if="request.env.user.id != request.env.ref('base.public_user').id">
+                <t t-set="partner_id" t-value="request.env.user.partner_id.id"/>
+                
+                <section class="sl-section" t-if="is_vendor and (tender.status in ['sppbj', 'pam', 'kontrak', 'pelaksanaan', 'selesai'])">
+                    <div class="container">
+                        <div class="sl-grid-header">
+                            <div>
+                                <h2>Pengumuman Pemenang &amp; Kontrak</h2>
+                                <p>Informasi pemenang lelang dan proses tanda tangan kontrak.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="sl-card" style="padding: 2rem;">
+                            <!-- Cari pemenang -->
+                            <t t-set="winning_bid" t-value="request.env['sadaya_lelang.penawaran'].sudo().search([('paket_id', '=', tender.id), ('status', '=', 'pemenang')], limit=1)"/>
+                            <t t-set="is_me_winner" t-value="winning_bid and winning_bid.vendor_id.id == partner_id"/>
+                            
+                            <div t-if="winning_bid" class="alert alert-success mb-4" style="border-radius: 12px;">
+                                <h4 class="alert-heading"><i class="fa fa-trophy me-2"></i> Pemenang Lelang Ditetapkan</h4>
+                                <p class="mb-0">Selamat kepada <strong><t t-esc="winning_bid.vendor_id.name"/></strong> yang telah ditetapkan sebagai pemenang untuk paket ini!</p>
+                            </div>
+                            
+                            <div t-if="is_me_winner">
+                                <h4 class="mb-3">Tindak Lanjut Pemenang</h4>
+                                <div class="row g-4">
+                                    <!-- Download SPPBJ -->
+                                    <div class="col-12 col-md-4">
+                                        <div class="p-3 border rounded bg-light text-center h-100">
+                                            <i class="fa fa-file-pdf-o fa-3x text-danger mb-3"></i>
+                                            <h6 class="fw-bold">SPPBJ</h6>
+                                            <p class="small text-muted mb-3">Surat Penunjukan Penyedia Barang/Jasa (SPPBJ) dari PPK.</p>
+                                            <a t-if="tender.file_sppbj" t-attf-href="/web/content/sadaya_lelang.paket/#{tender.id}/file_sppbj?download=true" class="btn btn-sm btn-outline-primary rounded-pill w-100">Download SPPBJ</a>
+                                            <button t-else="" class="btn btn-sm btn-outline-secondary rounded-pill w-100" disabled="1">Belum Tersedia</button>
+                                        </div>
+                                    </div>
+                                    <!-- Upload Jaminan -->
+                                    <div class="col-12 col-md-4">
+                                        <div class="p-3 border rounded h-100">
+                                            <h6 class="fw-bold text-center"><i class="fa fa-shield me-2"></i> Jaminan Pelaksanaan</h6>
+                                            <p class="small text-muted text-center mb-3">Silakan unggah Jaminan Pelaksanaan.</p>
+                                            
+                                            <form t-if="not tender.file_jaminan_pelaksanaan" t-attf-action="/sadaya-lelang/tender/#{tender.id}/submit_kontrak_jaminan" method="post" enctype="multipart/form-data">
+                                                <input type="hidden" name="upload_type" value="jaminan"/>
+                                                <input class="form-control form-control-sm mb-2" type="file" name="file_upload" accept=".pdf,.jpg,.jpeg,.png" required="1"/>
+                                                <button type="submit" class="btn btn-sm btn-primary rounded-pill w-100">Unggah Jaminan</button>
+                                            </form>
+                                            <div t-else="" class="text-center">
+                                                <span class="badge bg-success mb-2"><i class="fa fa-check"></i> Sudah Diunggah</span>
+                                                <a t-attf-href="/web/content/sadaya_lelang.paket/#{tender.id}/file_jaminan_pelaksanaan?download=true" class="btn btn-sm btn-outline-secondary rounded-pill w-100">Lihat File</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Upload Kontrak -->
+                                    <div class="col-12 col-md-4">
+                                        <div class="p-3 border rounded h-100">
+                                            <h6 class="fw-bold text-center"><i class="fa fa-pencil-square-o me-2"></i> Dokumen Kontrak</h6>
+                                            <p class="small text-muted text-center mb-3">Unggah Kontrak yang sudah ditandatangani.</p>
+                                            
+                                            <form t-if="not tender.file_kontrak" t-attf-action="/sadaya-lelang/tender/#{tender.id}/submit_kontrak_jaminan" method="post" enctype="multipart/form-data">
+                                                <input type="hidden" name="upload_type" value="kontrak"/>
+                                                <input class="form-control form-control-sm mb-2" type="file" name="file_upload" accept=".pdf" required="1"/>
+                                                <button type="submit" class="btn btn-sm btn-primary rounded-pill w-100">Unggah Kontrak TTD</button>
+                                            </form>
+                                            <div t-else="" class="text-center">
+                                                <span class="badge bg-success mb-2"><i class="fa fa-check"></i> Sudah Diunggah</span>
+                                                <a t-attf-href="/web/content/sadaya_lelang.paket/#{tender.id}/file_kontrak?download=true" class="btn btn-sm btn-outline-secondary rounded-pill w-100">Lihat File</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </t>
         </t>
     </template>

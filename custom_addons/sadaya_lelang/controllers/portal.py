@@ -127,3 +127,28 @@ class TenderPortal(http.Controller):
             })
             
         return request.redirect('/sadaya-lelang/tender/%s' % tender.id)
+
+    @http.route(['/sadaya-lelang/tender/<model("sadaya_lelang.paket"):tender>/submit_kontrak_jaminan'], type='http', auth='user', methods=['POST'], website=True, csrf=False)
+    def submit_kontrak_jaminan(self, tender, **post):
+        import base64
+        partner = request.env.user.partner_id
+        is_vendor = False
+        if partner and request.env.user.id != request.env.ref('base.public_user').id:
+            is_vendor = getattr(partner, 'is_vendor_tender', False) or getattr(partner, 'is_sadaya_mitra_vendor', False)
+        
+        # Check if winner
+        winning_bid = request.env['sadaya_lelang.penawaran'].sudo().search([('paket_id', '=', tender.id), ('status', '=', 'pemenang')], limit=1)
+        if not is_vendor or not winning_bid or winning_bid.vendor_id.id != partner.id:
+            return request.redirect('/sadaya-lelang/tender/%s' % tender.id)
+            
+        upload_type = post.get('upload_type')
+        file_upload = post.get('file_upload')
+        
+        if file_upload:
+            file_content = base64.b64encode(file_upload.read())
+            if upload_type == 'jaminan':
+                tender.sudo().write({'file_jaminan_pelaksanaan': file_content})
+            elif upload_type == 'kontrak':
+                tender.sudo().write({'file_kontrak': file_content})
+                
+        return request.redirect('/sadaya-lelang/tender/%s' % tender.id)
