@@ -1,6 +1,13 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_sadaya_tawar_paket,sadaya_tawar.paket,model_sadaya_tawar_paket,,1,1,1,1
-access_sadaya_tawar_peserta_user,sadaya_tawar.peserta.user,model_sadaya_tawar_peserta,base.group_user,1,1,1,1
-access_sadaya_tawar_peserta_portal,sadaya_tawar.peserta.portal,model_sadaya_tawar_peserta,base.group_portal,1,0,1,0
-access_sadaya_tawar_addendum_user,sadaya_tawar.addendum.user,model_sadaya_tawar_addendum,base.group_user,1,1,1,1
-access_sadaya_tawar_jadwal,sadaya_tawar.jadwal,model_sadaya_tawar_jadwal,base.group_user,1,1,1,1
+access_tawar_paket_admin,Akses Paket Admin,model_sadaya_tawar_paket,group_tawar_admin,1,1,1,1
+access_tawar_peserta_admin,Akses Peserta Admin,model_sadaya_tawar_peserta,group_tawar_admin,1,1,1,1
+access_tawar_paket_viewer,Akses Paket Viewer,model_sadaya_tawar_paket,group_tawar_viewer,1,0,0,0
+access_tawar_peserta_viewer,Akses Peserta Viewer,model_sadaya_tawar_peserta,group_tawar_viewer,1,0,0,0
+access_tawar_paket_vendor,Akses Paket Vendor,model_sadaya_tawar_paket,group_tawar_vendor,1,0,0,0
+access_tawar_peserta_vendor,Akses Peserta Vendor,model_sadaya_tawar_peserta,group_tawar_vendor,1,1,1,0
+access_tawar_addendum_admin,Akses Addendum Admin,model_sadaya_tawar_addendum,group_tawar_admin,1,1,1,1
+access_tawar_addendum_viewer,Akses Addendum Viewer,model_sadaya_tawar_addendum,group_tawar_viewer,1,0,0,0
+access_tawar_addendum_vendor,Akses Addendum Vendor,model_sadaya_tawar_addendum,group_tawar_vendor,1,0,0,0
+access_tawar_jadwal_admin,Akses Jadwal Admin,model_sadaya_tawar_jadwal,group_tawar_admin,1,1,1,1
+access_tawar_jadwal_viewer,Akses Jadwal Viewer,model_sadaya_tawar_jadwal,group_tawar_viewer,1,0,0,0
+access_tawar_jadwal_vendor,Akses Jadwal Vendor,model_sadaya_tawar_jadwal,group_tawar_vendor,1,0,0,0

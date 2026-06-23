@@ -40,82 +40,42 @@
                     </div>
                     <group>
                         <group>
-                            <field name="name"/>
-                            <field name="nilai_hps"/>
-                            <field name="jenis_pengadaan"/> <field name="jenis_kontrak"/>
+                            <field name="name" readonly="state != 'draft'"/>
+                            <field name="nilai_hps" readonly="state != 'draft'"/>
+                            <field name="jenis_pengadaan" readonly="state != 'draft'"/> 
+                            <field name="jenis_kontrak" readonly="state != 'draft'"/>
                         </group>
                         <group>
-                            <field name="metode_pemilihan"/>
-                            <field name="batas_pendaftaran"/>
-                            <field name="unit_pengusul"/>
-                            <field name="tgl_mulai"/>
-                            <field name="tgl_selesai"/>
+                            <field name="metode_pemilihan" readonly="state != 'draft'"/>
+                            <field name="batas_pendaftaran" readonly="state != 'draft'"/>
+                            <field name="unit_pengusul" readonly="state != 'draft'"/>
+                            <field name="tgl_mulai" readonly="state != 'draft'"/>
+                            <field name="tgl_selesai" readonly="state != 'draft'"/>
                         </group>
                     </group>
                     <notebook>
                         <page string="Dokumen Persiapan">
                             <group>
-                                <field name="deskripsi" placeholder="Tuliskan deskripsi atau ruang lingkup singkat..."/>
-                                <!-- Tambahan Field Persyaratan -->
-                                <field name="syarat_kbli" placeholder="Contoh: 6201, 6202"/>
-                                <field name="syarat_dokumen" placeholder="Sebutkan dokumen administratif atau teknis tambahan yang perlu disiapkan vendor..."/>
-                            </group>
-                            <group>
-                                <field name="deskripsi" placeholder="Tuliskan deskripsi atau ruang lingkup singkat..."/>
+                                <field name="deskripsi" readonly="state in ['eval', 'routed']"/>
+                                <field name="syarat_kbli" readonly="state in ['eval', 'routed']"/>
+                                <field name="syarat_dokumen" readonly="state in ['eval', 'routed']"/>
                             </group>
                             <group col="4">
-                                <field name="dokumen_kak" filename="filename_kak" widget="binary"/>
+                                <field name="dokumen_kak" filename="filename_kak" widget="binary" readonly="state in ['eval', 'routed']"/>
                                 <field name="filename_kak" invisible="1"/>
                                 
-                                <field name="dokumen_spektek" filename="filename_spektek" widget="binary"/>
+                                <field name="dokumen_spektek" filename="filename_spektek" widget="binary" readonly="state in ['eval', 'routed']"/>
                                 <field name="filename_spektek" invisible="1"/>
                                 
-                                <field name="dokumen_rab" filename="filename_rab" widget="binary"/>
+                                <field name="dokumen_rab" filename="filename_rab" widget="binary" readonly="state in ['eval', 'routed']"/>
                                 <field name="filename_rab" invisible="1"/>
                             </group>
                         </page>
 
-                        <page string="Peserta">
-                            <field name="peserta_ids">
-                                <list editable="bottom">
-                                    <field name="vendor_id"/>
-                                    <field name="tanggal_daftar"/>
-                                    <field name="status"/>
-                                </list>
-                                <form>
-                                    <group>
-                                        <field name="vendor_id"/>
-                                        <field name="tanggal_daftar"/>
-                                        <field name="status"/>
-                                        <field name="catatan"/>
-                                    </group>
-                                </form>
-                            </field>
-                        </page>
-                        
-                        <page string="Addendum">
-                            <field name="addendum_ids">
+                        <page string="Jadwal Tahapan">
+                            <field name="jadwal_ids" readonly="state in ['eval', 'routed']">
                                 <list editable="bottom">
                                     <field name="name"/>
-                                    <field name="tanggal"/>
-                                    <field name="dokumen" filename="dokumen_filename" widget="binary"/>
-                                    <field name="dokumen_filename" column_invisible="1"/>
-                                </list>
-                                <form>
-                                    <group>
-                                        <field name="name"/>
-                                        <field name="tanggal"/>
-                                        <field name="dokumen" filename="dokumen_filename"/>
-                                        <field name="keterangan"/>
-                                    </group>
-                                </form>
-                            </field>
-                        </page>
-
-                        <page string="Jadwal Tahapan">
-                            <field name="jadwal_ids">
-                                <list editable="bottom">
-                                    <field name="name" placeholder="Misal: Penjelasan (Aanwijzing), Upload Penawaran..."/>
                                     <field name="start_date"/>
                                     <field name="end_date"/>
                                 </list>

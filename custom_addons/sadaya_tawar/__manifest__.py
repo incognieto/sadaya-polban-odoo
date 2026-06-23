@@ -11,6 +11,7 @@
     'version': '1.0',
     'depends': ['base', 'sadaya_rutin', 'sadaya_langsung', 'sadaya_lelang', 'sadaya_mitra', 'website'],
     'data': [
+        'security/security.xml',
         'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
