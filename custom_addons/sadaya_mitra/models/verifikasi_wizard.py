@@ -12,9 +12,18 @@ class VerifikasiWizard(models.TransientModel):
     catatan = fields.Text(string='Catatan', required=True, help='Jelaskan alasan penolakan')
 
     def action_confirm(self):
+        import logging
+        _logger = logging.getLogger(__name__)
+        _logger.warning(f"--- WIZARD ACTION CONFIRM CALLED ---")
+        _logger.warning(f"penyedia_id: {self.penyedia_id}, action_type: {self.action_type}, catatan: {self.catatan}")
         if self.action_type == 'reject':
             self.penyedia_id.write({
                 'status_verifikasi': 'rejected',
                 'catatan_verifikasi': self.catatan,
                 'tanggal_verifikasi': fields.Datetime.now(),
             })
+            _logger.warning(f"Successfully rejected!")
+        else:
+            _logger.warning(f"action_type is not 'reject', it is {self.action_type}")
+            
+        return {'type': 'ir.actions.client', 'tag': 'reload'}

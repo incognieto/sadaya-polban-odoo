@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="group_mitra_admin" model="res.groups">
+            <field name="name">Admin Sadaya Mitra (PPK/POKJA)</field>
+            <field name="user_ids" eval="[
+                (4, ref('sadaya_auth.user_smith_ppk')),
+                (4, ref('sadaya_auth.user_alice_pokja')),
+                (4, ref('base.user_admin'))
+            ]"/>
+        </record>
+
+        <record id="group_mitra_vendor" model="res.groups">
+            <field name="name">Vendor Sadaya Mitra</field>
+            <field name="user_ids" eval="[
+                (4, ref('sadaya_auth.user_trent_vendor')),
+                (4, ref('sadaya_auth.user_glory_vendor'))
+            ]"/>
+        </record>
+
+        <record id="rule_mitra_vendor_lihat_data_sendiri" model="ir.rule">
+            <field name="name">Vendor Hanya Melihat Data Sendiri</field>
+            <field name="model_id" ref="model_sadaya_mitra_penyedia"/>
+            <field name="groups" eval="[(4, ref('sadaya_mitra.group_mitra_vendor'))]"/>
+            <field name="domain_force">[('partner_id.user_ids', 'in', [user.id])]</field>
+        </record>
+    </data>
+</odoo>

@@ -152,6 +152,12 @@ class SadayaMitraPenyedia(models.Model):
             'status_verifikasi': 'approved',
             'tanggal_verifikasi': fields.Datetime.now(),
         })
+        
+        # Tambahkan secara otomatis user terkait ke grup Vendor
+        group_mitra_vendor = self.env.ref('sadaya_mitra.group_mitra_vendor', raise_if_not_found=False)
+        for rec in self:
+            if rec.partner_id and rec.partner_id.user_ids and group_mitra_vendor:
+                group_mitra_vendor.sudo().write({'users': [(4, user.id) for user in rec.partner_id.user_ids]})
 
     def action_reject(self):
         return {
@@ -161,7 +167,7 @@ class SadayaMitraPenyedia(models.Model):
             'target': 'new',
             'context': {
                 'default_penyedia_id': self.id,
-                'action_type': 'reject',
+                'default_action_type': 'reject',
             }
         }
 
@@ -230,11 +236,22 @@ class SadayaMitraPenyedia(models.Model):
         return res
 
     def action_reset(self):
-        self.write({
-            'status_verifikasi': 'draft',
-            'catatan_verifikasi': '',
-            'tanggal_verifikasi': False,
-        })
+        for rec in self:
+            rec.write({
+                'status_verifikasi': 'draft',
+                'catatan_verifikasi': '',
+                'tanggal_verifikasi': False,
+            })
+            rec.message_post(body="Status telah dikembalikan ke Menunggu Verifikasi (Draft) oleh Petugas.")
+
+    def action_vendor_resubmit(self):
+        for rec in self:
+            rec.write({
+                'status_verifikasi': 'draft',
+                'catatan_verifikasi': '',
+                'tanggal_verifikasi': False,
+            })
+            rec.message_post(body="Vendor telah melakukan pembaruan data dan mengajukan ulang verifikasi.")
 
 
 class IzinUsaha(models.Model):
