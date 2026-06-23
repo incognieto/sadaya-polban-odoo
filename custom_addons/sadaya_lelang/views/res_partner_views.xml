@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
             <notebook position="inside">
-                <page string="Data Vendor SPSE" invisible="is_vendor_tender == False">
+                <page string="Data Vendor SPSE">
                     <group>
                         <group>
                             <field name="vendor_status" widget="badge" decoration-success="vendor_status == 'verified'" decoration-warning="vendor_status == 'waiting'" decoration-info="vendor_status == 'draft'" decoration-danger="vendor_status == 'rejected'"/>

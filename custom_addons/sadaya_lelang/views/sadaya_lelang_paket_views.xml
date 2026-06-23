@@ -23,7 +23,16 @@
         <field name="arch" type="xml">
             <form string="Paket Lelang">
                 <header>
-                    <field name="status" widget="statusbar" options="{'clickable': '1'}" statusbar_visible="draft,menunggu_persetujuan,pengumuman,pendaftaran,lelang,pemasukan_penawaran,pembukaan,eval_administrasi,eval_teknis,eval_harga,pembuktian_kualifikasi,penetapan_pemenang,masa_sanggah,sppbj,pam,kontrak,pelaksanaan"/>
+                    <button name="action_to_pengumuman" string="Mulai Pengumuman" type="object" class="oe_highlight" invisible="status != 'draft'" groups="sadaya_lelang.group_lelang_pokja"/>
+                    <button name="action_to_pendaftaran" string="Buka Pendaftaran" type="object" class="oe_highlight" invisible="status != 'pengumuman'" groups="sadaya_lelang.group_lelang_pokja"/>
+                    <button name="action_to_penjelasan" string="Mulai Pemberian Penjelasan" type="object" class="oe_highlight" invisible="status != 'pendaftaran'" groups="sadaya_lelang.group_lelang_pokja"/>
+                    <button name="action_to_pemasukan" string="Mulai Pemasukan Penawaran" type="object" class="oe_highlight" invisible="status != 'penjelasan'" groups="sadaya_lelang.group_lelang_pokja"/>
+                    <button name="action_to_pembukaan" string="Mulai Pembukaan" type="object" class="oe_highlight" invisible="status != 'pemasukan_penawaran'" groups="sadaya_lelang.group_lelang_pokja"/>
+                    <button name="action_mulai_evaluasi" string="Mulai Evaluasi" type="object" class="oe_highlight" invisible="status != 'pembukaan'" groups="sadaya_lelang.group_lelang_pokja"/>
+                    <button name="action_tetapkan_pemenang" string="Tetapkan Pemenang" type="object" class="oe_highlight" invisible="status not in ['eval_administrasi', 'eval_teknis', 'eval_harga', 'pembuktian_kualifikasi']" groups="sadaya_lelang.group_lelang_pokja"/>
+                    <button name="action_to_sppbj" string="Terbitkan SPPBJ" type="object" class="oe_highlight" invisible="status != 'masa_sanggah'" groups="sadaya_lelang.group_lelang_ppk"/>
+                    <button name="action_to_pam" string="Adakan PAM" type="object" class="oe_highlight" invisible="status != 'sppbj'" groups="sadaya_lelang.group_lelang_ppk"/>
+                    <field name="status" widget="statusbar" statusbar_visible="draft,pengumuman,penjelasan,pemasukan_penawaran,eval_administrasi,penetapan_pemenang,kontrak,pelaksanaan"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
@@ -77,12 +86,28 @@
                             </group>
                         </page>
                         <page string="Dokumen Lelang (POKJA)">
+                            <group>
+                                <field name="file_dokumen_pemilihan" filename="name"/>
+                                <field name="file_ba_penjelasan" filename="name"/>
+                                <field name="file_bahp" filename="name"/>
+                            </group>
+                            <separator string="Dokumen Lainnya"/>
                             <field name="dokumen_ids">
                                 <list editable="bottom">
                                     <field name="name"/>
                                     <field name="file_name" invisible="1"/>
                                     <field name="file_dokumen" filename="file_name"/>
                                     <field name="description"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Forum Tanya Jawab" invisible="status in ['draft', 'menunggu_persetujuan', 'pengumuman', 'pendaftaran']">
+                            <field name="penjelasan_ids">
+                                <list editable="bottom" decoration-info="status_penjelasan == 'masuk'">
+                                    <field name="vendor_id"/>
+                                    <field name="pertanyaan"/>
+                                    <field name="jawaban_pokja"/>
+                                    <field name="status_penjelasan"/>
                                 </list>
                             </field>
                         </page>

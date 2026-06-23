@@ -19,7 +19,6 @@
     # any module necessary for this one to work correctly
     'depends': ['base', 'mail', 'portal', 'website'],
 
-    # always loaded
     'data': [
         'security/sadaya_lelang_groups.xml',
         'security/ir.model.access.csv',
@@ -27,6 +26,7 @@
         'views/res_partner_views.xml',
         'views/sadaya_lelang_menus.xml',
         'views/portal_templates.xml',
+        'views/internal_portal_templates.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

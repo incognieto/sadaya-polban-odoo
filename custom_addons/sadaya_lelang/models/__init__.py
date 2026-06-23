@@ -5,4 +5,5 @@ from . import sadaya_lelang_jadwal
 from . import sadaya_lelang_dokumen
 from . import sadaya_lelang_penawaran
 from . import sadaya_lelang_sanggah
+from . import sadaya_lelang_penjelasan
 from . import res_partner

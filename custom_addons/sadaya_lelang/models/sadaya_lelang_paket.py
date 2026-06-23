@@ -18,6 +18,7 @@ class SadayaLelangPaket(models.Model):
         ('menunggu_persetujuan', 'Menunggu Persetujuan'),
         ('pengumuman', 'Pengumuman'),
         ('pendaftaran', 'Pendaftaran Peserta'),
+        ('penjelasan', 'Pemberian Penjelasan (Tanya Jawab)'),
         ('lelang', 'Lelang'),
         ('pemasukan_penawaran', 'Pemasukan Penawaran'),
         ('pembukaan', 'Pembukaan Penawaran'),
@@ -55,15 +56,49 @@ class SadayaLelangPaket(models.Model):
     # SOP Documents Uploads
     file_kebutuhan = fields.Binary(string='Dokumen Kebutuhan')
     file_disposisi = fields.Binary(string='Disposisi Manajemen')
+    
+    # Dokumen POKJA
+    file_dokumen_pemilihan = fields.Binary(string='Dokumen Pemilihan')
+    file_ba_penjelasan = fields.Binary(string='BA Pemberian Penjelasan')
+    file_bahp = fields.Binary(string='Berita Acara Hasil Pelelangan (BAHP)')
+    
     file_sppbj = fields.Binary(string='Dokumen SPPBJ')
     file_kontrak = fields.Binary(string='Dokumen Kontrak')
     file_jaminan_pelaksanaan = fields.Binary(string='Jaminan Pelaksanaan (Vendor)')
     file_bast = fields.Binary(string='Dokumen BAST')
 
     jadwal_ids = fields.One2many('sadaya_lelang.jadwal', 'paket_id', string='Jadwal Tender')
-    dokumen_ids = fields.One2many('sadaya_lelang.dokumen', 'paket_id', string='Dokumen Pemilihan')
+    dokumen_ids = fields.One2many('sadaya_lelang.dokumen', 'paket_id', string='Dokumen Pemilihan (Legacy)')
     penawaran_ids = fields.One2many('sadaya_lelang.penawaran', 'paket_id', string='Dokumen Penawaran')
     sanggah_ids = fields.One2many('sadaya_lelang.sanggah', 'paket_id', string='Daftar Sanggahan')
+    penjelasan_ids = fields.One2many('sadaya_lelang.penjelasan', 'paket_id', string='Forum Tanya Jawab')
+
+    def action_to_pengumuman(self):
+        for rec in self: rec.status = 'pengumuman'
+
+    def action_to_pendaftaran(self):
+        for rec in self: rec.status = 'pendaftaran'
+
+    def action_to_penjelasan(self):
+        for rec in self: rec.status = 'penjelasan'
+
+    def action_to_pemasukan(self):
+        for rec in self: rec.status = 'pemasukan_penawaran'
+
+    def action_to_pembukaan(self):
+        for rec in self: rec.status = 'pembukaan'
+
+    def action_mulai_evaluasi(self):
+        for rec in self: rec.status = 'eval_administrasi'
+
+    def action_tetapkan_pemenang(self):
+        for rec in self: rec.status = 'penetapan_pemenang'
+
+    def action_to_sppbj(self):
+        for rec in self: rec.status = 'sppbj'
+
+    def action_to_pam(self):
+        for rec in self: rec.status = 'pam'
 
     @api.model_create_multi
     def create(self, vals_list):

@@ -471,10 +471,17 @@
                                    t-att-class="'active' if active_menu == 'dashboard' else ''">Dashboard</a>
                                 <a href="/sadaya-lelang/tender"
                                    t-att-class="'active' if active_menu == 'tender' else ''">Info Lelang</a>
-                                <span class="sl-user-badge">
-                                    <i class="fa fa-user"></i>
-                                    <t t-esc="env.user.name"/>
-                                </span>
+                                <t t-if="env.user.id != env.ref('base.public_user').id">
+                                    <a href="/web/session/logout?redirect=/sadaya-lelang/tender" class="sl-user-badge" title="Logout" style="text-decoration: none;">
+                                        <i class="fa fa-sign-out"></i>
+                                        <t t-esc="env.user.name"/> (Logout)
+                                    </a>
+                                </t>
+                                <t t-else="">
+                                    <a href="/web/login" class="sl-user-badge" style="text-decoration: none;">
+                                        <i class="fa fa-sign-in"></i> Login
+                                    </a>
+                                </t>
                             </nav>
                         </div>
                     </header>
@@ -667,6 +674,125 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Pemberian Penjelasan -->
+            <t t-if="request.env.user.id != request.env.ref('base.public_user').id">
+                <t t-set="partner_id" t-value="request.env.user.partner_id.id"/>
+                
+                <section class="sl-section" t-if="is_vendor and (tender.status in ['penjelasan', 'pemasukan_penawaran', 'pembukaan', 'eval_administrasi', 'eval_teknis', 'eval_harga', 'pembuktian_kualifikasi', 'penetapan_pemenang', 'masa_sanggah', 'sppbj', 'pam', 'kontrak', 'pelaksanaan', 'selesai'])">
+                    <div class="container">
+                        <div class="sl-grid-header">
+                            <div>
+                                <h2>Forum Pemberian Penjelasan (Tanya Jawab)</h2>
+                                <p>Sesi interaktif tanya jawab antara vendor dan POKJA mengenai dokumen spesifikasi atau lelang.</p>
+                            </div>
+                        </div>
+
+                        <div class="sl-card" style="padding: 2rem;">
+                            <!-- Form Tanya Jawab (hanya saat status penjelasan) -->
+                            <form t-if="tender.status == 'penjelasan'" t-attf-action="/sadaya-lelang/tender/#{tender.id}/submit_penjelasan" method="post" class="mb-5">
+                                <div class="form-group mb-3">
+                                    <label for="pertanyaan" class="form-label fw-bold">Ajukan Pertanyaan Baru</label>
+                                    <textarea name="pertanyaan" id="pertanyaan" class="form-control sl-input" rows="3" placeholder="Ketik pertanyaan Anda di sini... (terkait RAB, Spektek, atau Dokumen Pemilihan)"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary px-4" style="border-radius: 999px;">Kirim Pertanyaan</button>
+                            </form>
+                            <div t-elif="tender.status != 'penjelasan'" class="alert alert-info sl-notice mb-5">
+                                <i class="fa fa-info-circle me-1"></i> Masa Pemberian Penjelasan telah ditutup. Berikut adalah arsip pertanyaannya.
+                            </div>
+
+                            <!-- Riwayat Penjelasan -->
+                            <h4 class="mb-3">Riwayat Forum</h4>
+                            <div t-if="tender.penjelasan_ids">
+                                <t t-foreach="tender.penjelasan_ids" t-as="tanya">
+                                    <div class="card mb-3 border-0 shadow-sm">
+                                        <div class="card-body">
+                                            <h6 class="card-subtitle mb-2 text-muted">
+                                                <i class="fa fa-user me-1"></i> <t t-esc="tanya.vendor_id.name"/> 
+                                                <span class="badge bg-secondary float-end"><t t-esc="tanya.create_date.strftime('%d %b %Y %H:%M')"/></span>
+                                            </h6>
+                                            <p class="card-text fw-bold mb-3"><t t-esc="tanya.pertanyaan"/></p>
+                                            
+                                            <div t-if="tanya.jawaban_pokja" class="p-3 bg-light rounded border-start border-4 border-success">
+                                                <small class="text-success fw-bold d-block mb-1"><i class="fa fa-check-circle me-1"></i> Jawaban POKJA:</small>
+                                                <t t-esc="tanya.jawaban_pokja"/>
+                                            </div>
+                                            <div t-else="" class="p-3 bg-light rounded border-start border-4 border-warning">
+                                                <small class="text-warning fw-bold d-block mb-1"><i class="fa fa-clock-o me-1"></i> Menunggu Jawaban POKJA...</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                            <div t-else="" class="text-center py-4 text-muted border rounded bg-light">
+                                Belum ada riwayat tanya jawab di forum ini.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </t>
+
+            <!-- Masa Sanggah -->
+            <t t-if="request.env.user.id != request.env.ref('base.public_user').id">
+                <t t-set="partner_id" t-value="request.env.user.partner_id.id"/>
+                
+                <section class="sl-section" t-if="is_vendor and (tender.status in ['masa_sanggah', 'sppbj', 'pam', 'kontrak', 'pelaksanaan', 'selesai'])">
+                    <div class="container">
+                        <div class="sl-grid-header">
+                            <div>
+                                <h2>Masa Sanggah</h2>
+                                <p>Fasilitas pengajuan keberatan atau sanggahan hasil lelang.</p>
+                            </div>
+                        </div>
+                        
+                        <t t-set="sanggahans" t-value="request.env['sadaya_lelang.sanggah'].sudo().search([('paket_id', '=', tender.id), ('vendor_id', '=', partner_id)], order='create_date desc')"/>
+                        
+                        <!-- Form Sanggah (Hanya muncul jika status masih masa_sanggah) -->
+                        <article t-if="tender.status == 'masa_sanggah'" class="sl-card sl-card--detail mb-4">
+                            <h3 style="margin-bottom: 1rem;">Ajukan Sanggahan Baru</h3>
+                            <form t-attf-action="/sadaya-lelang/tender/#{tender.id}/submit_sanggahan" method="post">
+                                <div class="mb-3">
+                                    <label class="sl-field-label">Isi Sanggahan / Keberatan <span style="color: #dc2626;">*</span></label>
+                                    <textarea class="form-control sl-input" name="pertanyaan" rows="4" required="1" placeholder="Tuliskan alasan sanggahan secara detail beserta bukti pendukung..."></textarea>
+                                </div>
+                                <div class="sl-actions">
+                                    <button type="submit" class="btn btn-warning" style="border-radius:999px; font-weight: 700; padding: 0.6rem 1.25rem;">
+                                        <i class="fa fa-paper-plane me-1"></i> Kirim Sanggahan
+                                    </button>
+                                </div>
+                            </form>
+                        </article>
+                        
+                        <!-- Riwayat Sanggahan -->
+                        <div t-if="sanggahans" class="row g-3">
+                            <t t-foreach="sanggahans" t-as="sg">
+                                <div class="col-12">
+                                    <div class="sl-card sl-card--detail" style="background: rgba(13, 79, 139, 0.02);">
+                                        <div class="sl-card__top" style="margin-bottom: 0.5rem;">
+                                            <div>
+                                                <span t-if="sg.status_sanggah == 'masuk'" class="sl-label" style="background: rgba(108, 117, 125, 0.1); color: #6c757d;">Menunggu Jawaban POKJA</span>
+                                                <span t-if="sg.status_sanggah == 'diterima'" class="sl-label" style="background: rgba(25, 135, 84, 0.1); color: #198754;">Diterima (Evaluasi Ulang)</span>
+                                                <span t-if="sg.status_sanggah == 'ditolak'" class="sl-label" style="background: rgba(220, 53, 69, 0.1); color: #dc3545;">Ditolak (Lanjut)</span>
+                                                <span t-if="sg.status_sanggah == 'dijawab'" class="sl-label sl-label--info">Sudah Dijawab</span>
+                                                <small class="text-muted ms-2"><t t-esc="sg.create_date" t-options="{'widget': 'datetime'}"/></small>
+                                            </div>
+                                        </div>
+                                        <p style="white-space: pre-wrap; font-weight: 500; margin-bottom: 1rem;"><t t-esc="sg.pertanyaan"/></p>
+                                        
+                                        <div t-if="sg.jawaban_pokja" style="border-left: 3px solid var(--sl-accent); padding-left: 1rem; margin-top: 1rem;">
+                                            <strong style="color: var(--sl-accent); font-size: 0.85rem; text-transform: uppercase;">Jawaban POKJA:</strong>
+                                            <p style="white-space: pre-wrap; color: var(--sl-text); margin-top: 0.3rem;"><t t-esc="sg.jawaban_pokja"/></p>
+                                        </div>
+                                        <div t-else="" style="border-left: 3px solid rgba(108, 117, 125, 0.3); padding-left: 1rem; margin-top: 1rem;">
+                                            <p style="color: var(--sl-muted); font-style: italic; margin: 0; font-size: 0.9rem;">POKJA belum memberikan jawaban.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </section>
+            </t>
         </t>
     </template>
 
@@ -693,12 +819,7 @@
                             <strong>Perhatian!</strong> Akun Anda belum terverifikasi penuh sebagai Vendor. Anda tidak dapat mengikuti tender. Silakan hubungi admin.
                         </div>
                     </t>
-                    <t t-elif="partner.vendor_status != 'verified'">
-                        <div class="alert alert-warning sl-notice" role="alert">
-                            <i class="fa fa-exclamation-triangle me-2"></i>
-                            <strong>Perhatian!</strong> Status verifikasi Anda saat ini: <b><t t-esc="partner.vendor_status"/></b>. Anda belum bisa mengajukan penawaran.
-                        </div>
-                    </t>
+
                 </div>
             </section>
 

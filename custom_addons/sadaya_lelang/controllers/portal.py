@@ -13,8 +13,14 @@ class TenderPortal(http.Controller):
 
     @http.route(['/sadaya-lelang/tender/<model("sadaya_lelang.paket"):tender>'], type='http', auth='public', website=True)
     def tender_detail(self, tender, **kwargs):
+        partner = request.env.user.partner_id
+        is_vendor = False
+        if partner and request.env.user.id != request.env.ref('base.public_user').id:
+            is_vendor = getattr(partner, 'is_vendor_tender', False) or getattr(partner, 'is_sadaya_mitra_vendor', False)
+            
         return request.render('sadaya_lelang.portal_tender_detail', {
-            'tender': tender
+            'tender': tender.sudo(),
+            'is_vendor': is_vendor
         })
 
     @http.route('/sadaya-lelang/dashboard', type='http', auth='user', website=True)
@@ -81,3 +87,43 @@ class TenderPortal(http.Controller):
             request.env['sadaya_lelang.penawaran'].sudo().create(vals)
             
         return request.redirect('/sadaya-lelang/dashboard')
+
+    @http.route(['/sadaya-lelang/tender/<model("sadaya_lelang.paket"):tender>/submit_sanggahan'], type='http', auth='user', methods=['POST'], website=True, csrf=False)
+    def submit_sanggahan(self, tender, **post):
+        partner = request.env.user.partner_id
+        is_vendor = getattr(partner, 'is_vendor_tender', False) or getattr(partner, 'is_sadaya_mitra_vendor', False)
+        
+        if not is_vendor or tender.status != 'masa_sanggah':
+            return request.redirect('/sadaya-lelang/tender/%s' % tender.id)
+            
+        pertanyaan = post.get('pertanyaan')
+        if pertanyaan:
+            request.env['sadaya_lelang.sanggah'].sudo().create({
+                'paket_id': tender.id,
+                'vendor_id': partner.id,
+                'pertanyaan': pertanyaan,
+                'status_sanggah': 'masuk'
+            })
+            
+        return request.redirect('/sadaya-lelang/tender/%s' % tender.id)
+
+    @http.route(['/sadaya-lelang/tender/<model("sadaya_lelang.paket"):tender>/submit_penjelasan'], type='http', auth='user', methods=['POST'], website=True, csrf=False)
+    def submit_penjelasan(self, tender, **post):
+        partner = request.env.user.partner_id
+        is_vendor = False
+        if partner and request.env.user.id != request.env.ref('base.public_user').id:
+            is_vendor = getattr(partner, 'is_vendor_tender', False) or getattr(partner, 'is_sadaya_mitra_vendor', False)
+        
+        if not is_vendor or tender.status != 'penjelasan':
+            return request.redirect('/sadaya-lelang/tender/%s' % tender.id)
+            
+        pertanyaan = post.get('pertanyaan')
+        if pertanyaan:
+            request.env['sadaya_lelang.penjelasan'].sudo().create({
+                'paket_id': tender.id,
+                'vendor_id': partner.id,
+                'pertanyaan': pertanyaan,
+                'status_penjelasan': 'masuk'
+            })
+            
+        return request.redirect('/sadaya-lelang/tender/%s' % tender.id)

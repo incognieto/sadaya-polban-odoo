@@ -22,3 +22,7 @@ access_lelang_penawaran_portal,sadaya_lelang.penawaran.portal,model_sadaya_lelan
 access_lelang_sanggah_pokja,sadaya_lelang.sanggah.pokja,model_sadaya_lelang_sanggah,group_lelang_pokja,1,1,1,1
 access_lelang_sanggah_ppk,sadaya_lelang.sanggah.ppk,model_sadaya_lelang_sanggah,group_lelang_ppk,1,1,0,0
 access_lelang_sanggah_portal,sadaya_lelang.sanggah.portal,model_sadaya_lelang_sanggah,base.group_portal,1,1,1,0
+
+access_lelang_penjelasan_pokja,sadaya_lelang.penjelasan.pokja,model_sadaya_lelang_penjelasan,group_lelang_pokja,1,1,1,1
+access_lelang_penjelasan_ppk,sadaya_lelang.penjelasan.ppk,model_sadaya_lelang_penjelasan,group_lelang_ppk,1,1,0,0
+access_lelang_penjelasan_portal,sadaya_lelang.penjelasan.portal,model_sadaya_lelang_penjelasan,base.group_portal,1,1,1,0
