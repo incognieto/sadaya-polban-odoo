@@ -163,6 +163,16 @@
                   <field name="bast_date"/>
                 </group>
               </group>
+              <!-- Tombol notifikasi vendor — hanya muncul saat hasil TIDAK SESUAI -->
+              <div class="mt-2" invisible="inspection_status != 'not_ok' or status != 'inspection'">
+                <button
+                  name="action_notify_vendor_rejection"
+                  type="object"
+                  string="⚠️ Simpan &amp; Kirim Notifikasi ke Vendor"
+                  class="btn btn-warning"
+                  confirm="Tindakan ini akan menyimpan catatan ketidaksesuaian dan mengirimkan notifikasi ke vendor melalui portal. Lanjutkan?"
+                />
+              </div>
               <group>
                 <field name="bast_signed_pphp"/>
                 <field name="bast_signed_user"/>
