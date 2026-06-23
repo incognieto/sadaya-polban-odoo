@@ -30,11 +30,12 @@
                     <button name="action_to_pembukaan" string="Mulai Pembukaan" type="object" class="oe_highlight" invisible="status != 'pemasukan_penawaran'" groups="sadaya_lelang.group_lelang_pokja"/>
                     <button name="action_mulai_evaluasi" string="Mulai Evaluasi" type="object" class="oe_highlight" invisible="status != 'pembukaan'" groups="sadaya_lelang.group_lelang_pokja"/>
                     <button name="action_tetapkan_pemenang" string="Tetapkan Pemenang" type="object" class="oe_highlight" invisible="status not in ['eval_administrasi', 'eval_teknis', 'eval_harga', 'pembuktian_kualifikasi']" groups="sadaya_lelang.group_lelang_pokja"/>
+                    <button name="action_to_masa_sanggah" string="Mulai Masa Sanggah" type="object" class="oe_highlight" invisible="status != 'penetapan_pemenang'" groups="sadaya_lelang.group_lelang_pokja"/>
                     <button name="action_to_sppbj" string="Terbitkan SPPBJ" type="object" class="oe_highlight" invisible="status != 'masa_sanggah'" groups="sadaya_lelang.group_lelang_ppk"/>
                     <button name="action_to_pam" string="Adakan PAM" type="object" class="oe_highlight" invisible="status != 'sppbj'" groups="sadaya_lelang.group_lelang_ppk"/>
                     <button name="action_to_kontrak" string="Tanda Tangan Kontrak" type="object" class="oe_highlight" invisible="status != 'pam'" groups="sadaya_lelang.group_lelang_ppk"/>
                     <button name="action_to_pelaksanaan" string="Mulai Pelaksanaan" type="object" class="oe_highlight" invisible="status != 'kontrak'" groups="sadaya_lelang.group_lelang_ppk"/>
-                    <field name="status" widget="statusbar" statusbar_visible="draft,pengumuman,penjelasan,pemasukan_penawaran,eval_administrasi,penetapan_pemenang,kontrak,pelaksanaan"/>
+                    <field name="status" widget="statusbar" statusbar_visible="draft,pengumuman,penjelasan,pemasukan_penawaran,eval_administrasi,penetapan_pemenang,masa_sanggah,kontrak,pelaksanaan"/>
                 </header>
                 <sheet>
                     <div class="oe_title">

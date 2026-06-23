@@ -817,7 +817,7 @@
             <t t-if="request.env.user.id != request.env.ref('base.public_user').id">
                 <t t-set="partner_id" t-value="request.env.user.partner_id.id"/>
                 
-                <section class="sl-section" t-if="is_vendor and (tender.status in ['sppbj', 'pam', 'kontrak', 'pelaksanaan', 'selesai'])">
+                <section class="sl-section" t-if="is_vendor and (tender.status in ['penetapan_pemenang', 'masa_sanggah', 'sppbj', 'pam', 'kontrak', 'pelaksanaan', 'selesai'])">
                     <div class="container">
                         <div class="sl-grid-header">
                             <div>
