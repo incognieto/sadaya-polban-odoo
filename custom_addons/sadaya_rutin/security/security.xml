@@ -38,7 +38,7 @@
 
         <!-- Bob = PP (Pejabat Pengadaan) -->
         <record id="sadaya_auth.user_bob_pejabatpengadaan" model="res.users">
-            <field name="groups_id" eval="[
+            <field name="group_ids" eval="[
                 (3, ref('base.group_portal')),
                 (4, ref('base.group_user')),
                 (4, ref('sadaya_rutin.group_rutin_pp'))
@@ -47,7 +47,7 @@
 
         <!-- Smith = PPK -->
         <record id="sadaya_auth.user_smith_ppk" model="res.users">
-            <field name="groups_id" eval="[
+            <field name="group_ids" eval="[
                 (3, ref('base.group_portal')),
                 (4, ref('base.group_user')),
                 (4, ref('sadaya_rutin.group_rutin_ppk'))
@@ -56,7 +56,7 @@
 
         <!-- Arthur = Tim Teknis -->
         <record id="sadaya_auth.user_arthur_timteknis" model="res.users">
-            <field name="groups_id" eval="[
+            <field name="group_ids" eval="[
                 (3, ref('base.group_portal')),
                 (4, ref('base.group_user')),
                 (4, ref('sadaya_rutin.group_rutin_tim_teknis'))
@@ -65,7 +65,7 @@
 
         <!-- Dave = PPHP -->
         <record id="sadaya_auth.user_dave_pphp" model="res.users">
-            <field name="groups_id" eval="[
+            <field name="group_ids" eval="[
                 (3, ref('base.group_portal')),
                 (4, ref('base.group_user')),
                 (4, ref('sadaya_rutin.group_rutin_pphp'))
@@ -74,7 +74,7 @@
 
         <!-- Eve = Unit Kerja -->
         <record id="sadaya_auth.user_eve_unitkerja" model="res.users">
-            <field name="groups_id" eval="[
+            <field name="group_ids" eval="[
                 (3, ref('base.group_portal')),
                 (4, ref('base.group_user')),
                 (4, ref('sadaya_rutin.group_rutin_unit_kerja'))
@@ -91,12 +91,12 @@
 
         <!-- Trent (Vendor 1) -->
         <record id="sadaya_auth.user_trent_vendor" model="res.users">
-            <field name="groups_id" eval="[(6, 0, [ref('base.group_portal')])]"/>
+            <field name="group_ids" eval="[(6, 0, [ref('base.group_portal')])]"/>
         </record>
 
         <!-- Glory (Vendor 2) -->
         <record id="sadaya_auth.user_glory_vendor" model="res.users">
-            <field name="groups_id" eval="[(6, 0, [ref('base.group_portal')])]"/>
+            <field name="group_ids" eval="[(6, 0, [ref('base.group_portal')])]"/>
         </record>
 
         <!-- ============================================================ -->
