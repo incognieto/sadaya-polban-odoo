@@ -192,7 +192,15 @@ class ProcurementPackage(models.Model):
             )
             rec.status = "negotiation_pp"
 
-    def _clear_progress_fields(self):
+    def _clear_progress_fields(self, keep_inspection=False):
+        """Reset progres field saat status berubah ke Revisi atau Draft.
+
+        Args:
+            keep_inspection (bool): Jika True, field hasil pemeriksaan
+                (inspection_status & inspection_notes) TIDAK dihapus.
+                Gunakan True saat Revisi karena catatan ketidaksesuaian
+                harus tetap tersimpan sebagai referensi vendor.
+        """
         for rec in self:
             rec.vendor_stock_confirmed = False
             rec.sp_signed_ppk = False
@@ -203,8 +211,9 @@ class ProcurementPackage(models.Model):
             rec.sp_signed_filename = False
             rec.delivery_date = False
             rec.delivery_notes = False
-            rec.inspection_status = False
-            rec.inspection_notes = False
+            if not keep_inspection:
+                rec.inspection_status = False
+                rec.inspection_notes = False
 
     def action_vendor_reject_offer(self):
         self._ensure_status(["negotiation_vendor"])
@@ -287,8 +296,22 @@ class ProcurementPackage(models.Model):
             "inspection",
         ])
         for rec in self:
+            # Catat catatan pemeriksaan ke chatter sebelum status berubah
+            # agar riwayat ketidaksesuaian tidak hilang dan dapat dilihat semua pihak
+            if rec.inspection_status == 'not_ok' and rec.inspection_notes:
+                rec.message_post(
+                    body=(
+                        "<b>⚠️ Revisi: Barang Tidak Sesuai Spek</b><br/>"
+                        "Hasil pemeriksaan: <b>Tidak Sesuai</b><br/>"
+                        "Catatan ketidaksesuaian:<br/>%s" % rec.inspection_notes
+                    ),
+                    message_type='comment',
+                    subtype_xmlid='mail.mt_note',
+                )
             rec.status = "revision"
-            rec._clear_progress_fields()
+            # keep_inspection=True: catatan pemeriksaan tetap tersimpan di field
+            # agar Tim Teknis tidak perlu mengetik ulang saat barang pengganti tiba
+            rec._clear_progress_fields(keep_inspection=True)
 
     def action_set_addendum(self):
         self._ensure_status(["spk_process", "done"])
@@ -316,7 +339,64 @@ class ProcurementPackage(models.Model):
         self._ensure_status(["revision", "cancelled"])
         for rec in self:
             rec.status = "draft"
-            rec._clear_progress_fields()
+            # Saat reset ke draft: hapus SEMUA termasuk catatan pemeriksaan lama
+            rec._clear_progress_fields(keep_inspection=False)
+
+    def action_notify_vendor_rejection(self):
+        """Simpan catatan ketidaksesuaian & kirim notifikasi ke vendor via portal chatter.
+
+        Method ini dipanggil oleh tombol "Simpan & Kirim Notifikasi ke Vendor"
+        di Tab Pemeriksaan. Tidak memerlukan klik Save manual di header karena
+        Odoo akan auto-save field form sebelum eksekusi method ini melalui
+        mekanisme type="object" pada tombol.
+        """
+        self.ensure_one()
+        self._ensure_status(['inspection'])
+
+        if self.inspection_status != 'not_ok':
+            raise ValidationError(
+                "Notifikasi hanya bisa dikirim saat hasil pemeriksaan adalah 'Tidak Sesuai'."
+            )
+        if not self.inspection_notes:
+            raise ValidationError(
+                "Harap isi Catatan Pemeriksaan terlebih dahulu sebelum mengirim notifikasi ke vendor."
+            )
+
+        # Bangun pesan yang jelas dan informatif untuk vendor
+        vendor_name = self.vendor_id.name if self.vendor_id else 'Vendor'
+        body = (
+            "<p><b>⚠️ Pemberitahuan Ketidaksesuaian Barang/Jasa</b></p>"
+            "<p>Kepada <b>%s</b>,</p>"
+            "<p>Tim Teknis telah melakukan pemeriksaan terhadap barang/jasa yang dikirimkan "
+            "untuk paket <b>%s</b> dan menemukan ketidaksesuaian dengan spesifikasi yang disepakati.</p>"
+            "<p><b>Catatan Ketidaksesuaian:</b><br/>%s</p>"
+            "<p>Mohon segera menghubungi pihak kami untuk tindak lanjut pengembalian dan pengiriman "
+            "barang/jasa pengganti yang sesuai spesifikasi.</p>"
+        ) % (
+            vendor_name,
+            self.name or self.code or '-',
+            self.inspection_notes.replace('\n', '<br/>'),
+        )
+
+        # Kirim sebagai 'comment' (bukan 'note') agar pesan muncul di portal vendor
+        self.message_post(
+            body=body,
+            message_type='comment',
+            subtype_xmlid='mail.mt_comment',
+            partner_ids=self.vendor_id.ids if self.vendor_id else [],
+        )
+
+        # Tampilkan notifikasi sukses di UI
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Notifikasi Terkirim',
+                'message': 'Catatan ketidaksesuaian telah disimpan dan notifikasi berhasil dikirim ke %s.' % vendor_name,
+                'type': 'success',
+                'sticky': False,
+            },
+        }
 
     def action_print_ba_negotiation(self):
         self.ensure_one()
