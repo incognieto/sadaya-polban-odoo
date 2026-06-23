@@ -811,6 +811,7 @@
                         </div>
                     </div>
                 </section>
+            </t>
             <!-- Pengumuman Pemenang & Kontrak -->
             <t t-if="request.env.user.id != request.env.ref('base.public_user').id">
                 <t t-set="partner_id" t-value="request.env.user.partner_id.id"/>
