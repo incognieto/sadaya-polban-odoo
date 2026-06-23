@@ -11,3 +11,8 @@ access_rancang_hps_ppk,rancang.hps.ppk,model_rancang_hps,group_rancang_ppk,1,1,1
 access_rancang_hps_tim_teknis,rancang.hps.timteknis,model_rancang_hps,group_rancang_tim_teknis,1,1,0,0
 access_rancang_hps_line_ppk,rancang.hps.line.ppk,model_rancang_hps_line,group_rancang_ppk,1,1,1,1
 access_rancang_hps_line_tim_teknis,rancang.hps.line.timteknis,model_rancang_hps_line,group_rancang_tim_teknis,1,1,1,1
+access_rancang_usulan_admin,rancang.usulan.admin,model_rancang_usulan,base.group_system,1,1,1,1
+access_rancang_wizard_catatan_admin,rancang.wizard.catatan.admin,model_rancang_wizard_catatan,base.group_system,1,1,1,1
+access_rancang_rup_admin,rancang.rup.admin,model_rancang_rup,base.group_system,1,1,1,1
+access_rancang_hps_admin,rancang.hps.admin,model_rancang_hps,base.group_system,1,1,1,1
+access_rancang_hps_line_admin,rancang.hps.line.admin,model_rancang_hps_line,base.group_system,1,1,1,1

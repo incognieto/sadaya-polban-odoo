@@ -81,25 +81,25 @@ class SadayaRancangPortal(http.Controller):
         return request.redirect(f'/sadaya-rancang/pengajuan/{usulan.id}')
 
     # Route: Setujui Pengajuan
-    @http.route(['/sadaya-rancang/pengajuan/<model("rancang.usulan"):usulan>/approve'], type='http', auth="public", website=True)
+    @http.route(['/sadaya-rancang/pengajuan/<model("rancang.usulan"):usulan>/approve'], type='http', auth="user", website=True)
     def approve_pengajuan(self, usulan, **kwargs):
-        if usulan.state == 'submitted':
+        if usulan.state == 'submitted' and request.env.user.has_group('sadaya_rancang.group_rancang_manajemen'):
             usulan.sudo().action_approve()
         return request.redirect(f'/sadaya-rancang/pengajuan/{usulan.id}')
 
     # Route: Tolak Pengajuan
-    @http.route(['/sadaya-rancang/pengajuan/<model("rancang.usulan"):usulan>/reject'], type='http', auth="public", website=True, methods=['POST'])
+    @http.route(['/sadaya-rancang/pengajuan/<model("rancang.usulan"):usulan>/reject'], type='http', auth="user", website=True, methods=['POST'])
     def reject_pengajuan(self, usulan, **kwargs):
-        if usulan.state == 'submitted':
+        if usulan.state == 'submitted' and request.env.user.has_group('sadaya_rancang.group_rancang_manajemen'):
             alasan = kwargs.get('alasan', 'Tanpa alasan')
             usulan.sudo().write({'state': 'rejected'})
             usulan.sudo().message_post(body=f"Persetujuan ditolak dengan alasan: {alasan}")
         return request.redirect(f'/sadaya-rancang/pengajuan/{usulan.id}')
 
     # Route: Publikasi ke RUP
-    @http.route(['/sadaya-rancang/pengajuan/<model("rancang.usulan"):usulan>/publish'], type='http', auth="public", website=True)
+    @http.route(['/sadaya-rancang/pengajuan/<model("rancang.usulan"):usulan>/publish'], type='http', auth="user", website=True)
     def publish_pengajuan(self, usulan, **kwargs):
-        if usulan.state == 'approved':
+        if usulan.state == 'approved' and request.env.user.has_group('sadaya_rancang.group_rancang_ppk'):
             usulan.sudo().action_publish_rup()
         return request.redirect(f'/sadaya-rancang/pengajuan/{usulan.id}')
 
