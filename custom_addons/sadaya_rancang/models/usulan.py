@@ -103,7 +103,7 @@ class RancangUsulan(models.Model):
                     'unit_pengusul': record.pemohon,
                     'state': 'draft',
                 })
-                record.state = 'published'
+                record.sudo().write({'state': 'published'})
 
     def action_draft(self):
         self.state = 'draft'
