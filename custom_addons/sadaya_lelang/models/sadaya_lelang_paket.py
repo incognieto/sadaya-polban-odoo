@@ -100,6 +100,12 @@ class SadayaLelangPaket(models.Model):
     def action_to_pam(self):
         for rec in self: rec.status = 'pam'
 
+    def action_to_kontrak(self):
+        for rec in self: rec.status = 'kontrak'
+
+    def action_to_pelaksanaan(self):
+        for rec in self: rec.status = 'pelaksanaan'
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
