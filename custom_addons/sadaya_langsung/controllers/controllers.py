@@ -47,21 +47,32 @@ class SadayaLangsungController(http.Controller):
 	def _paket_actions(self, record):
 		actions = []
 		if record.status_paket == "draft":
-			actions.append({"key": "kirim_undangan", "label": "Kirim Undangan", "class": "btn-primary"})
-		elif record.status_paket == "undangan":
-			actions.append({"key": "tunggu_penawaran", "label": "Menunggu Penawaran", "class": "btn-primary"})
-		elif record.status_paket == "penawaran":
-			actions.append({"key": "evaluasi", "label": "Evaluasi", "class": "btn-primary"})
-		elif record.status_paket == "evaluasi":
-			actions.append({"key": "negosiasi", "label": "Klarifikasi & Negosiasi", "class": "btn-primary"})
-		elif record.status_paket == "negosiasi":
-			actions.append({"key": "tetapkan_pemenang", "label": "Tetapkan Pemenang", "class": "btn-success"})
-		elif record.status_paket == "sppbj":
-			actions.append({"key": "buat_kontrak", "label": "Buat Kontrak", "class": "btn-success"})
-		elif record.status_paket == "kontrak":
-			actions.append({"key": "selesai", "label": "Selesai Pengadaan", "class": "btn-success"})
+			actions.append({"key": "ajukan", "label": "Ajukan Persetujuan", "class": "btn-primary"})
+		elif record.status_paket == "menunggu_persetujuan":
+			actions.append({"key": "pengumuman", "label": "Publikasikan Pengumuman", "class": "btn-primary"})
+			actions.append({"key": "revisi", "label": "Minta Revisi", "class": "btn-outline-warning"})
+		elif record.status_paket == "pengumuman":
+			actions.append({"key": "buat_spk", "label": "Terbitkan SPK", "class": "btn-success"})
+		elif record.status_paket == "spk_dibuat":
+			actions.append({"key": "pam", "label": "Pre-Award Meeting (PAM)", "class": "btn-primary"})
+		elif record.status_paket == "pam":
+			actions.append({"key": "persiapan_kontrak", "label": "Persiapan Kontrak", "class": "btn-primary"})
+		elif record.status_paket == "persiapan_kontrak":
+			actions.append({"key": "proses_kontrak", "label": "Proses Kontrak", "class": "btn-primary"})
+		elif record.status_paket == "proses_kontrak":
+			actions.append({"key": "pelaksanaan", "label": "Mulai Pelaksanaan", "class": "btn-primary"})
+		elif record.status_paket == "pelaksanaan":
+			actions.append({"key": "pemeriksaan", "label": "Pemeriksaan (PPHP)", "class": "btn-primary"})
+		elif record.status_paket == "pemeriksaan":
+			actions.append({"key": "selesai", "label": "Selesai", "class": "btn-success"})
+		elif record.status_paket == "selesai":
+			actions.append({"key": "addendum", "label": "Addendum Kontrak", "class": "btn-warning"})
+		elif record.status_paket == "addendum_kontrak":
+			actions.append({"key": "selesai", "label": "Selesaikan Addendum", "class": "btn-success"})
+		elif record.status_paket == "revisi":
+			actions.append({"key": "reset_draft", "label": "Reset ke Draft", "class": "btn-outline-secondary"})
 
-		if record.status_paket in ("draft", "undangan", "penawaran", "evaluasi", "negosiasi", "sppbj", "kontrak"):
+		if record.status_paket not in ("selesai", "batal", "revisi"):
 			actions.append({"key": "batal", "label": "Batalkan", "class": "btn-outline-danger"})
 		if record.status_paket == "batal":
 			actions.append({"key": "reset_draft", "label": "Reset ke Draft", "class": "btn-outline-secondary"})
@@ -215,35 +226,65 @@ class SadayaLangsungController(http.Controller):
 			)
 		return cards
 
+	def _get_user_vendor_partners(self):
+		user = request.env.user
+		emails = list(filter(None, [user.login, user.email, user.partner_id.email]))
+		if not emails:
+			return user.partner_id
+		domain = ['|', ('id', '=', user.partner_id.id), '&', ('email', 'in', emails), ('is_sadaya_mitra_vendor', '=', True)]
+		return request.env['res.partner'].sudo().search(domain)
+
+	def _is_vendor_user(self):
+		user = request.env.user
+		if user.has_group('sadaya_langsung.group_sadaya_langsung_vendor'):
+			return True
+		vendor_partners = self._get_user_vendor_partners()
+		if any(p.is_sadaya_mitra_vendor for p in vendor_partners):
+			return True
+		if 'vendor' in (user.login or '') or 'vendor' in (user.email or ''):
+			return True
+		return False
+
 	def _get_dashboard_payload(self):
 		Paket = request.env["sadaya_langsung.paket"].sudo()
 		Kontrak = request.env["sadaya_langsung.kontrak"].sudo()
 
+		is_vendor = self._is_vendor_user()
+		paket_domain = []
+		kontrak_domain = []
+		if is_vendor:
+			partner_ids = self._get_user_vendor_partners().ids
+			paket_domain = [
+				('penawaran_ids.vendor_id', 'in', partner_ids),
+				('status_paket', 'not in', ['draft', 'menunggu_persetujuan', 'revisi'])
+			]
+			kontrak_domain = [('paket_id.vendor_pemenang_id', 'in', partner_ids)]
+
 		paket_breakdown = Paket.read_group(
-			[], ["status_paket"], ["status_paket"], lazy=False
+			paket_domain, ["status_paket"], ["status_paket"], lazy=False
 		)
 		kontrak_breakdown = Kontrak.read_group(
-			[], ["status_kontrak"], ["status_kontrak"], lazy=False
+			kontrak_domain, ["status_kontrak"], ["status_kontrak"], lazy=False
 		)
 
 		return {
-			"total_paket": Paket.search_count([]),
-			"total_kontrak": Kontrak.search_count([]),
+			"total_paket": Paket.search_count(paket_domain),
+			"total_kontrak": Kontrak.search_count(kontrak_domain),
 			"paket_aktif": Paket.search_count(
-				[("status_paket", "not in", ["selesai", "batal"])]
+				paket_domain + [("status_paket", "not in", ["selesai", "batal"])]
 			),
-			"paket_selesai": Paket.search_count([("status_paket", "=", "selesai")]),
+			"paket_selesai": Paket.search_count(paket_domain + [("status_paket", "=", "selesai")]),
 			"kontrak_persiapan": Kontrak.search_count(
-				[("status_kontrak", "=", "persiapan_kontrak")]
+				kontrak_domain + [("status_kontrak", "=", "persiapan_kontrak")]
 			),
 			"kontrak_selesai": Kontrak.search_count(
-				[("status_kontrak", "=", "selesai_kontrak")]
+				kontrak_domain + [("status_kontrak", "=", "selesai_kontrak")]
 			),
 			"recent_paket": self._build_paket_cards(
-				Paket.search([], order="tanggal desc, id desc", limit=5)
+				Paket.search(paket_domain, order="tanggal desc, id desc", limit=5)
 			),
 			"recent_kontrak": self._build_kontrak_cards(
-				Kontrak.search([], order="tanggal desc, id desc", limit=5)
+				Kontrak.search(kontrak_domain, order="tanggal desc, id desc", limit=5)
 			),
 			"paket_breakdown": [
 				{
@@ -277,6 +318,14 @@ class SadayaLangsungController(http.Controller):
 	@http.route("/sadaya-langsung/paket", type="http", auth="user", website=True)
 	def paket_page(self, **kwargs):
 		Paket = request.env["sadaya_langsung.paket"].sudo()
+		is_vendor = self._is_vendor_user()
+		domain = []
+		if is_vendor:
+			partner_ids = self._get_user_vendor_partners().ids
+			domain = [
+				('penawaran_ids.vendor_id', 'in', partner_ids),
+				('status_paket', 'not in', ['draft', 'menunggu_persetujuan', 'revisi'])
+			]
 		return request.render(
 			"sadaya_langsung.frontend_paket_page",
 			{
@@ -284,7 +333,7 @@ class SadayaLangsungController(http.Controller):
 				"notice_success": kwargs.get("success"),
 				"notice_error": kwargs.get("error"),
 				"paket_cards": self._build_paket_cards(
-					Paket.search([], order="tanggal desc, id desc")
+					Paket.search(domain, order="tanggal desc, id desc")
 				),
 				"total_paket": Paket.search_count([]),
 				"jenis_pengadaan_options": self._selection_options(
@@ -541,13 +590,17 @@ class SadayaLangsungController(http.Controller):
 		if not self._check_edit_permission():
 			return self._redirect_with_message("/sadaya-langsung/paket", error="Anda tidak memiliki hak akses untuk mengubah status paket.")
 		action_map = {
-			"kirim_undangan": "action_kirim_undangan",
-			"tunggu_penawaran": "action_tunggu_penawaran",
-			"evaluasi": "action_evaluasi",
-			"negosiasi": "action_negosiasi",
-			"tetapkan_pemenang": "action_tetapkan_pemenang",
-			"buat_kontrak": "action_buat_kontrak",
+			"ajukan": "action_ajukan",
+			"pengumuman": "action_pengumuman",
+			"buat_spk": "action_buat_spk",
+			"pam": "action_pam",
+			"persiapan_kontrak": "action_persiapan_kontrak",
+			"proses_kontrak": "action_proses_kontrak",
+			"pelaksanaan": "action_pelaksanaan",
+			"pemeriksaan": "action_pemeriksaan",
 			"selesai": "action_selesai",
+			"addendum": "action_addendum",
+			"revisi": "action_revisi",
 			"batal": "action_batal",
 			"reset_draft": "action_reset_draft",
 		}
@@ -651,6 +704,13 @@ class SadayaLangsungController(http.Controller):
 	def kontrak_page(self, **kwargs):
 		Kontrak = request.env["sadaya_langsung.kontrak"].sudo()
 		Paket = request.env["sadaya_langsung.paket"].sudo()
+		is_vendor = self._is_vendor_user()
+		domain = []
+		paket_domain = []
+		if is_vendor:
+			partner_ids = self._get_user_vendor_partners().ids
+			domain = [('paket_id.vendor_pemenang_id', 'in', partner_ids)]
+			paket_domain = [('vendor_pemenang_id', 'in', partner_ids)]
 		return request.render(
 			"sadaya_langsung.frontend_kontrak_page",
 			{
@@ -658,12 +718,12 @@ class SadayaLangsungController(http.Controller):
 				"notice_success": kwargs.get("success"),
 				"notice_error": kwargs.get("error"),
 				"kontrak_cards": self._build_kontrak_cards(
-					Kontrak.search([], order="tanggal desc, id desc")
+					Kontrak.search(domain, order="tanggal desc, id desc")
 				),
-				"total_kontrak": Kontrak.search_count([]),
+				"total_kontrak": Kontrak.search_count(domain),
 				"paket_options": [
 					{"id": paket.id, "name": paket.name}
-					for paket in Paket.search([], order="tanggal desc, id desc")
+					for paket in Paket.search(paket_domain, order="tanggal desc, id desc")
 				],
 				"jenis_pengadaan_options": self._selection_options(
 					Kontrak, "jenis_pengadaan"

@@ -379,6 +379,10 @@
                                                 </div>
                                             </div>
                                             <p class="mt-3 text-danger"><strong>Catatan Penolakan:</strong><br/><t t-esc="penyedia.catatan_verifikasi"/></p>
+                                            <form action="/sadaya-mitra/ajukan-ulang" method="post" class="mt-3">
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                <button type="submit" class="btn btn-primary w-100">Ajukan Ulang Verifikasi</button>
+                                            </form>
                                         </t>
                                         <t t-else="">
                                             <div class="alert alert-warning sl-notice" role="alert">

@@ -18,7 +18,7 @@ FORM_CONFIG = {
 			{'name': 'nomor_pengesahan', 'label': 'Nomor Pengesahan', 'type': 'text'},
 			{'name': 'tanggal_pengesahan', 'label': 'Tanggal Pengesahan', 'type': 'date'},
 			{'name': 'perubahan_akta', 'label': 'Perubahan Akta', 'type': 'textarea', 'full_width': True},
-			{'name': 'scan_bukti', 'label': 'Scan Bukti (PDF)', 'type': 'binary', 'full_width': True},
+			{'name': 'scan_bukti', 'label': 'Scan Bukti (PDF)', 'type': 'binary', 'full_width': True, 'accept': 'application/pdf'},
 		],
 	},
 	'pengurus': {
@@ -38,7 +38,7 @@ FORM_CONFIG = {
 			{'name': 'nama_lengkap', 'label': 'Nama Lengkap', 'type': 'text', 'required': True},
 			{'name': 'nomor_hp', 'label': 'Nomor HP', 'type': 'text', 'required': True},
 			{'name': 'nik', 'label': 'NIK', 'type': 'text', 'required': True, 'pattern': r'^\d{16}$', 'maxlength': 16, 'placeholder': '16 digit angka', 'invalid_feedback': 'NIK wajib diisi dan harus tepat 16 digit angka.'},
-			{'name': 'scan_ktp', 'label': 'Scan KTP', 'type': 'binary', 'full_width': True},
+			{'name': 'scan_ktp', 'label': 'Scan KTP', 'type': 'binary', 'full_width': True, 'accept': 'image/jpeg, image/jpg, image/png'},
 		],
 	},
 	'izin_usaha': {
@@ -58,7 +58,7 @@ FORM_CONFIG = {
 			},
 			{'name': 'nama_izin', 'label': 'Nama/Judul Izin', 'type': 'text'},
 			{'name': 'nomor_izin', 'label': 'Nomor Izin', 'type': 'text'},
-			{'name': 'scan_dokumen', 'label': 'Scan Dokumen', 'type': 'binary', 'full_width': True},
+			{'name': 'scan_dokumen', 'label': 'Scan Dokumen', 'type': 'binary', 'full_width': True, 'accept': 'application/pdf'},
 			{'name': 'masa_berlaku', 'label': 'Masa Berlaku', 'type': 'date'},
 		],
 	},
@@ -101,14 +101,14 @@ FORM_CONFIG = {
 			{'name': 'jenjang_pendidikan', 'label': 'Jenjang Pendidikan', 'type': 'text'},
 			{'name': 'program_studi', 'label': 'Program Studi', 'type': 'text'},
 			{'name': 'posisi', 'label': 'Posisi', 'type': 'text'},
-			{'name': 'scan_ktp', 'label': 'Scan KTP', 'type': 'binary', 'full_width': True},
-			{'name': 'scan_ijazah', 'label': 'Scan Ijazah', 'type': 'binary', 'full_width': True},
-			{'name': 'cv_pdf', 'label': 'CV (PDF)', 'type': 'binary', 'full_width': True},
+			{'name': 'scan_ktp', 'label': 'Scan KTP', 'type': 'binary', 'full_width': True, 'accept': 'image/jpeg, image/jpg, image/png'},
+			{'name': 'scan_ijazah', 'label': 'Scan Ijazah', 'type': 'binary', 'full_width': True, 'accept': 'application/pdf'},
+			{'name': 'cv_pdf', 'label': 'CV (PDF)', 'type': 'binary', 'full_width': True, 'accept': 'application/pdf'},
 			{'name': 'cv_tanggal', 'label': 'Tanggal CV', 'type': 'date'},
 			{'name': 'pengalaman', 'label': 'Pengalaman', 'type': 'text'},
-			{'name': 'bukti_pengalaman', 'label': 'Bukti Pengalaman (PDF)', 'type': 'binary', 'full_width': True},
+			{'name': 'bukti_pengalaman', 'label': 'Bukti Pengalaman (PDF)', 'type': 'binary', 'full_width': True, 'accept': 'application/pdf'},
 			{'name': 'nama_sertifikat', 'label': 'Nama Sertifikat', 'type': 'text'},
-			{'name': 'bukti_sertifikat', 'label': 'Bukti Sertifikat (PDF)', 'type': 'binary', 'full_width': True},
+			{'name': 'bukti_sertifikat', 'label': 'Bukti Sertifikat (PDF)', 'type': 'binary', 'full_width': True, 'accept': 'application/pdf'},
 		],
 	},
 	'kantor': {
@@ -145,10 +145,10 @@ FORM_CONFIG = {
 			{'name': 'nomor_rekening', 'label': 'Nomor Rekening', 'type': 'text'},
 			{'name': 'kode_bank', 'label': 'Kode Bank', 'type': 'text'},
 			{'name': 'nama_bank', 'label': 'Nama Bank', 'type': 'text'},
-			{'name': 'scan_buku_rekening', 'label': 'Scan Buku Rekening', 'type': 'binary', 'full_width': True},
-			{'name': 'scan_laporan_keuangan', 'label': 'Scan Laporan Keuangan', 'type': 'binary', 'full_width': True},
+			{'name': 'scan_buku_rekening', 'label': 'Scan Buku Rekening', 'type': 'binary', 'full_width': True, 'accept': 'application/pdf'},
+			{'name': 'scan_laporan_keuangan', 'label': 'Scan Laporan Keuangan', 'type': 'binary', 'full_width': True, 'accept': 'application/pdf'},
 			{'name': 'masa_berlaku_laporan', 'label': 'Masa Berlaku Laporan', 'type': 'date'},
-			{'name': 'scan_laporan_audited', 'label': 'Scan Laporan Audited', 'type': 'binary', 'full_width': True},
+			{'name': 'scan_laporan_audited', 'label': 'Scan Laporan Audited', 'type': 'binary', 'full_width': True, 'accept': 'application/pdf'},
 			{'name': 'masa_berlaku_audited', 'label': 'Masa Berlaku Audited', 'type': 'date'},
 		],
 	},
@@ -158,11 +158,11 @@ FORM_CONFIG = {
 		'model': 'sadaya_mitra.pajak',
 		'fields': [
 			{'name': 'npwp', 'label': 'NPWP', 'type': 'text', 'required': True, 'pattern': r'^(\d{15}|\d{16})$', 'maxlength': 16, 'placeholder': '15 atau 16 digit angka', 'invalid_feedback': 'NPWP wajib diisi dan harus tepat 15 atau 16 digit angka.'},
-			{'name': 'bukti_kswp', 'label': 'Bukti KSWP', 'type': 'binary', 'full_width': True},
-			{'name': 'bukti_spt', 'label': 'Bukti SPT', 'type': 'binary', 'full_width': True},
-			{'name': 'bukti_bebas_pph23', 'label': 'Bukti Bebas PPh23', 'type': 'binary', 'full_width': True},
-			{'name': 'bukti_pp23', 'label': 'Bukti PPh23', 'type': 'binary', 'full_width': True},
-			{'name': 'bukti_non_pkp', 'label': 'Bukti Non PKP', 'type': 'binary', 'full_width': True},
+			{'name': 'bukti_kswp', 'label': 'Bukti KSWP', 'type': 'binary', 'full_width': True, 'accept': 'application/pdf'},
+			{'name': 'bukti_spt', 'label': 'Bukti SPT', 'type': 'binary', 'full_width': True, 'accept': 'application/pdf'},
+			{'name': 'bukti_bebas_pph23', 'label': 'Bukti Bebas PPh23', 'type': 'binary', 'full_width': True, 'accept': 'application/pdf'},
+			{'name': 'bukti_pp23', 'label': 'Bukti PPh23', 'type': 'binary', 'full_width': True, 'accept': 'application/pdf'},
+			{'name': 'bukti_non_pkp', 'label': 'Bukti Non PKP', 'type': 'binary', 'full_width': True, 'accept': 'application/pdf'},
 		],
 	},
 	'pendaftaran_dpt': {
@@ -217,7 +217,7 @@ FORM_CONFIG = {
 		'fields': [
 			{'name': 'email', 'label': 'Email', 'type': 'text'},
 			{'name': 'pin', 'label': 'PIN', 'type': 'text'},
-			{'name': 'surat_kuasa', 'label': 'Surat Kuasa', 'type': 'binary', 'full_width': True},
+			{'name': 'surat_kuasa', 'label': 'Surat Kuasa', 'type': 'binary', 'full_width': True, 'accept': 'application/pdf'},
 			{
 				'name': 'status_verifikasi',
 				'label': 'Status Verifikasi',
@@ -473,6 +473,15 @@ class SadayaMitraWebsite(http.Controller):
 		return request.render('sadaya_mitra.sadaya_mitra_profil', {
 			'penyedia': penyedia,
 		})
+
+	@http.route('/sadaya-mitra/ajukan-ulang', auth='user', website=True, methods=['POST'], csrf=True)
+	def ajukan_ulang(self, **post):
+		user = request.env.user
+		email = user.email or user.login
+		penyedia = request.env['sadaya_mitra.penyedia'].sudo().search([('email', '=', email)], limit=1)
+		if penyedia and penyedia.status_verifikasi == 'rejected':
+			penyedia.action_vendor_resubmit()
+		return request.redirect('/sadaya-mitra/profil')
 
 	@http.route(['/sadaya-mitra/penyedia', '/sadaya-mitra/penyedia/submit'], auth='user', website=True, methods=['GET', 'POST'], csrf=False)
 	def penyedia_redirect(self, **kwargs):

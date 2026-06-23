@@ -5,7 +5,9 @@
     'author': 'Tim Pengadaan POLBAN',
     'depends': ['base', 'mail', 'website', 'sadaya_auth'],
     'data': [
+        'security/security.xml',
         'security/ir.model.access.csv',
+        'views/verifikasi_wizard_views.xml',
         'views/penyedia_views.xml',
         'views/pengurus_views.xml',
         'views/website_penyedia_templates.xml',

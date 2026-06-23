@@ -91,5 +91,5 @@
     </record>
 
     <!-- Menu -->
-    <menuitem id="menu_rancang_tim_teknis" name="Tim Teknis PPK" parent="menu_rancang_root" action="action_rancang_hps_tim_teknis" sequence="40"/>
+    <menuitem id="menu_rancang_tim_teknis" name="Tim Teknis PPK" parent="menu_rancang_root" action="action_rancang_hps_tim_teknis" sequence="40" groups="sadaya_rancang.group_rancang_tim_teknis"/>
 </odoo>

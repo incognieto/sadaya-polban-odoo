@@ -316,7 +316,7 @@
                                     </div>
                                     <div class="col-12">
                                         <label for="deskripsi_kebutuhan" class="sl-field-label">Deskripsi Kebutuhan</label>
-                                        <textarea class="form-control sl-input" id="deskripsi_kebutuhan" name="deskripsi_kebutuhan" rows="3"></textarea>
+                                        <textarea class="form-control sl-input" id="deskripsi_kebutuhan" name="deskripsi_kebutuhan" rows="3" required="1"></textarea>
                                     </div>
                                     <div class="col-12">
                                         <label for="kak" class="sl-field-label">File KAK (Hanya PDF)</label>
@@ -423,12 +423,16 @@
                                         </t>
 
                                         <t t-if="usulan.state == 'submitted'">
-                                            <a t-attf-href="/sadaya-rancang/pengajuan/#{usulan.id}/approve" class="btn btn-success" onclick="return confirm('Setujui pengajuan ini?');">Setujui</a>
-                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal">Tolak</button>
+                                            <t t-if="request.env.user.has_group('sadaya_rancang.group_rancang_manajemen')">
+                                                <a t-attf-href="/sadaya-rancang/pengajuan/#{usulan.id}/approve" class="btn btn-success" onclick="return confirm('Setujui pengajuan ini?');">Setujui</a>
+                                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal">Tolak</button>
+                                            </t>
                                         </t>
 
                                         <t t-if="usulan.state == 'approved'">
-                                            <a t-attf-href="/sadaya-rancang/pengajuan/#{usulan.id}/publish" class="btn btn-primary" onclick="return confirm('Publikasi usulan ini ke RUP (Rencana Umum Pengadaan)?');">Publikasi ke RUP</a>
+                                            <t t-if="request.env.user.has_group('sadaya_rancang.group_rancang_ppk')">
+                                                <a t-attf-href="/sadaya-rancang/pengajuan/#{usulan.id}/publish" class="btn btn-primary" onclick="return confirm('Publikasi usulan ini ke RUP (Rencana Umum Pengadaan)?');">Publikasi ke RUP</a>
+                                            </t>
                                         </t>
 
                                         <t t-if="usulan.state in ['submitted', 'returned', 'rejected']">
