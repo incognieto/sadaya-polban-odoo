@@ -177,7 +177,7 @@
                                                 <div class="invalid-feedback">Field harus diisi</div>
                                             </t>
                                             <t t-elif="field['type'] == 'binary'">
-                                                <input type="file" class="form-control" t-att-name="field['name']" t-att-required="field.get('required') and 'required' or None"/>
+                                                <input type="file" class="form-control" t-att-name="field['name']" t-att-required="field.get('required') and 'required' or None" t-att-accept="field.get('accept')"/>
                                                 <div class="invalid-feedback">Field harus diisi</div>
                                             </t>
                                             <t t-elif="field['type'] == 'date'">
