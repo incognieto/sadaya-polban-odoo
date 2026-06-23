@@ -474,6 +474,15 @@ class SadayaMitraWebsite(http.Controller):
 			'penyedia': penyedia,
 		})
 
+	@http.route('/sadaya-mitra/ajukan-ulang', auth='user', website=True, methods=['POST'], csrf=True)
+	def ajukan_ulang(self, **post):
+		user = request.env.user
+		email = user.email or user.login
+		penyedia = request.env['sadaya_mitra.penyedia'].sudo().search([('email', '=', email)], limit=1)
+		if penyedia and penyedia.status_verifikasi == 'rejected':
+			penyedia.action_vendor_resubmit()
+		return request.redirect('/sadaya-mitra/profil')
+
 	@http.route(['/sadaya-mitra/penyedia', '/sadaya-mitra/penyedia/submit'], auth='user', website=True, methods=['GET', 'POST'], csrf=False)
 	def penyedia_redirect(self, **kwargs):
 		"""Form pendaftaran penyedia sudah dipindah ke sadaya_auth.
