@@ -472,10 +472,17 @@
                                 <a href="/sadaya-lelang/tender"
                                    t-att-class="'active' if active_menu == 'tender' else ''">Info Lelang</a>
                                 <t t-if="env.user.id != env.ref('base.public_user').id">
-                                    <a href="/web/session/logout?redirect=/sadaya-lelang/tender" class="sl-user-badge" title="Logout" style="text-decoration: none;">
-                                        <i class="fa fa-sign-out"></i>
-                                        <t t-esc="env.user.name"/> (Logout)
-                                    </a>
+                                    <div class="dropdown">
+                                        <button class="sl-user-badge dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border:none; cursor:pointer;">
+                                            <i class="fa fa-user-circle"></i>
+                                            <t t-esc="env.user.name"/>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm" aria-labelledby="userDropdown" style="border-radius:12px;">
+                                            <li><a class="dropdown-item" href="/sadaya-lelang/dashboard"><i class="fa fa-dashboard me-2 text-muted"></i>Dashboard Saya</a></li>
+                                            <li><hr class="dropdown-divider"/></li>
+                                            <li><a class="dropdown-item text-danger" href="/web/session/logout?redirect=/sadaya-lelang/tender"><i class="fa fa-sign-out me-2"></i>Keluar</a></li>
+                                        </ul>
+                                    </div>
                                 </t>
                                 <t t-else="">
                                     <a href="/web/login" class="sl-user-badge" style="text-decoration: none;">
