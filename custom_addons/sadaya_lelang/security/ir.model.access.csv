@@ -25,12 +25,21 @@ access_lelang_dokumen_public,sadaya_lelang.dokumen.public,model_sadaya_lelang_do
 
 access_lelang_penawaran_pokja,sadaya_lelang.penawaran.pokja,model_sadaya_lelang_penawaran,group_lelang_pokja,1,1,0,0
 access_lelang_penawaran_ppk,sadaya_lelang.penawaran.ppk,model_sadaya_lelang_penawaran,group_lelang_ppk,1,1,1,1
+access_lelang_penawaran_pphp,sadaya_lelang.penawaran.pphp,model_sadaya_lelang_penawaran,group_lelang_pphp,1,0,0,0
+access_lelang_penawaran_user,sadaya_lelang.penawaran.user,model_sadaya_lelang_penawaran,group_lelang_user,1,0,0,0
+access_lelang_penawaran_manajemen,sadaya_lelang.penawaran.manajemen,model_sadaya_lelang_penawaran,group_lelang_manajemen,1,0,0,0
 access_lelang_penawaran_portal,sadaya_lelang.penawaran.portal,model_sadaya_lelang_penawaran,base.group_portal,1,1,1,0
 
 access_lelang_sanggah_pokja,sadaya_lelang.sanggah.pokja,model_sadaya_lelang_sanggah,group_lelang_pokja,1,1,1,1
 access_lelang_sanggah_ppk,sadaya_lelang.sanggah.ppk,model_sadaya_lelang_sanggah,group_lelang_ppk,1,1,0,0
+access_lelang_sanggah_pphp,sadaya_lelang.sanggah.pphp,model_sadaya_lelang_sanggah,group_lelang_pphp,1,0,0,0
+access_lelang_sanggah_user,sadaya_lelang.sanggah.user,model_sadaya_lelang_sanggah,group_lelang_user,1,0,0,0
+access_lelang_sanggah_manajemen,sadaya_lelang.sanggah.manajemen,model_sadaya_lelang_sanggah,group_lelang_manajemen,1,0,0,0
 access_lelang_sanggah_portal,sadaya_lelang.sanggah.portal,model_sadaya_lelang_sanggah,base.group_portal,1,1,1,0
 
 access_lelang_penjelasan_pokja,sadaya_lelang.penjelasan.pokja,model_sadaya_lelang_penjelasan,group_lelang_pokja,1,1,1,1
 access_lelang_penjelasan_ppk,sadaya_lelang.penjelasan.ppk,model_sadaya_lelang_penjelasan,group_lelang_ppk,1,1,0,0
+access_lelang_penjelasan_pphp,sadaya_lelang.penjelasan.pphp,model_sadaya_lelang_penjelasan,group_lelang_pphp,1,0,0,0
+access_lelang_penjelasan_user,sadaya_lelang.penjelasan.user,model_sadaya_lelang_penjelasan,group_lelang_user,1,0,0,0
+access_lelang_penjelasan_manajemen,sadaya_lelang.penjelasan.manajemen,model_sadaya_lelang_penjelasan,group_lelang_manajemen,1,0,0,0
 access_lelang_penjelasan_portal,sadaya_lelang.penjelasan.portal,model_sadaya_lelang_penjelasan,base.group_portal,1,1,1,0
