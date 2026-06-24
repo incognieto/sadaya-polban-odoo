@@ -323,8 +323,11 @@
                             <!-- Detail Info Card -->
                             <div class="col-12 col-lg-8">
                                 <article class="sl-card sl-card--detail h-100">
-                                    <div class="sl-card__top">
+                                    <div class="sl-card__top d-flex justify-content-between align-items-center">
                                         <h4>Informasi Dasar</h4>
+                                        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                                            Edit Profil
+                                        </button>
                                     </div>
                                     <dl class="sl-dl">
                                         <div>
@@ -407,6 +410,40 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- Modal Edit Profil -->
+                <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form action="/sadaya-mitra/profil/update" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editProfileModalLabel">Edit Profil</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="nomor_npwp_perusahaan" class="form-label">Nomor NPWP Perusahaan</label>
+                                        <input type="text" class="form-control" id="nomor_npwp_perusahaan" name="nomor_npwp_perusahaan" t-att-value="penyedia.nomor_npwp_perusahaan"/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="bukti_npwp" class="form-label">Bukti NPWP (PDF)</label>
+                                        <input type="file" class="form-control" id="bukti_npwp" name="bukti_npwp" accept="application/pdf"/>
+                                        <small class="text-muted">Biarkan kosong jika tidak ingin mengubah file.</small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="nomor_telepon" class="form-label">Nomor Telepon</label>
+                                        <input type="text" class="form-control" id="nomor_telepon" name="nomor_telepon" t-att-value="penyedia.nomor_telepon"/>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
 
                 <footer class="sl-app-footer">
                     <div class="container sl-app-footer__inner">

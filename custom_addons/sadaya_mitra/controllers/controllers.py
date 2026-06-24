@@ -474,6 +474,30 @@ class SadayaMitraWebsite(http.Controller):
 			'penyedia': penyedia,
 		})
 
+	@http.route('/sadaya-mitra/profil/update', auth='user', website=True, methods=['POST'], type='http', csrf=True)
+	def profil_update(self, **post):
+		import base64
+		user = request.env.user
+		email = user.email or user.login
+		penyedia = request.env['sadaya_mitra.penyedia'].sudo().search([('email', '=', email)], limit=1)
+		
+		if penyedia:
+			values = {}
+			if 'nomor_npwp_perusahaan' in post and post.get('nomor_npwp_perusahaan'):
+				values['nomor_npwp_perusahaan'] = post.get('nomor_npwp_perusahaan')
+			if 'nomor_telepon' in post and post.get('nomor_telepon'):
+				values['nomor_telepon'] = post.get('nomor_telepon')
+			
+			if 'bukti_npwp' in request.httprequest.files:
+				file = request.httprequest.files.get('bukti_npwp')
+				if file and file.filename:
+					values['bukti_npwp'] = base64.b64encode(file.read())
+			
+			if values:
+				penyedia.sudo().write(values)
+				
+		return request.redirect('/sadaya-mitra/profil')
+
 	@http.route('/sadaya-mitra/ajukan-ulang', auth='user', website=True, methods=['POST'], csrf=True)
 	def ajukan_ulang(self, **post):
 		user = request.env.user
