@@ -6,6 +6,7 @@ access_rutin_pkg_ppk,Paket Rutin - PPK (Read+Write),model_sadaya_rutin_procureme
 access_rutin_pkg_timteknis,Paket Rutin - Tim Teknis (Read+Write),model_sadaya_rutin_procurement_package,sadaya_rutin.group_rutin_tim_teknis,1,1,0,0
 access_rutin_pkg_pphp,Paket Rutin - PPHP (Read+Write),model_sadaya_rutin_procurement_package,sadaya_rutin.group_rutin_pphp,1,1,0,0
 access_rutin_pkg_unitkerja,Paket Rutin - Unit Kerja (Read Only),model_sadaya_rutin_procurement_package,sadaya_rutin.group_rutin_unit_kerja,1,0,0,0
+access_rutin_pkg_admin2,Paket Rutin - Admin (ERP Manager),model_sadaya_rutin_procurement_package,base.group_erp_manager,1,1,1,1
 access_rutin_contract_admin,Kontrak Rutin - Admin (Full),model_sadaya_rutin_contract,base.group_system,1,1,1,1
 access_rutin_contract_internal,Kontrak Rutin - Semua Internal (Read),model_sadaya_rutin_contract,base.group_user,1,0,0,0
 access_rutin_contract_pp,Kontrak Rutin - PP (Full),model_sadaya_rutin_contract,sadaya_rutin.group_rutin_pp,1,1,1,1
@@ -13,3 +14,4 @@ access_rutin_contract_ppk,Kontrak Rutin - PPK (Read+Write),model_sadaya_rutin_co
 access_rutin_contract_timteknis,Kontrak Rutin - Tim Teknis (Read Only),model_sadaya_rutin_contract,sadaya_rutin.group_rutin_tim_teknis,1,0,0,0
 access_rutin_contract_pphp,Kontrak Rutin - PPHP (Read Only),model_sadaya_rutin_contract,sadaya_rutin.group_rutin_pphp,1,0,0,0
 access_rutin_contract_unitkerja,Kontrak Rutin - Unit Kerja (Read Only),model_sadaya_rutin_contract,sadaya_rutin.group_rutin_unit_kerja,1,0,0,0
+access_rutin_contract_admin2,Kontrak Rutin - Admin (ERP Manager),model_sadaya_rutin_contract,base.group_erp_manager,1,1,1,1
