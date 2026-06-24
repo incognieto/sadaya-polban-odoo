@@ -78,15 +78,13 @@
                             <field name="kak_filename" invisible="1"/>
                         </page>
                         <page string="Dokumen Pendukung">
-                            <field name="attachment_ids" widget="many2many_binary" readonly="state not in ('draft', 'returned')"/>
+                            <group>
+                                <field name="attachment_ids" widget="many2many_binary" nolabel="1" colspan="2" readonly="state not in ('draft', 'returned')"/>
+                            </group>
                         </page>
                     </notebook>
                 </sheet>
-                <div class="oe_chatter">
-                    <field name="message_follower_ids" widget="mail_followers"/>
-                    <field name="activity_ids" widget="mail_activity"/>
-                    <field name="message_ids" widget="mail_thread"/>
-                </div>
+                <chatter/>
             </form>
         </field>
     </record>
