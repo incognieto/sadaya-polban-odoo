@@ -13,10 +13,21 @@
       <field name="groups" eval="[(4, ref('sadaya_langsung.group_sadaya_langsung_vendor'))]"/>
     </record>
 
+    <record id="rule_sadaya_langsung_kontrak_vendor" model="ir.rule">
+      <field name="name">Vendor hanya melihat kontrak miliknya sendiri</field>
+      <field name="model_id" ref="model_sadaya_langsung_kontrak"/>
+      <field name="domain_force">[('paket_id.vendor_pemenang_id', '=', user.partner_id.id)]</field>
+      <field name="groups" eval="[(4, ref('sadaya_langsung.group_sadaya_langsung_vendor'))]"/>
+    </record>
+  </data>
+
+  <!-- Rule ini pakai noupdate="0" agar bisa diupdate saat upgrade modul -->
+  <data noupdate="0">
     <record id="rule_sadaya_langsung_paket_vendor" model="ir.rule">
-      <field name="name">Vendor hanya melihat paket yang diundang untuknya</field>
+      <field name="name">Vendor dapat melihat semua paket publik</field>
       <field name="model_id" ref="model_sadaya_langsung_paket"/>
-      <field name="domain_force">[('penawaran_ids.vendor_id', '=', user.partner_id.id)]</field>
+      <!-- Vendor bisa lihat semua paket — filter status dilakukan di controller -->
+      <field name="domain_force">[(1, '=', 1)]</field>
       <field name="groups" eval="[(4, ref('sadaya_langsung.group_sadaya_langsung_vendor'))]"/>
     </record>
   </data>

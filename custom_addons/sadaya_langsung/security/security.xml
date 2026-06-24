@@ -1,23 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <record id="group_langsung_paket" model="res.groups">
-            <field name="name">Admin Paket Langsung</field>
+        <!-- PPK Langsung -->
+        <record id="group_langsung_ppk" model="res.groups">
+            <field name="name">PPK Langsung</field>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-            <field name="user_ids" eval="[(4, ref('sadaya_auth.user_john_admin')), (4, ref('base.user_admin'))]"/>
+            <field name="user_ids" eval="[(4, ref('sadaya_auth.user_smith_ppk')), (4, ref('sadaya_auth.user_john_admin')), (4, ref('base.user_admin'))]"/>
         </record>
 
-        <record id="group_langsung_pokja" model="res.groups">
-            <field name="name">POKJA Langsung (Admin Lelang)</field>
+        <!-- Pejabat Pengadaan Langsung -->
+        <record id="group_langsung_pp" model="res.groups">
+            <field name="name">Pejabat Pengadaan Langsung</field>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-            <field name="user_ids" eval="[(4, ref('sadaya_auth.user_alice_pokja')), (4, ref('base.user_admin'))]"/>
+            <field name="user_ids" eval="[(4, ref('sadaya_auth.user_bob_pejabatpengadaan')), (4, ref('sadaya_auth.user_john_admin')), (4, ref('base.user_admin'))]"/>
         </record>
 
+        <!-- Tim PPHP Langsung -->
+        <record id="group_langsung_pphp" model="res.groups">
+            <field name="name">PPHP Langsung</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="user_ids" eval="[(4, ref('sadaya_auth.user_dave_pphp')), (4, ref('sadaya_auth.user_john_admin')), (4, ref('base.user_admin'))]"/>
+        </record>
+
+        <!-- Unit Kerja / User Langsung -->
         <record id="group_langsung_unit_kerja" model="res.groups">
-            <field name="name">Unit Kerja Langsung (Viewer)</field>
+            <field name="name">Unit Kerja Langsung</field>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
             <field name="user_ids" eval="[(4, ref('sadaya_auth.user_eve_unitkerja'))]"/>
         </record>
 
+        <!-- Manajemen Langsung -->
+        <record id="group_langsung_manajemen" model="res.groups">
+            <field name="name">Manajemen Langsung</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="user_ids" eval="[(4, ref('sadaya_auth.user_jane_manajemen')), (4, ref('sadaya_auth.user_john_admin')), (4, ref('base.user_admin'))]"/>
+        </record>
     </data>
 </odoo>

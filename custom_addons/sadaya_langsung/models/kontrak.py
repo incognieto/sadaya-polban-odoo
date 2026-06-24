@@ -36,9 +36,12 @@ class SadayaLangsungKontrak(models.Model):
         ('persiapan_kontrak', 'Persiapan Kontrak'),
         ('proses_tte', 'Proses Kontrak (TTE)'),
         ('pelaksanaan', 'Pelaksanaan Pekerjaan'),
+        ('addendum_diajukan', 'Addendum Diajukan'),
+        ('addendum_disetujui', 'Addendum Disetujui'),
+        ('addendum_tte_ppk', 'Addendum TTE PPK'),
         ('pemeriksaan', 'Pemeriksaan PPHP'),
         ('selesai_kontrak', 'Selesai Kontrak'),
-        ('addendum_kontrak', 'Addendum Kontrak'),
+        ('addendum_kontrak', 'Addendum Kontrak (Aktif)'),
         ('revisi', 'Revisi'),
         ('batal', 'Batal'),
     ], string='Status Kontrak', default='pam', tracking=True)
@@ -65,6 +68,17 @@ class SadayaLangsungKontrak(models.Model):
     # === Catatan ===
     keterangan = fields.Text(string='Keterangan')
 
+    # === Addendum & TTE Fields ===
+    justifikasi_addendum = fields.Text(string='Justifikasi Addendum')
+    addendum_nilai_tambah = fields.Float(string='Nilai Tambahan Addendum')
+    addendum_perpanjangan_hari = fields.Integer(string='Perpanjangan Hari Addendum')
+    dokumen_addendum = fields.Binary(string='Dokumen Addendum')
+    filename_addendum = fields.Char(string='Filename Addendum')
+    tte_ppk_kontrak = fields.Boolean(string='TTE PPK Kontrak', default=False)
+    tte_vendor_kontrak = fields.Boolean(string='TTE Vendor Kontrak', default=False)
+    tte_ppk_addendum = fields.Boolean(string='TTE PPK Addendum', default=False)
+    tte_vendor_addendum = fields.Boolean(string='TTE Vendor Addendum', default=False)
+
     # ------------------------------------------------------------------
     # Auto-fill jenis_pengadaan dari Paket terkait
     # ------------------------------------------------------------------
@@ -84,8 +98,57 @@ class SadayaLangsungKontrak(models.Model):
     def action_proses_tte(self):
         self.write({'status_kontrak': 'proses_tte'})
 
+    def action_tte_ppk(self):
+        self.write({'tte_ppk_kontrak': True})
+        if self.tte_vendor_kontrak:
+            self.action_pelaksanaan()
+
+    def action_tte_vendor(self):
+        self.write({'tte_vendor_kontrak': True})
+        if self.tte_ppk_kontrak:
+            self.action_pelaksanaan()
+
     def action_pelaksanaan(self):
         self.write({'status_kontrak': 'pelaksanaan'})
+
+    def action_ajukan_addendum(self, justifikasi, nilai_tambah, perpanjangan_hari):
+        self.write({
+            'status_kontrak': 'addendum_diajukan',
+            'justifikasi_addendum': justifikasi,
+            'addendum_nilai_tambah': nilai_tambah,
+            'addendum_perpanjangan_hari': perpanjangan_hari,
+            'tte_ppk_addendum': False,
+            'tte_vendor_addendum': False,
+        })
+
+    def action_setujui_addendum(self):
+        import base64
+        self.write({
+            'status_kontrak': 'addendum_disetujui',
+            'dokumen_addendum': base64.b64encode(b"Dokumen Addendum Ke-1").decode('utf-8'),
+            'filename_addendum': "Addendum_Ke-1.pdf"
+        })
+
+    def action_tte_ppk_addendum(self):
+        self.write({
+            'tte_ppk_addendum': True,
+            'status_kontrak': 'addendum_tte_ppk',
+        })
+
+    def action_tte_vendor_addendum(self):
+        from datetime import timedelta
+        self.write({
+            'tte_vendor_addendum': True,
+            'status_kontrak': 'addendum_kontrak',
+        })
+        # Update nilai kontrak (nilai_hps)
+        new_nilai = self.nilai_hps + self.addendum_nilai_tambah
+        # Update timeline (tanggal_selesai)
+        vals = {'nilai_hps': new_nilai}
+        if self.tanggal_selesai:
+            t_selesai = fields.Date.to_date(self.tanggal_selesai)
+            vals['tanggal_selesai'] = t_selesai + timedelta(days=self.addendum_perpanjangan_hari)
+        self.write(vals)
 
     def action_pemeriksaan(self):
         self.write({'status_kontrak': 'pemeriksaan'})
