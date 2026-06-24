@@ -106,6 +106,9 @@ class SadayaLelangPaket(models.Model):
     def action_to_masa_sanggah(self):
         for rec in self: rec.status = 'masa_sanggah'
 
+    def action_evaluasi_ulang(self):
+        for rec in self: rec.status = 'pembuktian_kualifikasi'
+
     def action_to_sppbj(self):
         for rec in self: rec.status = 'sppbj'
 

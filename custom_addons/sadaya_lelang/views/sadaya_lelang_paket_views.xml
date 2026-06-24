@@ -31,6 +31,7 @@
                     <button name="action_mulai_evaluasi" string="Mulai Evaluasi" type="object" class="oe_highlight" invisible="status != 'pembukaan'" groups="sadaya_lelang.group_lelang_pokja"/>
                     <button name="action_tetapkan_pemenang" string="Tetapkan Pemenang" type="object" class="oe_highlight" invisible="status not in ['eval_administrasi', 'eval_teknis', 'eval_harga', 'pembuktian_kualifikasi']" groups="sadaya_lelang.group_lelang_pokja"/>
                     <button name="action_to_masa_sanggah" string="Mulai Masa Sanggah" type="object" class="oe_highlight" invisible="status != 'penetapan_pemenang'" groups="sadaya_lelang.group_lelang_pokja"/>
+                    <button name="action_evaluasi_ulang" string="Evaluasi Ulang (Terima Sanggah)" type="object" class="btn-danger" invisible="status not in ['penetapan_pemenang', 'masa_sanggah']" groups="sadaya_lelang.group_lelang_pokja" confirm="Yakin ingin mengulang evaluasi? Ini akan mengembalikan status ke Pembuktian Kualifikasi."/>
                     <button name="action_to_sppbj" string="Terbitkan SPPBJ" type="object" class="oe_highlight" invisible="status != 'masa_sanggah'" groups="sadaya_lelang.group_lelang_ppk"/>
                     <button name="action_to_pam" string="Adakan PAM" type="object" class="oe_highlight" invisible="status != 'sppbj'" groups="sadaya_lelang.group_lelang_ppk"/>
                     <button name="action_to_kontrak" string="Tanda Tangan Kontrak" type="object" class="oe_highlight" invisible="status != 'pam'" groups="sadaya_lelang.group_lelang_ppk"/>
