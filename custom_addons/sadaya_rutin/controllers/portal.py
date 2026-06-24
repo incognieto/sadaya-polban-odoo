@@ -264,6 +264,80 @@ class SadayaRutinPortal(http.Controller):
         return request.redirect("/sadaya-rutin/paket/%s" % package_id)
 
     @http.route(
+        [
+            "/sadaya-rutin/paket/<int:package_id>/request-revision",
+            "/sadaya-rutin/packages/<int:package_id>/request-revision",
+        ],
+        type="http",
+        auth="user",
+        website=True,
+        methods=["POST"],
+    )
+    def portal_request_revision(self, package_id, **post):
+        package = request.env["sadaya_rutin.procurement_package"].sudo().browse(package_id)
+        if not package.exists() or package.status != "inspection":
+            return request.not_found()
+        if package.vendor_id and request.env.user.partner_id.id not in (package.vendor_id.id, package.vendor_id.parent_id.id):
+            raise ValidationError("Anda tidak memiliki akses untuk meminta revisi pada paket ini.")
+        
+        if package.inspection_status != 'not_ok':
+            raise ValidationError("Revisi hanya dapat diajukan jika hasil pemeriksaan tidak sesuai.")
+
+        # Tambahkan pesan log ke chatter atas nama vendor
+        package.message_post(
+            body=(
+                "<p><b>Konfirmasi Vendor: Mengajukan Revisi</b></p>"
+                "<p>Vendor telah menerima pemberitahuan ketidaksesuaian barang/jasa dan sepakat untuk "
+                "melakukan pengiriman ulang/perbaikan (Revisi). Menunggu persetujuan Tim Teknis/PP.</p>"
+            ),
+            message_type='comment',
+            subtype_xmlid='mail.mt_comment',
+            author_id=request.env.user.partner_id.id,
+        )
+        
+        package.write({'vendor_revision_requested': True, 'vendor_cancellation_requested': False})
+        return request.redirect("/sadaya-rutin/paket/%s" % package_id)
+
+    @http.route(
+        [
+            "/sadaya-rutin/paket/<int:package_id>/request-cancellation",
+            "/sadaya-rutin/packages/<int:package_id>/request-cancellation",
+        ],
+        type="http",
+        auth="user",
+        website=True,
+        methods=["POST"],
+    )
+    def portal_request_cancellation(self, package_id, **post):
+        package = request.env["sadaya_rutin.procurement_package"].sudo().browse(package_id)
+        if not package.exists() or package.status != "inspection":
+            return request.not_found()
+        if package.vendor_id and request.env.user.partner_id.id not in (package.vendor_id.id, package.vendor_id.parent_id.id):
+            raise ValidationError("Anda tidak memiliki akses untuk meminta pembatalan pada paket ini.")
+        
+        if package.inspection_status != 'not_ok':
+            raise ValidationError("Pembatalan hanya dapat diajukan jika hasil pemeriksaan tidak sesuai.")
+
+        reason = post.get("cancellation_reason", "Tidak ada alasan yang diberikan.")
+
+        # Tambahkan pesan log ke chatter atas nama vendor
+        package.message_post(
+            body=(
+                "<p><b>Konfirmasi Vendor: Mengajukan Pembatalan</b></p>"
+                "<p>Vendor telah menerima pemberitahuan ketidaksesuaian barang/jasa, namun <b>tidak sanggup</b> "
+                "untuk melakukan perbaikan/pengiriman ulang dan meminta pesanan ini dibatalkan.</p>"
+                "<p><b>Alasan:</b> %s</p>"
+                "<p>Menunggu persetujuan Tim Teknis/PP.</p>"
+            ) % reason,
+            message_type='comment',
+            subtype_xmlid='mail.mt_comment',
+            author_id=request.env.user.partner_id.id,
+        )
+        
+        package.write({'vendor_cancellation_requested': True, 'vendor_revision_requested': False})
+        return request.redirect("/sadaya-rutin/paket/%s" % package_id)
+
+    @http.route(
         ["/sadaya-rutin/kontrak", "/sadaya-rutin/contracts", "/purchase-portal/contracts"],
         type="http",
         auth="user",
