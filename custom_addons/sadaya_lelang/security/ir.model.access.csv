@@ -8,21 +8,38 @@ access_lelang_paket_portal,sadaya_lelang.paket.portal,model_sadaya_lelang_paket,
 access_lelang_paket_public,sadaya_lelang.paket.public,model_sadaya_lelang_paket,base.group_public,1,0,0,0
 
 access_lelang_jadwal_pokja,sadaya_lelang.jadwal.pokja,model_sadaya_lelang_jadwal,group_lelang_pokja,1,1,1,1
+access_lelang_jadwal_ppk,sadaya_lelang.jadwal.ppk,model_sadaya_lelang_jadwal,group_lelang_ppk,1,0,0,0
+access_lelang_jadwal_pphp,sadaya_lelang.jadwal.pphp,model_sadaya_lelang_jadwal,group_lelang_pphp,1,0,0,0
+access_lelang_jadwal_user,sadaya_lelang.jadwal.user,model_sadaya_lelang_jadwal,group_lelang_user,1,0,0,0
+access_lelang_jadwal_manajemen,sadaya_lelang.jadwal.manajemen,model_sadaya_lelang_jadwal,group_lelang_manajemen,1,0,0,0
 access_lelang_jadwal_portal,sadaya_lelang.jadwal.portal,model_sadaya_lelang_jadwal,base.group_portal,1,0,0,0
 access_lelang_jadwal_public,sadaya_lelang.jadwal.public,model_sadaya_lelang_jadwal,base.group_public,1,0,0,0
 
 access_lelang_dokumen_pokja,sadaya_lelang.dokumen.pokja,model_sadaya_lelang_dokumen,group_lelang_pokja,1,1,1,1
+access_lelang_dokumen_ppk,sadaya_lelang.dokumen.ppk,model_sadaya_lelang_dokumen,group_lelang_ppk,1,0,0,0
+access_lelang_dokumen_pphp,sadaya_lelang.dokumen.pphp,model_sadaya_lelang_dokumen,group_lelang_pphp,1,0,0,0
+access_lelang_dokumen_user,sadaya_lelang.dokumen.user,model_sadaya_lelang_dokumen,group_lelang_user,1,0,0,0
+access_lelang_dokumen_manajemen,sadaya_lelang.dokumen.manajemen,model_sadaya_lelang_dokumen,group_lelang_manajemen,1,0,0,0
 access_lelang_dokumen_portal,sadaya_lelang.dokumen.portal,model_sadaya_lelang_dokumen,base.group_portal,1,0,0,0
 access_lelang_dokumen_public,sadaya_lelang.dokumen.public,model_sadaya_lelang_dokumen,base.group_public,1,0,0,0
 
 access_lelang_penawaran_pokja,sadaya_lelang.penawaran.pokja,model_sadaya_lelang_penawaran,group_lelang_pokja,1,1,0,0
 access_lelang_penawaran_ppk,sadaya_lelang.penawaran.ppk,model_sadaya_lelang_penawaran,group_lelang_ppk,1,1,1,1
+access_lelang_penawaran_pphp,sadaya_lelang.penawaran.pphp,model_sadaya_lelang_penawaran,group_lelang_pphp,1,0,0,0
+access_lelang_penawaran_user,sadaya_lelang.penawaran.user,model_sadaya_lelang_penawaran,group_lelang_user,1,0,0,0
+access_lelang_penawaran_manajemen,sadaya_lelang.penawaran.manajemen,model_sadaya_lelang_penawaran,group_lelang_manajemen,1,0,0,0
 access_lelang_penawaran_portal,sadaya_lelang.penawaran.portal,model_sadaya_lelang_penawaran,base.group_portal,1,1,1,0
 
 access_lelang_sanggah_pokja,sadaya_lelang.sanggah.pokja,model_sadaya_lelang_sanggah,group_lelang_pokja,1,1,1,1
 access_lelang_sanggah_ppk,sadaya_lelang.sanggah.ppk,model_sadaya_lelang_sanggah,group_lelang_ppk,1,1,0,0
+access_lelang_sanggah_pphp,sadaya_lelang.sanggah.pphp,model_sadaya_lelang_sanggah,group_lelang_pphp,1,0,0,0
+access_lelang_sanggah_user,sadaya_lelang.sanggah.user,model_sadaya_lelang_sanggah,group_lelang_user,1,0,0,0
+access_lelang_sanggah_manajemen,sadaya_lelang.sanggah.manajemen,model_sadaya_lelang_sanggah,group_lelang_manajemen,1,0,0,0
 access_lelang_sanggah_portal,sadaya_lelang.sanggah.portal,model_sadaya_lelang_sanggah,base.group_portal,1,1,1,0
 
 access_lelang_penjelasan_pokja,sadaya_lelang.penjelasan.pokja,model_sadaya_lelang_penjelasan,group_lelang_pokja,1,1,1,1
 access_lelang_penjelasan_ppk,sadaya_lelang.penjelasan.ppk,model_sadaya_lelang_penjelasan,group_lelang_ppk,1,1,0,0
+access_lelang_penjelasan_pphp,sadaya_lelang.penjelasan.pphp,model_sadaya_lelang_penjelasan,group_lelang_pphp,1,0,0,0
+access_lelang_penjelasan_user,sadaya_lelang.penjelasan.user,model_sadaya_lelang_penjelasan,group_lelang_user,1,0,0,0
+access_lelang_penjelasan_manajemen,sadaya_lelang.penjelasan.manajemen,model_sadaya_lelang_penjelasan,group_lelang_manajemen,1,0,0,0
 access_lelang_penjelasan_portal,sadaya_lelang.penjelasan.portal,model_sadaya_lelang_penjelasan,base.group_portal,1,1,1,0

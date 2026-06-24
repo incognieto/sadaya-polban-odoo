@@ -20,6 +20,7 @@
     'depends': ['base', 'mail', 'portal', 'website'],
 
     'data': [
+        'data/sequence.xml',
         'security/sadaya_lelang_groups.xml',
         'security/ir.model.access.csv',
         'views/sadaya_lelang_paket_views.xml',

@@ -32,6 +32,7 @@ class SadayaLelangPaket(models.Model):
         ('pam', 'Pre-Award Meeting (PAM)'),
         ('kontrak', 'Tanda Tangan Kontrak'),
         ('pelaksanaan', 'Pelaksanaan Pekerjaan & BAST'),
+        ('selesai', 'Selesai'),
         ('batal', 'Batal')
     ], string='Status', default='draft', tracking=True)
 
@@ -59,13 +60,24 @@ class SadayaLelangPaket(models.Model):
     
     # Dokumen POKJA
     file_dokumen_pemilihan = fields.Binary(string='Dokumen Pemilihan')
+    file_dokumen_pemilihan_name = fields.Char(string='Nama File Dokumen Pemilihan')
     file_ba_penjelasan = fields.Binary(string='BA Pemberian Penjelasan')
+    file_ba_penjelasan_name = fields.Char(string='Nama File BA Penjelasan')
     file_bahp = fields.Binary(string='Berita Acara Hasil Pelelangan (BAHP)')
+    file_bahp_name = fields.Char(string='Nama File BAHP')
     
     file_sppbj = fields.Binary(string='Dokumen SPPBJ')
-    file_kontrak = fields.Binary(string='Dokumen Kontrak')
+    file_sppbj_name = fields.Char(string='Nama File SPPBJ')
+    file_draft_kontrak = fields.Binary(string='Draft Kontrak (PPK)')
+    file_draft_kontrak_name = fields.Char(string='Nama File Draft Kontrak')
+    file_kontrak = fields.Binary(string='Dokumen Kontrak (Vendor TTD)')
+    file_kontrak_name = fields.Char(string='Nama File Kontrak')
     file_jaminan_pelaksanaan = fields.Binary(string='Jaminan Pelaksanaan (Vendor)')
+    file_jaminan_pelaksanaan_name = fields.Char(string='Nama File Jaminan Pelaksanaan')
     file_bast = fields.Binary(string='Dokumen BAST')
+    file_bast_name = fields.Char(string='Nama File BAST')
+    file_laporan_pphp = fields.Binary(string='Laporan Progres PPHP')
+    file_laporan_pphp_name = fields.Char(string='Nama File Laporan PPHP')
 
     jadwal_ids = fields.One2many('sadaya_lelang.jadwal', 'paket_id', string='Jadwal Tender')
     dokumen_ids = fields.One2many('sadaya_lelang.dokumen', 'paket_id', string='Dokumen Pemilihan (Legacy)')
@@ -94,6 +106,12 @@ class SadayaLelangPaket(models.Model):
     def action_tetapkan_pemenang(self):
         for rec in self: rec.status = 'penetapan_pemenang'
 
+    def action_to_masa_sanggah(self):
+        for rec in self: rec.status = 'masa_sanggah'
+
+    def action_evaluasi_ulang(self):
+        for rec in self: rec.status = 'pembuktian_kualifikasi'
+
     def action_to_sppbj(self):
         for rec in self: rec.status = 'sppbj'
 
@@ -105,6 +123,9 @@ class SadayaLelangPaket(models.Model):
 
     def action_to_pelaksanaan(self):
         for rec in self: rec.status = 'pelaksanaan'
+
+    def action_to_selesai(self):
+        for rec in self: rec.status = 'selesai'
 
     @api.model_create_multi
     def create(self, vals_list):

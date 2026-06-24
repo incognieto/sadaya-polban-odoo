@@ -47,6 +47,17 @@ class SadayaLelangPenawaran(models.Model):
             else:
                 rec.status = 'submitted'
 
+    def action_set_pemenang(self):
+        for rec in self:
+            rec.status = 'winner'
+            # Set other penawaran in the same paket to failed? Or just leave them
+            other_bids = self.search([('paket_id', '=', rec.paket_id.id), ('id', '!=', rec.id)])
+            other_bids.write({'status': 'failed'})
+
+    def action_set_gagal(self):
+        for rec in self:
+            rec.status = 'failed'
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
