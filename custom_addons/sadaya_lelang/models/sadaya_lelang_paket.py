@@ -32,6 +32,7 @@ class SadayaLelangPaket(models.Model):
         ('pam', 'Pre-Award Meeting (PAM)'),
         ('kontrak', 'Tanda Tangan Kontrak'),
         ('pelaksanaan', 'Pelaksanaan Pekerjaan & BAST'),
+        ('selesai', 'Selesai'),
         ('batal', 'Batal')
     ], string='Status', default='draft', tracking=True)
 
@@ -122,6 +123,9 @@ class SadayaLelangPaket(models.Model):
 
     def action_to_pelaksanaan(self):
         for rec in self: rec.status = 'pelaksanaan'
+
+    def action_to_selesai(self):
+        for rec in self: rec.status = 'selesai'
 
     @api.model_create_multi
     def create(self, vals_list):
