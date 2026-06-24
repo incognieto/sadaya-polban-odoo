@@ -19,16 +19,17 @@
             </div>
 
             <!-- Status Verifikasi -->
+            <t t-set="actual_state" t-value="penyedia.status_verifikasi if penyedia else (registration.state if registration else 'draft')"/>
             <t t-if="registration">
-                <t t-if="registration.state == 'pending'">
+                <t t-if="actual_state == 'pending' or actual_state == 'draft'">
                     <div class="alert alert-info d-flex align-items-center gap-2 mb-4">
                         <span>🕐</span>
                         <div>
-                            <strong>Akun sedang diverifikasi.</strong> Proses verifikasi dokumen Anda sedang berlangsung. Biasanya membutuhkan 1-3 hari kerja. Kami akan menghubungi Anda melalui email <strong><t t-esc="user.email"/></strong>.
+                            <strong>Akun belum terverifikasi.</strong> Anda perlu melengkapi profil di menu Sadaya Mitra dan menunggunya diverifikasi oleh Admin. Kami akan menghubungi Anda melalui email <strong><t t-esc="user.email"/></strong> jika disetujui.
                         </div>
                     </div>
                 </t>
-                <t t-elif="registration.state == 'approved'">
+                <t t-elif="actual_state == 'approved'">
                     <div class="alert alert-success d-flex align-items-center gap-2 mb-4">
                         <span>✅</span>
                         <div>
@@ -36,15 +37,15 @@
                         </div>
                     </div>
                 </t>
-                <t t-elif="registration.state == 'rejected'">
+                <t t-elif="actual_state == 'rejected'">
                     <div class="alert alert-danger d-flex align-items-center gap-2 mb-4">
                         <span>❌</span>
                         <div>
-                            <strong>Verifikasi ditolak.</strong>
-                            <t t-if="registration.rejection_reason">
-                                Alasan: <t t-esc="registration.rejection_reason"/>
+                            <strong>Verifikasi profil Anda ditolak.</strong>
+                            <t t-if="penyedia and penyedia.catatan_verifikasi">
+                                Alasan: <t t-esc="penyedia.catatan_verifikasi"/>
                             </t>
-                            Silakan hubungi <a href="mailto:support@sadaya.id" class="alert-link text-decoration-none">support@sadaya.id</a> untuk informasi lebih lanjut.
+                            Silakan perbaiki data di menu Profil dan ajukan ulang, atau hubungi <a href="mailto:support@sadaya.id" class="alert-link text-decoration-none">support@sadaya.id</a>.
                         </div>
                     </div>
                 </t>
@@ -59,13 +60,13 @@
                             <div class="text-uppercase small text-muted mb-2 fw-bold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Status Akun</div>
                             <div>
                                 <t t-if="registration">
-                                    <t t-if="registration.state == 'approved'">
+                                    <t t-if="actual_state == 'approved'">
                                         <span class="badge bg-success">Terverifikasi</span>
                                     </t>
-                                    <t t-elif="registration.state == 'pending'">
-                                        <span class="badge bg-warning text-dark">Menunggu</span>
+                                    <t t-elif="actual_state == 'pending' or actual_state == 'draft'">
+                                        <span class="badge bg-warning text-dark">Belum Terverifikasi</span>
                                     </t>
-                                    <t t-elif="registration.state == 'rejected'">
+                                    <t t-elif="actual_state == 'rejected'">
                                         <span class="badge bg-danger">Ditolak</span>
                                     </t>
                                     <t t-else="">
@@ -204,15 +205,16 @@
                 <div class="card shadow-sm border rounded-3 bg-white">
                     <div class="card-header bg-light d-flex align-items-center justify-content-between py-3 border-0">
                         <h5 class="card-title mb-0 fw-bold text-dark">Data Registrasi</h5>
-                        <t t-if="registration.state == 'approved'">
+                        <t t-set="actual_state" t-value="penyedia.status_verifikasi if penyedia else (registration.state if registration else 'draft')"/>
+                        <t t-if="actual_state == 'approved'">
                             <span class="badge bg-success">Terverifikasi</span>
                         </t>
-                        <t t-elif="registration.state == 'pending'">
-                            <span class="badge bg-warning text-dark">Menunggu Verifikasi</span>
+                        <t t-elif="actual_state == 'pending' or actual_state == 'draft'">
+                            <span class="badge bg-warning text-dark">Belum Terverifikasi</span>
                         </t>
                         <t t-else="">
                             <span class="badge bg-secondary text-capitalize">
-                                <t t-esc="registration.state"/>
+                                <t t-esc="actual_state"/>
                             </span>
                         </t>
                     </div>

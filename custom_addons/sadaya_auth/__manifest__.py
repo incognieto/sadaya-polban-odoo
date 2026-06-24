@@ -28,6 +28,7 @@
         'security/ir.model.access.csv',
         'views/registration_views.xml',
         'views/sadaya_layout_templates.xml',
+        'views/sadaya_landing_templates.xml',
         'views/sadaya_register_templates.xml',
         'views/sadaya_login_templates.xml',
         'views/sadaya_dashboard_templates.xml',
