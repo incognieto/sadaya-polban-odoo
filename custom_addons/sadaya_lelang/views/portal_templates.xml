@@ -515,7 +515,7 @@
                                 <article class="sl-card sl-card--detail">
                                     <div class="sl-card__top">
                                         <div>
-                                            <span class="sl-label"><t t-esc="tender.status"/></span>
+                                            <span class="sl-label"><t t-esc="dict(tender._fields['status'].selection).get(tender.status)"/></span>
                                             <h3><t t-esc="tender.name"/></h3>
                                         </div>
                                         <strong><t t-esc="tender.hps" t-options="{'widget': 'monetary', 'display_currency': tender.currency_id}"/></strong>
@@ -566,7 +566,7 @@
                             <article class="sl-card sl-card--detail">
                                 <div class="sl-card__top">
                                     <div>
-                                        <span class="sl-label"><t t-esc="tender.status"/></span>
+                                        <span class="sl-label"><t t-esc="dict(tender._fields['status'].selection).get(tender.status)"/></span>
                                         <h3>Informasi Tender</h3>
                                     </div>
                                 </div>
@@ -574,7 +574,7 @@
                                     <div><dt>Kode Tender</dt><dd><t t-esc="tender.kode_tender"/></dd></div>
                                     <div><dt>Metode</dt><dd><t t-esc="tender.metode_pemilihan"/></dd></div>
                                     <div><dt>HPS</dt><dd><t t-esc="tender.hps" t-options="{'widget': 'monetary', 'display_currency': tender.currency_id}"/></dd></div>
-                                    <div><dt>Status</dt><dd><t t-esc="tender.status"/></dd></div>
+                                    <div><dt>Status</dt><dd><t t-esc="dict(tender._fields['status'].selection).get(tender.status)"/></dd></div>
                                 </dl>
                             </article>
                         </div>
@@ -778,7 +778,7 @@
             <t t-if="request.env.user.id != request.env.ref('base.public_user').id">
                 <t t-set="partner_id" t-value="request.env.user.partner_id.id"/>
                 
-                <section class="sl-section" t-if="is_vendor and (tender.status in ['sppbj', 'pam', 'kontrak', 'pelaksanaan', 'selesai'])">
+                <section class="sl-section" t-if="is_vendor and (tender.status in ['penetapan_pemenang', 'masa_sanggah', 'sppbj', 'pam', 'kontrak', 'pelaksanaan', 'selesai'])">
                     <div class="container">
                         <div class="sl-grid-header">
                             <div>
@@ -789,7 +789,7 @@
                         
                         <div class="sl-card" style="padding: 2rem;">
                             <!-- Cari pemenang -->
-                            <t t-set="winning_bid" t-value="request.env['sadaya_lelang.penawaran'].sudo().search([('paket_id', '=', tender.id), ('status', '=', 'pemenang')], limit=1)"/>
+                            <t t-set="winning_bid" t-value="request.env['sadaya_lelang.penawaran'].sudo().search([('paket_id', '=', tender.id), ('status', '=', 'winner')], limit=1)"/>
                             <t t-set="is_me_winner" t-value="winning_bid and winning_bid.vendor_id.id == partner_id"/>
                             
                             <div t-if="winning_bid" class="alert alert-success mb-4" style="border-radius: 12px;">
@@ -813,13 +813,13 @@
                                     <!-- Upload Jaminan -->
                                     <div class="col-12 col-md-4">
                                         <div class="p-3 border rounded h-100">
-                                            <h6 class="fw-bold text-center"><i class="fa fa-shield me-2"></i> Jaminan Pelaksanaan</h6>
-                                            <p class="small text-muted text-center mb-3">Silakan unggah Jaminan Pelaksanaan.</p>
+                                            <h6 class="fw-bold text-center"><i class="fa fa-shield me-2"></i> Jaminan &amp; Jadwal Kerja</h6>
+                                            <p class="small text-muted text-center mb-3">Silakan unggah Jaminan Pelaksanaan &amp; Jadwal Kerja (PDF/ZIP).</p>
                                             
                                             <form t-if="not tender.file_jaminan_pelaksanaan" t-attf-action="/sadaya-lelang/tender/#{tender.id}/submit_kontrak_jaminan" method="post" enctype="multipart/form-data">
                                                 <input type="hidden" name="upload_type" value="jaminan"/>
-                                                <input class="form-control form-control-sm mb-2" type="file" name="file_upload" accept=".pdf,.jpg,.jpeg,.png" required="1"/>
-                                                <button type="submit" class="btn btn-sm btn-primary rounded-pill w-100">Unggah Jaminan</button>
+                                                <input class="form-control form-control-sm mb-2" type="file" name="file_upload" accept=".pdf,.zip,.rar" required="1"/>
+                                                <button type="submit" class="btn btn-sm btn-primary rounded-pill w-100">Unggah Dokumen</button>
                                             </form>
                                             <div t-else="" class="text-center">
                                                 <span class="badge bg-success mb-2"><i class="fa fa-check"></i> Sudah Diunggah</span>
@@ -831,7 +831,18 @@
                                     <div class="col-12 col-md-4">
                                         <div class="p-3 border rounded h-100">
                                             <h6 class="fw-bold text-center"><i class="fa fa-pencil-square-o me-2"></i> Dokumen Kontrak</h6>
-                                            <p class="small text-muted text-center mb-3">Unggah Kontrak yang sudah ditandatangani.</p>
+                                            <p class="small text-muted text-center mb-3">Unduh Draft, tandatangani, lalu unggah kembali.</p>
+                                            
+                                            <div t-if="tender.file_draft_kontrak" class="mb-3 text-center">
+                                                <a t-attf-href="/web/content/sadaya_lelang.paket/#{tender.id}/file_draft_kontrak?download=true" class="btn btn-sm btn-outline-info rounded-pill w-100">
+                                                    <i class="fa fa-download me-1"></i> Unduh Draft Kontrak
+                                                </a>
+                                            </div>
+                                            <div t-else="" class="mb-3 text-center">
+                                                <button class="btn btn-sm btn-outline-secondary rounded-pill w-100" disabled="1">
+                                                    Draft Belum Tersedia
+                                                </button>
+                                            </div>
                                             
                                             <form t-if="not tender.file_kontrak" t-attf-action="/sadaya-lelang/tender/#{tender.id}/submit_kontrak_jaminan" method="post" enctype="multipart/form-data">
                                                 <input type="hidden" name="upload_type" value="kontrak"/>
@@ -965,7 +976,7 @@
                                             <label class="sl-field-label">Nilai Penawaran (Rp) <span style="color: #dc2626;">*</span></label>
                                             <div class="input-group">
                                                 <span class="input-group-text" style="border-radius: 16px 0 0 16px; border-color: rgba(24,33,47,0.14); background: rgba(13,79,139,0.04); font-weight: 700; color: var(--sl-accent);">Rp</span>
-                                                <input type="number" class="form-control sl-input" style="border-radius: 0 16px 16px 0;" name="harga_penawaran" required="1" placeholder="Masukkan angka tanpa titik (contoh: 150000000)" t-att-value="existing_bid.harga_penawaran if existing_bid else ''"/>
+                                                <input type="text" class="form-control sl-input" style="border-radius: 0 16px 16px 0;" name="harga_penawaran" required="1" placeholder="Contoh: 150.000.000" t-att-value="int(existing_bid.harga_penawaran) if existing_bid else ''" oninput="let v = this.value.replace(/[^0-9]/g, ''); this.value = v.replace(/\B(?=(\d{3})+(?!\d))/g, '.');"/>
                                             </div>
                                             <small style="color: var(--sl-muted); margin-top: 0.35rem; display: block;">
                                                 Nilai HPS: <t t-esc="tender.hps" t-options="{'widget': 'monetary', 'display_currency': tender.currency_id}"/>
@@ -1017,7 +1028,7 @@
                                     <div><dt>Kode Tender</dt><dd><t t-esc="tender.kode_tender"/></dd></div>
                                     <div><dt>Metode</dt><dd><t t-esc="tender.metode_pemilihan"/></dd></div>
                                     <div><dt>HPS</dt><dd><t t-esc="tender.hps" t-options="{'widget': 'monetary', 'display_currency': tender.currency_id}"/></dd></div>
-                                    <div><dt>Status</dt><dd><span class="sl-label"><t t-esc="tender.status"/></span></dd></div>
+                                    <div><dt>Status</dt><dd><span class="sl-label"><t t-esc="dict(tender._fields['status'].selection).get(tender.status)"/></span></dd></div>
                                 </dl>
                             </article>
                         </div>

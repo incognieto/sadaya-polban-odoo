@@ -105,12 +105,16 @@ class SadayaLangsungController(http.Controller):
 				actions.append({"key": "pemeriksaan", "label": "Kirim ke Pemeriksaan (PPHP)", "class": "btn-primary"})
 		elif record.status_kontrak == "addendum_diajukan" and is_ppk:
 			actions.append({"key": "setujui_addendum", "label": "Setujui & Generate Addendum", "class": "btn-primary"})
+		elif record.status_kontrak == "addendum_ditolak" and is_vendor:
+			actions.append({"key": "kembali_pelaksanaan", "label": "Kembali ke Pelaksanaan", "class": "btn-outline-secondary"})
 		elif record.status_kontrak == "addendum_disetujui" and is_ppk:
 			actions.append({"key": "tte_ppk_addendum", "label": "TTE Addendum (PPK)", "class": "btn-success"})
 		elif record.status_kontrak == "addendum_tte_ppk" and is_vendor:
 			actions.append({"key": "tte_vendor_addendum", "label": "TTE Addendum (Vendor)", "class": "btn-success"})
 		elif record.status_kontrak == "pemeriksaan" and is_pphp:
-			actions.append({"key": "selesai_kontrak", "label": "Selesai Kontrak/BAST", "class": "btn-success"})
+			# Tombol Selesai Kontrak hanya muncul SETELAH PPHP mengisi form dan hasilnya Lulus
+			if record.hasil_pemeriksaan_pphp == 'lulus':
+				actions.append({"key": "selesai_kontrak", "label": "Selesai Kontrak/BAST", "class": "btn-success"})
 
 		if record.status_kontrak not in ("selesai_kontrak", "revisi", "batal") and (is_ppk or is_pphp):
 			actions.append({"key": "revisi", "label": "Revisi", "class": "btn-outline-secondary"})
@@ -321,10 +325,16 @@ class SadayaLangsungController(http.Controller):
 					"addendum_nilai_tambah": self._format_money(record.addendum_nilai_tambah),
 					"addendum_perpanjangan_hari": record.addendum_perpanjangan_hari or 0,
 					"filename_addendum": record.filename_addendum or "",
+					"tolak_addendum_alasan": record.tolak_addendum_alasan or "",
 					"tte_ppk_kontrak": record.tte_ppk_kontrak,
 					"tte_vendor_kontrak": record.tte_vendor_kontrak,
 					"tte_ppk_addendum": record.tte_ppk_addendum,
 					"tte_vendor_addendum": record.tte_vendor_addendum,
+					# === Pemeriksaan PPHP ===
+					"hasil_pemeriksaan_pphp": record.hasil_pemeriksaan_pphp or "",
+					"catatan_pphp": record.catatan_pphp or "",
+					"tanggal_bast": fields.Date.to_string(record.tanggal_bast) if record.tanggal_bast else "",
+					"filename_bast": record.filename_bast or "",
 					"actions": self._kontrak_actions(record),
 				}
 			)
@@ -1130,9 +1140,9 @@ class SadayaLangsungController(http.Controller):
 		is_vendor = self._is_vendor_user()
 
 		allowed = False
-		if action_key in ("persiapan_kontrak", "proses_tte", "tte_ppk", "setujui_addendum", "tte_ppk_addendum", "revisi", "batal"):
+		if action_key in ("persiapan_kontrak", "proses_tte", "tte_ppk", "setujui_addendum", "tolak_addendum", "tte_ppk_addendum", "revisi", "batal"):
 			allowed = is_ppk
-		elif action_key in ("tte_vendor", "tte_vendor_addendum"):
+		elif action_key in ("tte_vendor", "tte_vendor_addendum", "kembali_pelaksanaan"):
 			allowed = is_vendor
 		elif action_key == "pemeriksaan":
 			allowed = is_vendor or is_pphp or is_ppk
@@ -1148,6 +1158,8 @@ class SadayaLangsungController(http.Controller):
 			"tte_vendor": "action_tte_vendor",
 			"pemeriksaan": "action_pemeriksaan",
 			"setujui_addendum": "action_setujui_addendum",
+			"tolak_addendum": "action_tolak_addendum",
+			"kembali_pelaksanaan": "action_pelaksanaan",
 			"tte_ppk_addendum": "action_tte_ppk_addendum",
 			"tte_vendor_addendum": "action_tte_vendor_addendum",
 			"selesai_kontrak": "action_selesai_kontrak",
@@ -1189,7 +1201,7 @@ class SadayaLangsungController(http.Controller):
 		if not record.exists():
 			return self._redirect_with_message("/sadaya-langsung/kontrak", error="Kontrak tidak ditemukan")
 		
-		if record.status_kontrak != 'pelaksanaan':
+		if record.status_kontrak not in ('pelaksanaan', 'addendum_ditolak'):
 			return self._redirect_with_message("/sadaya-langsung/kontrak", error="Addendum hanya dapat diajukan di tengah pelaksanaan kontrak.")
 
 		justifikasi = post.get("justifikasi_addendum")
@@ -1205,6 +1217,36 @@ class SadayaLangsungController(http.Controller):
 			return self._redirect_with_message("/sadaya-langsung/kontrak", error=str(exc))
 
 		return self._redirect_with_message("/sadaya-langsung/kontrak", success="Pengajuan addendum berhasil dikirim.")
+
+	@http.route(
+		"/sadaya-langsung/kontrak/<int:kontrak_id>/tolak-addendum",
+		type="http",
+		auth="user",
+		website=True,
+		methods=["POST"],
+	)
+	def tolak_addendum(self, kontrak_id, **post):
+		user = request.env.user
+		if not user.has_group('sadaya_langsung.group_langsung_ppk'):
+			return self._redirect_with_message("/sadaya-langsung/kontrak", error="Hanya PPK yang dapat menolak addendum.")
+
+		record = request.env["sadaya_langsung.kontrak"].sudo().browse(kontrak_id)
+		if not record.exists():
+			return self._redirect_with_message("/sadaya-langsung/kontrak", error="Kontrak tidak ditemukan.")
+
+		if record.status_kontrak != 'addendum_diajukan':
+			return self._redirect_with_message("/sadaya-langsung/kontrak", error="Penolakan hanya dapat dilakukan saat addendum sedang diajukan.")
+
+		alasan = post.get("alasan_tolak", "").strip()
+		if not alasan:
+			return self._redirect_with_message("/sadaya-langsung/kontrak", error="Alasan penolakan wajib diisi.")
+
+		try:
+			record.action_tolak_addendum(alasan)
+		except Exception as exc:
+			return self._redirect_with_message("/sadaya-langsung/kontrak", error=str(exc))
+
+		return self._redirect_with_message("/sadaya-langsung/kontrak", success="Pengajuan addendum telah ditolak.")
 
 	@http.route(
 		"/sadaya-langsung/kontrak/<int:kontrak_id>/pphp-submit",
@@ -1233,8 +1275,9 @@ class SadayaLangsungController(http.Controller):
 			return self._redirect_with_message("/sadaya-langsung/kontrak", error="Hasil pemeriksaan wajib dipilih.")
 		if not catatan:
 			return self._redirect_with_message("/sadaya-langsung/kontrak", error="Catatan pemeriksaan wajib diisi.")
-		if not tanggal_bast:
-			return self._redirect_with_message("/sadaya-langsung/kontrak", error="Tanggal BAST wajib diisi.")
+		# Tanggal BAST hanya wajib jika hasil Lulus (BAST hanya diterbitkan saat pekerjaan diterima)
+		if hasil == 'lulus' and not tanggal_bast:
+			return self._redirect_with_message("/sadaya-langsung/kontrak", error="Tanggal BAST wajib diisi jika hasil pemeriksaan Lulus.")
 
 		dokumen_bast_b64 = None
 		filename_bast = None

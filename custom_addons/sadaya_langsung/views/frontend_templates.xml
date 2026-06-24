@@ -825,8 +825,13 @@
                     </dl>
 
                     <!-- Detail Pengajuan Addendum -->
-                    <div t-if="kontrak['status_code'] in ('addendum_diajukan', 'addendum_disetujui', 'addendum_tte_ppk', 'addendum_kontrak')" class="sl-subsection">
+                    <div t-if="kontrak['status_code'] in ('addendum_diajukan', 'addendum_ditolak', 'addendum_disetujui', 'addendum_tte_ppk', 'addendum_kontrak')" class="sl-subsection">
                       <h4>Informasi Addendum Kontrak</h4>
+                      <!-- Notifikasi Penolakan -->
+                      <div t-if="kontrak['status_code'] == 'addendum_ditolak'" class="alert alert-danger py-2 mb-2">
+                        <strong>Addendum Ditolak oleh PPK</strong>
+                        <p class="mb-0 mt-1"><t t-esc="kontrak['tolak_addendum_alasan']"/></p>
+                      </div>
                       <dl class="sl-dl">
                         <div><dt>Justifikasi / Lingkup</dt><dd><t t-esc="kontrak['justifikasi_addendum']"/></dd></div>
                         <div><dt>Nilai Kontrak Tambahan</dt><dd><t t-esc="kontrak['addendum_nilai_tambah']"/></dd></div>
@@ -834,13 +839,13 @@
                         <t t-if="kontrak['filename_addendum']">
                           <div><dt>Dokumen Addendum</dt><dd><span class="text-success"><t t-esc="kontrak['filename_addendum']"/></span></dd></div>
                         </t>
-                        <div>
+                        <div t-if="kontrak['status_code'] not in ('addendum_diajukan', 'addendum_ditolak')">
                           <dt>TTE PPK</dt>
                           <dd>
                             <span t-att-class="'text-success' if kontrak['tte_ppk_addendum'] else 'text-danger'"><t t-esc="'Sudah TTE' if kontrak['tte_ppk_addendum'] else 'Belum TTE'"/></span>
                           </dd>
                         </div>
-                        <div>
+                        <div t-if="kontrak['status_code'] not in ('addendum_diajukan', 'addendum_ditolak', 'addendum_disetujui')">
                           <dt>TTE Vendor</dt>
                           <dd>
                             <span t-att-class="'text-success' if kontrak['tte_vendor_addendum'] else 'text-danger'"><t t-esc="'Sudah TTE' if kontrak['tte_vendor_addendum'] else 'Belum TTE'"/></span>
@@ -849,8 +854,8 @@
                       </dl>
                     </div>
 
-                    <!-- Form Pengajuan Addendum (Khusus Vendor saat Pelaksanaan) -->
-                    <details class="sl-inline-panel mt-3" t-if="is_vendor and kontrak['status_code'] == 'pelaksanaan'">
+                    <!-- Form Pengajuan Addendum (Khusus Vendor saat Pelaksanaan atau setelah Ditolak) -->
+                    <details class="sl-inline-panel mt-3" t-if="is_vendor and kontrak['status_code'] in ('pelaksanaan', 'addendum_ditolak')">
                       <summary>Ajukan Addendum Kontrak</summary>
                       <div class="sl-inline-panel__body">
                         <form class="sl-form sl-form--inline" t-attf-action="/sadaya-langsung/kontrak/{{ kontrak['id'] }}/ajukan-addendum" method="post">
@@ -876,6 +881,23 @@
                       </div>
                     </details>
 
+                    <!-- Form Tolak Addendum (Khusus PPK saat addendum_diajukan) -->
+                    <details class="sl-inline-panel mt-3" t-if="env.user.has_group('sadaya_langsung.group_langsung_ppk') and kontrak['status_code'] == 'addendum_diajukan'">
+                      <summary class="text-danger">Tolak Pengajuan Addendum</summary>
+                      <div class="sl-inline-panel__body">
+                        <form class="sl-form sl-form--inline" t-attf-action="/sadaya-langsung/kontrak/{{ kontrak['id'] }}/tolak-addendum" method="post">
+                          <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                          <div class="mb-2">
+                            <label class="sl-field-label">Alasan Penolakan <span class="text-danger">*</span></label>
+                            <textarea class="form-control sl-input form-control-sm" name="alasan_tolak" required="required" rows="3" placeholder="Jelaskan alasan penolakan pengajuan addendum ini..."></textarea>
+                          </div>
+                          <div>
+                            <button type="submit" class="btn btn-sm btn-danger w-100">Konfirmasi Tolak Addendum</button>
+                          </div>
+                        </form>
+                      </div>
+                    </details>
+
                     <div class="sl-actions" t-if="kontrak['actions']">
                       <t t-foreach="kontrak['actions']" t-as="action">
                         <form t-attf-action="/sadaya-langsung/kontrak/{{ kontrak['id'] }}/workflow" method="post">
@@ -887,6 +909,68 @@
                         </form>
                       </t>
                     </div>
+
+                    <!-- Informasi Hasil Pemeriksaan PPHP (tampil jika sudah ada hasil) -->
+                    <div t-if="kontrak['hasil_pemeriksaan_pphp']" class="sl-subsection mt-3">
+                      <h4>Hasil Pemeriksaan PPHP</h4>
+                      <dl class="sl-dl">
+                        <div>
+                          <dt>Hasil</dt>
+                          <dd>
+                            <span t-att-class="'badge bg-success' if kontrak['hasil_pemeriksaan_pphp'] == 'lulus' else 'badge bg-danger'">
+                              <t t-esc="'Lulus' if kontrak['hasil_pemeriksaan_pphp'] == 'lulus' else 'Tidak Lulus / Perlu Perbaikan'"/>
+                            </span>
+                          </dd>
+                        </div>
+                        <div><dt>Catatan PPHP</dt><dd><t t-esc="kontrak['catatan_pphp']"/></dd></div>
+                        <div><dt>Tanggal BAST</dt><dd><t t-esc="kontrak['tanggal_bast'] or '-'"/></dd></div>
+                        <div t-if="kontrak['filename_bast']">
+                          <dt>Dokumen BAST</dt>
+                          <dd><span class="text-success"><t t-esc="kontrak['filename_bast']"/></span></dd>
+                        </div>
+                      </dl>
+                    </div>
+
+                    <!-- Form Pemeriksaan PPHP (khusus user PPHP saat status pemeriksaan dan belum ada hasil) -->
+                    <details class="sl-inline-panel mt-3" t-if="env.user.has_group('sadaya_langsung.group_langsung_pphp') and kontrak['status_code'] == 'pemeriksaan' and not kontrak['hasil_pemeriksaan_pphp']">
+                      <summary>Form Pemeriksaan PPHP</summary>
+                      <div class="sl-inline-panel__body">
+                        <form class="sl-form sl-form--inline" t-attf-action="/sadaya-langsung/kontrak/{{ kontrak['id'] }}/pphp-submit" method="post" enctype="multipart/form-data">
+                          <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                          <div class="mb-2">
+                            <label class="sl-field-label">Hasil Pemeriksaan <span class="text-danger">*</span></label>
+                            <div class="d-flex gap-3 mt-1">
+                              <div class="form-check">
+                                <input class="form-check-input" type="radio" name="hasil_pemeriksaan" id="hasil_lulus" value="lulus" required="required" onchange="document.getElementById('bast-section').style.display='block'"/>
+                                <label class="form-check-label text-success fw-semibold" for="hasil_lulus">✓ Lulus</label>
+                              </div>
+                              <div class="form-check">
+                                <input class="form-check-input" type="radio" name="hasil_pemeriksaan" id="hasil_tidak_lulus" value="tidak_lulus" onchange="document.getElementById('bast-section').style.display='none'"/>
+                                <label class="form-check-label text-danger fw-semibold" for="hasil_tidak_lulus">✗ Tidak Lulus / Perlu Perbaikan</label>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="mb-2">
+                            <label class="sl-field-label">Catatan Pemeriksaan <span class="text-danger">*</span></label>
+                            <textarea class="form-control sl-input form-control-sm" name="catatan_pphp" required="required" rows="3" placeholder="Tuliskan catatan hasil pemeriksaan kesesuaian pekerjaan..."></textarea>
+                          </div>
+                          <!-- Section BAST: hanya tampil saat hasil Lulus -->
+                          <div id="bast-section" class="row g-2 mb-2" style="display:none;">
+                            <div class="col-12 col-lg-6">
+                              <label class="sl-field-label">Tanggal BAST <span class="text-danger">*</span></label>
+                              <input class="form-control sl-input form-control-sm" type="date" name="tanggal_bast"/>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                              <label class="sl-field-label">Upload Dokumen BAST <span class="text-muted">(opsional)</span></label>
+                              <input class="form-control sl-input form-control-sm" type="file" name="dokumen_bast" accept=".pdf,.doc,.docx"/>
+                            </div>
+                          </div>
+                          <div>
+                            <button type="submit" class="btn btn-sm btn-success w-100">Submit Hasil Pemeriksaan</button>
+                          </div>
+                        </form>
+                      </div>
+                    </details>
 
                     <details class="sl-inline-panel" t-if="env.user.has_group('sadaya_langsung.group_langsung_ppk')">
                       <summary>Edit Kontrak</summary>
