@@ -257,6 +257,14 @@ class SadayaLangsungController(http.Controller):
 					"tte_vendor_kontrak": record.tte_vendor_kontrak,
 					"tte_ppk_addendum": record.tte_ppk_addendum,
 					"tte_vendor_addendum": record.tte_vendor_addendum,
+					# === Data Pemeriksaan PPHP ===
+					"hasil_pemeriksaan": record.hasil_pemeriksaan or "",
+					"hasil_pemeriksaan_label": self._selection_label(
+						record, "hasil_pemeriksaan", record.hasil_pemeriksaan
+					) if record.hasil_pemeriksaan else "",
+					"catatan_pphp": record.catatan_pphp or "",
+					"tanggal_bast": fields.Date.to_string(record.tanggal_bast) if record.tanggal_bast else "",
+					"filename_bast": record.filename_bast or "",
 					"actions": self._kontrak_actions(record),
 				}
 			)
@@ -290,10 +298,11 @@ class SadayaLangsungController(http.Controller):
 		kontrak_domain = []
 		if is_vendor:
 			partner_ids = self._get_user_vendor_partners().ids
+			# Vendor bisa lihat SEMUA paket kecuali yang masih internal
 			paket_domain = [
-				('penawaran_ids.vendor_id', 'in', partner_ids),
 				('status_paket', 'not in', ['draft', 'menunggu_persetujuan', 'revisi'])
 			]
+			# Vendor hanya lihat kontrak miliknya sendiri
 			kontrak_domain = [('paket_id.vendor_pemenang_id', 'in', partner_ids)]
 
 		paket_breakdown = Paket.read_group(
@@ -357,9 +366,8 @@ class SadayaLangsungController(http.Controller):
 		is_vendor = self._is_vendor_user()
 		domain = []
 		if is_vendor:
-			partner_ids = self._get_user_vendor_partners().ids
+			# Vendor bisa lihat SEMUA paket kecuali yang masih internal (draft/menunggu/revisi)
 			domain = [
-				('penawaran_ids.vendor_id', 'in', partner_ids),
 				('status_paket', 'not in', ['draft', 'menunggu_persetujuan', 'revisi'])
 			]
 		return request.render(
@@ -965,3 +973,58 @@ class SadayaLangsungController(http.Controller):
 
 		return self._redirect_with_message("/sadaya-langsung/kontrak", success="Pengajuan addendum berhasil dikirim.")
 
+	@http.route(
+		"/sadaya-langsung/kontrak/<int:kontrak_id>/pphp-submit",
+		type="http",
+		auth="user",
+		website=True,
+		methods=["POST"],
+	)
+	def pphp_submit(self, kontrak_id, **post):
+		"""PPHP mengisi form pemeriksaan dan hasilnya menentukan apakah kontrak selesai."""
+		if not request.env.user.has_group('sadaya_langsung.group_langsung_pphp'):
+			return self._redirect_with_message("/sadaya-langsung/kontrak", error="Hanya PPHP yang dapat mengisi form pemeriksaan.")
+
+		record = request.env["sadaya_langsung.kontrak"].sudo().browse(kontrak_id)
+		if not record.exists():
+			return self._redirect_with_message("/sadaya-langsung/kontrak", error="Kontrak tidak ditemukan.")
+
+		if record.status_kontrak != 'pemeriksaan':
+			return self._redirect_with_message("/sadaya-langsung/kontrak", error="Form pemeriksaan hanya bisa diisi saat kontrak dalam status Pemeriksaan PPHP.")
+
+		hasil = post.get("hasil_pemeriksaan")
+		catatan = post.get("catatan_pphp", "").strip()
+		tanggal_bast = post.get("tanggal_bast")
+
+		if not hasil:
+			return self._redirect_with_message("/sadaya-langsung/kontrak", error="Hasil pemeriksaan wajib dipilih.")
+		if not catatan:
+			return self._redirect_with_message("/sadaya-langsung/kontrak", error="Catatan pemeriksaan wajib diisi.")
+		if not tanggal_bast:
+			return self._redirect_with_message("/sadaya-langsung/kontrak", error="Tanggal BAST wajib diisi.")
+
+		dokumen_bast_b64 = None
+		filename_bast = None
+		if request.httprequest.files:
+			f_bast = request.httprequest.files.get("dokumen_bast")
+			if f_bast:
+				data = f_bast.read()
+				if data:
+					dokumen_bast_b64 = base64.b64encode(data).decode("utf-8")
+					filename_bast = getattr(f_bast, "filename", None)
+
+		try:
+			record.action_submit_pphp(
+				hasil=hasil,
+				catatan=catatan,
+				tanggal_bast=tanggal_bast,
+				dokumen_bast=dokumen_bast_b64,
+				filename_bast=filename_bast,
+			)
+		except Exception as exc:
+			return self._redirect_with_message("/sadaya-langsung/kontrak", error=str(exc))
+
+		if hasil == 'lulus':
+			return self._redirect_with_message("/sadaya-langsung/kontrak", success="Pemeriksaan selesai. Kontrak telah diselesaikan (BAST).")
+		else:
+			return self._redirect_with_message("/sadaya-langsung/kontrak", success="Hasil pemeriksaan: Tidak Lulus. Kontrak dikembalikan ke PPK untuk ditindaklanjuti.")
