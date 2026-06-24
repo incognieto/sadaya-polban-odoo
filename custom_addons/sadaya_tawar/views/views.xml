@@ -81,6 +81,17 @@
                                 </list>
                             </field>
                         </page>
+
+                        <page string="Peserta">
+                            <field name="peserta_ids" readonly="state in ['eval', 'routed']">
+                                <list editable="bottom">
+                                    <field name="vendor_id"/>
+                                    <field name="tanggal_daftar"/>
+                                    <field name="status"/>
+                                    <field name="catatan"/>
+                                </list>
+                            </field>
+                        </page>
                     </notebook>
                 </sheet>
             </form>
