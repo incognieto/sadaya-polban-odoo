@@ -153,9 +153,12 @@ class TenderPortal(http.Controller):
                     'file_jaminan_pelaksanaan_name': file_name
                 })
             elif upload_type == 'kontrak':
-                tender.sudo().write({
+                update_vals = {
                     'file_kontrak': file_content,
                     'file_kontrak_name': file_name
-                })
+                }
+                if tender.status in ['sppbj', 'pam']:
+                    update_vals['status'] = 'kontrak'
+                tender.sudo().write(update_vals)
                 
         return request.redirect('/sadaya-lelang/tender/%s' % tender.id)
