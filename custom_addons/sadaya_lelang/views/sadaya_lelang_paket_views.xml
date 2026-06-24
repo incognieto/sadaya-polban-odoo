@@ -79,13 +79,13 @@
                                     <field name="file_kebutuhan"/>
                                     <field name="file_disposisi"/>
                                 </group>
-                                <group string="Fase Penetapan">
-                                    <field name="file_sppbj_name" invisible="1"/>
-                                    <field name="file_sppbj" filename="file_sppbj_name"/>
-                                    <field name="file_jaminan_pelaksanaan_name" invisible="1"/>
-                                    <field name="file_jaminan_pelaksanaan" filename="file_jaminan_pelaksanaan_name"/>
+                                <group string="Fase Kontrak &amp; Pelaksanaan">
+                                    <field name="file_draft_kontrak_name" invisible="1"/>
+                                    <field name="file_draft_kontrak" filename="file_draft_kontrak_name"/>
                                     <field name="file_kontrak_name" invisible="1"/>
                                     <field name="file_kontrak" filename="file_kontrak_name"/>
+                                    <field name="file_jaminan_pelaksanaan_name" invisible="1"/>
+                                    <field name="file_jaminan_pelaksanaan" filename="file_jaminan_pelaksanaan_name"/>
                                 </group>
                                 <group string="Fase Serah Terima">
                                     <field name="file_laporan_pphp_name" invisible="1"/>

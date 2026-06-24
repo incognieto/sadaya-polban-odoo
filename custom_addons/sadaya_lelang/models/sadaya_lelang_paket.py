@@ -67,7 +67,9 @@ class SadayaLelangPaket(models.Model):
     
     file_sppbj = fields.Binary(string='Dokumen SPPBJ')
     file_sppbj_name = fields.Char(string='Nama File SPPBJ')
-    file_kontrak = fields.Binary(string='Dokumen Kontrak')
+    file_draft_kontrak = fields.Binary(string='Draft Kontrak (PPK)')
+    file_draft_kontrak_name = fields.Char(string='Nama File Draft Kontrak')
+    file_kontrak = fields.Binary(string='Dokumen Kontrak (Vendor TTD)')
     file_kontrak_name = fields.Char(string='Nama File Kontrak')
     file_jaminan_pelaksanaan = fields.Binary(string='Jaminan Pelaksanaan (Vendor)')
     file_jaminan_pelaksanaan_name = fields.Char(string='Nama File Jaminan Pelaksanaan')
