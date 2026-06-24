@@ -79,20 +79,29 @@
                                     <field name="file_disposisi"/>
                                 </group>
                                 <group string="Fase Penetapan">
-                                    <field name="file_sppbj"/>
-                                    <field name="file_jaminan_pelaksanaan"/>
-                                    <field name="file_kontrak"/>
+                                    <field name="file_sppbj_name" invisible="1"/>
+                                    <field name="file_sppbj" filename="file_sppbj_name"/>
+                                    <field name="file_jaminan_pelaksanaan_name" invisible="1"/>
+                                    <field name="file_jaminan_pelaksanaan" filename="file_jaminan_pelaksanaan_name"/>
+                                    <field name="file_kontrak_name" invisible="1"/>
+                                    <field name="file_kontrak" filename="file_kontrak_name"/>
                                 </group>
                                 <group string="Fase Serah Terima">
-                                    <field name="file_bast"/>
+                                    <field name="file_laporan_pphp_name" invisible="1"/>
+                                    <field name="file_laporan_pphp" filename="file_laporan_pphp_name"/>
+                                    <field name="file_bast_name" invisible="1"/>
+                                    <field name="file_bast" filename="file_bast_name"/>
                                 </group>
                             </group>
                         </page>
                         <page string="Dokumen Lelang (POKJA)">
                             <group>
-                                <field name="file_dokumen_pemilihan" filename="name"/>
-                                <field name="file_ba_penjelasan" filename="name"/>
-                                <field name="file_bahp" filename="name"/>
+                                <field name="file_dokumen_pemilihan_name" invisible="1"/>
+                                <field name="file_dokumen_pemilihan" filename="file_dokumen_pemilihan_name"/>
+                                <field name="file_ba_penjelasan_name" invisible="1"/>
+                                <field name="file_ba_penjelasan" filename="file_ba_penjelasan_name"/>
+                                <field name="file_bahp_name" invisible="1"/>
+                                <field name="file_bahp" filename="file_bahp_name"/>
                             </group>
                             <separator string="Dokumen Lainnya"/>
                             <field name="dokumen_ids">
@@ -150,6 +159,8 @@
         <field name="arch" type="xml">
             <form string="Dokumen Penawaran">
                 <header>
+                    <button name="action_set_pemenang" type="object" string="Tetapkan Pemenang" class="oe_highlight" invisible="status == 'winner'" groups="sadaya_lelang.group_lelang_pokja"/>
+                    <button name="action_set_gagal" type="object" string="Gugurkan" invisible="status == 'failed'" groups="sadaya_lelang.group_lelang_pokja"/>
                     <field name="status" widget="statusbar" options="{'clickable': '1'}"/>
                 </header>
                 <sheet>
@@ -174,7 +185,7 @@
                         <group string="Harga &amp; Kualifikasi">
                             <field name="skor_harga" invisible="eval_administrasi != 'lulus'"/>
                             <field name="eval_harga_wajar" invisible="eval_administrasi != 'lulus'"/>
-                            <field name="eval_kualifikasi" widget="radio" options="{'horizontal': true}" invisible="not eval_harga_wajar"/>
+                            <field name="eval_kualifikasi" widget="radio" options="{'horizontal': true}"/>
                         </group>
                     </group>
                 </sheet>

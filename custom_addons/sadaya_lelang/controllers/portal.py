@@ -68,7 +68,7 @@ class TenderPortal(http.Controller):
         vals = {
             'paket_id': tender.id,
             'vendor_id': partner.id,
-            'harga_penawaran': float(harga_penawaran) if harga_penawaran else 0.0,
+            'harga_penawaran': float(harga_penawaran.replace('.', '').replace(',', '')) if harga_penawaran else 0.0,
         }
         
         if file_kualifikasi:

@@ -8,5 +8,13 @@
             <field name="padding">5</field>
             <field name="company_id" eval="False"/>
         </record>
+
+        <record id="seq_sadaya_lelang_penawaran" model="ir.sequence">
+            <field name="name">Sadaya Lelang Nomor Penawaran</field>
+            <field name="code">sadaya_lelang.penawaran</field>
+            <field name="prefix">PNW/LELANG/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
     </data>
 </odoo>

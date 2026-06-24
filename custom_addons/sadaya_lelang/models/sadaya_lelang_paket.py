@@ -59,13 +59,22 @@ class SadayaLelangPaket(models.Model):
     
     # Dokumen POKJA
     file_dokumen_pemilihan = fields.Binary(string='Dokumen Pemilihan')
+    file_dokumen_pemilihan_name = fields.Char(string='Nama File Dokumen Pemilihan')
     file_ba_penjelasan = fields.Binary(string='BA Pemberian Penjelasan')
+    file_ba_penjelasan_name = fields.Char(string='Nama File BA Penjelasan')
     file_bahp = fields.Binary(string='Berita Acara Hasil Pelelangan (BAHP)')
+    file_bahp_name = fields.Char(string='Nama File BAHP')
     
     file_sppbj = fields.Binary(string='Dokumen SPPBJ')
+    file_sppbj_name = fields.Char(string='Nama File SPPBJ')
     file_kontrak = fields.Binary(string='Dokumen Kontrak')
+    file_kontrak_name = fields.Char(string='Nama File Kontrak')
     file_jaminan_pelaksanaan = fields.Binary(string='Jaminan Pelaksanaan (Vendor)')
+    file_jaminan_pelaksanaan_name = fields.Char(string='Nama File Jaminan Pelaksanaan')
     file_bast = fields.Binary(string='Dokumen BAST')
+    file_bast_name = fields.Char(string='Nama File BAST')
+    file_laporan_pphp = fields.Binary(string='Laporan Progres PPHP')
+    file_laporan_pphp_name = fields.Char(string='Nama File Laporan PPHP')
 
     jadwal_ids = fields.One2many('sadaya_lelang.jadwal', 'paket_id', string='Jadwal Tender')
     dokumen_ids = fields.One2many('sadaya_lelang.dokumen', 'paket_id', string='Dokumen Pemilihan (Legacy)')

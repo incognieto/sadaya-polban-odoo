@@ -8,6 +8,10 @@ access_lelang_paket_portal,sadaya_lelang.paket.portal,model_sadaya_lelang_paket,
 access_lelang_paket_public,sadaya_lelang.paket.public,model_sadaya_lelang_paket,base.group_public,1,0,0,0
 
 access_lelang_jadwal_pokja,sadaya_lelang.jadwal.pokja,model_sadaya_lelang_jadwal,group_lelang_pokja,1,1,1,1
+access_lelang_jadwal_ppk,sadaya_lelang.jadwal.ppk,model_sadaya_lelang_jadwal,group_lelang_ppk,1,0,0,0
+access_lelang_jadwal_pphp,sadaya_lelang.jadwal.pphp,model_sadaya_lelang_jadwal,group_lelang_pphp,1,0,0,0
+access_lelang_jadwal_user,sadaya_lelang.jadwal.user,model_sadaya_lelang_jadwal,group_lelang_user,1,0,0,0
+access_lelang_jadwal_manajemen,sadaya_lelang.jadwal.manajemen,model_sadaya_lelang_jadwal,group_lelang_manajemen,1,0,0,0
 access_lelang_jadwal_portal,sadaya_lelang.jadwal.portal,model_sadaya_lelang_jadwal,base.group_portal,1,0,0,0
 access_lelang_jadwal_public,sadaya_lelang.jadwal.public,model_sadaya_lelang_jadwal,base.group_public,1,0,0,0
 

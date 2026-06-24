@@ -554,7 +554,7 @@
                                 <article class="sl-card sl-card--detail">
                                     <div class="sl-card__top">
                                         <div>
-                                            <span class="sl-label"><t t-esc="tender.status"/></span>
+                                            <span class="sl-label"><t t-esc="dict(tender._fields['status'].selection).get(tender.status)"/></span>
                                             <h3><t t-esc="tender.name"/></h3>
                                         </div>
                                         <strong><t t-esc="tender.hps" t-options="{'widget': 'monetary', 'display_currency': tender.currency_id}"/></strong>
@@ -605,7 +605,7 @@
                             <article class="sl-card sl-card--detail">
                                 <div class="sl-card__top">
                                     <div>
-                                        <span class="sl-label"><t t-esc="tender.status"/></span>
+                                        <span class="sl-label"><t t-esc="dict(tender._fields['status'].selection).get(tender.status)"/></span>
                                         <h3>Informasi Tender</h3>
                                     </div>
                                 </div>
@@ -613,7 +613,7 @@
                                     <div><dt>Kode Tender</dt><dd><t t-esc="tender.kode_tender"/></dd></div>
                                     <div><dt>Metode</dt><dd><t t-esc="tender.metode_pemilihan"/></dd></div>
                                     <div><dt>HPS</dt><dd><t t-esc="tender.hps" t-options="{'widget': 'monetary', 'display_currency': tender.currency_id}"/></dd></div>
-                                    <div><dt>Status</dt><dd><t t-esc="tender.status"/></dd></div>
+                                    <div><dt>Status</dt><dd><t t-esc="dict(tender._fields['status'].selection).get(tender.status)"/></dd></div>
                                 </dl>
                             </article>
                         </div>
@@ -852,13 +852,13 @@
                                     <!-- Upload Jaminan -->
                                     <div class="col-12 col-md-4">
                                         <div class="p-3 border rounded h-100">
-                                            <h6 class="fw-bold text-center"><i class="fa fa-shield me-2"></i> Jaminan Pelaksanaan</h6>
-                                            <p class="small text-muted text-center mb-3">Silakan unggah Jaminan Pelaksanaan.</p>
+                                            <h6 class="fw-bold text-center"><i class="fa fa-shield me-2"></i> Jaminan &amp; Jadwal Kerja</h6>
+                                            <p class="small text-muted text-center mb-3">Silakan unggah Jaminan Pelaksanaan &amp; Jadwal Kerja (PDF/ZIP).</p>
                                             
                                             <form t-if="not tender.file_jaminan_pelaksanaan" t-attf-action="/sadaya-lelang/tender/#{tender.id}/submit_kontrak_jaminan" method="post" enctype="multipart/form-data">
                                                 <input type="hidden" name="upload_type" value="jaminan"/>
-                                                <input class="form-control form-control-sm mb-2" type="file" name="file_upload" accept=".pdf,.jpg,.jpeg,.png" required="1"/>
-                                                <button type="submit" class="btn btn-sm btn-primary rounded-pill w-100">Unggah Jaminan</button>
+                                                <input class="form-control form-control-sm mb-2" type="file" name="file_upload" accept=".pdf,.zip,.rar" required="1"/>
+                                                <button type="submit" class="btn btn-sm btn-primary rounded-pill w-100">Unggah Dokumen</button>
                                             </form>
                                             <div t-else="" class="text-center">
                                                 <span class="badge bg-success mb-2"><i class="fa fa-check"></i> Sudah Diunggah</span>
@@ -1004,7 +1004,7 @@
                                             <label class="sl-field-label">Nilai Penawaran (Rp) <span style="color: #dc2626;">*</span></label>
                                             <div class="input-group">
                                                 <span class="input-group-text" style="border-radius: 16px 0 0 16px; border-color: rgba(24,33,47,0.14); background: rgba(13,79,139,0.04); font-weight: 700; color: var(--sl-accent);">Rp</span>
-                                                <input type="number" class="form-control sl-input" style="border-radius: 0 16px 16px 0;" name="harga_penawaran" required="1" placeholder="Masukkan angka tanpa titik (contoh: 150000000)" t-att-value="existing_bid.harga_penawaran if existing_bid else ''"/>
+                                                <input type="text" class="form-control sl-input" style="border-radius: 0 16px 16px 0;" name="harga_penawaran" required="1" placeholder="Contoh: 150.000.000" t-att-value="int(existing_bid.harga_penawaran) if existing_bid else ''" oninput="let v = this.value.replace(/[^0-9]/g, ''); this.value = v.replace(/\B(?=(\d{3})+(?!\d))/g, '.');"/>
                                             </div>
                                             <small style="color: var(--sl-muted); margin-top: 0.35rem; display: block;">
                                                 Nilai HPS: <t t-esc="tender.hps" t-options="{'widget': 'monetary', 'display_currency': tender.currency_id}"/>
@@ -1056,7 +1056,7 @@
                                     <div><dt>Kode Tender</dt><dd><t t-esc="tender.kode_tender"/></dd></div>
                                     <div><dt>Metode</dt><dd><t t-esc="tender.metode_pemilihan"/></dd></div>
                                     <div><dt>HPS</dt><dd><t t-esc="tender.hps" t-options="{'widget': 'monetary', 'display_currency': tender.currency_id}"/></dd></div>
-                                    <div><dt>Status</dt><dd><span class="sl-label"><t t-esc="tender.status"/></span></dd></div>
+                                    <div><dt>Status</dt><dd><span class="sl-label"><t t-esc="dict(tender._fields['status'].selection).get(tender.status)"/></span></dd></div>
                                 </dl>
                             </article>
                         </div>
