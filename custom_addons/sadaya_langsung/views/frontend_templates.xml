@@ -241,7 +241,7 @@
           <div class="container">
             <div class="row g-3">
               <t t-foreach="paket_cards" t-as="paket">
-                <div class="col-12 col-lg-6">
+                <div class="col-12 col-lg-6 sl-card-col">
                   <article class="sl-card sl-card--detail">
                     <div class="sl-card__top">
                       <div>
@@ -270,221 +270,471 @@
 
                     <details class="sl-inline-panel" t-if="env.user.has_group('sadaya_langsung.group_langsung_ppk') or env.user.has_group('sadaya_langsung.group_langsung_pp')">
                       <summary>Edit Paket &amp; Kelola Penawaran</summary>
-                      <div class="sl-inline-panel__body">
-                        <form class="sl-form sl-form--inline" t-attf-action="/sadaya-langsung/paket/{{ paket['id'] }}/update" method="post" enctype="multipart/form-data">
-                          <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                          <div class="row g-2">
-                            <div class="col-12 col-lg-6">
-                              <label class="sl-field-label">Nama Paket</label>
-                              <input class="form-control sl-input" type="text" name="name" t-att-value="paket['name']" required="required"/>
-                            </div>
-                            <div class="col-12 col-lg-6">
-                              <label class="sl-field-label">Unit Pengusul</label>
-                              <input class="form-control sl-input" type="text" name="unit_pengusul" t-att-value="paket['unit_pengusul'] if paket['unit_pengusul'] != '-' else ''"/>
-                            </div>
-                            <div class="col-12 col-lg-4">
-                              <label class="sl-field-label">Jenis</label>
-                              <select class="form-select sl-input" name="jenis_pengadaan">
-                                <option value="">Pilih jenis</option>
-                                <t t-foreach="jenis_pengadaan_options" t-as="option">
-                                  <option t-att-value="option['value']" t-att-selected="option['value'] == paket['jenis_pengadaan_code'] and 'selected' or None">
-                                    <t t-esc="option['label']"/>
-                                  </option>
-                                </t>
-                              </select>
-                            </div>
-                            <div class="col-12 col-lg-4">
-                              <label class="sl-field-label">Status</label>
-                              <select class="form-select sl-input" name="status_paket">
-                                <t t-foreach="status_paket_options" t-as="status_option">
-                                  <option t-att-value="status_option['value']" t-att-selected="status_option['value'] == paket['status_code'] and 'selected' or None">
-                                    <t t-esc="status_option['label']"/>
-                                  </option>
-                                </t>
-                              </select>
-                            </div>
-                            <div class="col-12 col-lg-4">
-                              <label class="sl-field-label">Vendor Pemenang</label>
-                              <select class="form-select sl-input" name="vendor_pemenang_id">
-                                <option value="">Belum dipilih</option>
-                                <t t-foreach="vendor_options" t-as="vendor_option">
-                                  <option t-att-value="vendor_option['id']" t-att-selected="vendor_option['id'] == paket['vendor_pemenang_id'] and 'selected' or None">
-                                    <t t-esc="vendor_option['name']"/>
-                                  </option>
-                                </t>
-                              </select>
-                            </div>
-                            <div class="col-12 col-lg-4">
-                              <label class="sl-field-label">Nilai HPS</label>
-                              <input class="form-control sl-input" type="number" step="0.01" name="nilai_hps" t-att-value="paket['nilai_hps_raw']"/>
-                            </div>
-                            <div class="col-12 col-lg-4">
-                              <label class="sl-field-label">Tanggal</label>
-                              <input class="form-control sl-input" type="date" name="tanggal" t-att-value="paket['tanggal_raw']"/>
-                            </div>
-                            <div class="col-12 col-lg-4">
-                              <label class="sl-field-label">Tanggal Mulai</label>
-                              <input class="form-control sl-input" type="date" name="tanggal_mulai" t-att-value="paket['tanggal_mulai']"/>
-                            </div>
-                            <div class="col-12 col-lg-6">
-                              <label class="sl-field-label">Tanggal Selesai</label>
-                              <input class="form-control sl-input" type="date" name="tanggal_selesai" t-att-value="paket['tanggal_selesai']"/>
-                            </div>
-                            <div class="col-12 col-lg-6">
-                              <label class="sl-field-label">Keterangan</label>
-                              <input class="form-control sl-input" type="text" name="keterangan" t-att-value="paket['keterangan']"/>
-                            </div>
-                            <div class="col-12 col-lg-6">
-                              <label class="sl-field-label">Upload Dokumen KAK</label>
-                              <input class="form-control" type="file" name="dokumen_kak" accept="application/pdf" />
-                            </div>
-                            <div class="col-12 col-lg-6">
-                              <label class="sl-field-label">Upload Dokumen RAB/HPS</label>
-                              <input class="form-control" type="file" name="dokumen_rab" accept="application/pdf" />
-                            </div>
-                            <div class="col-12">
-                              <button type="submit" class="btn btn-dark sl-submit">Update Paket</button>
+                      <div class="sl-inline-panel__body mt-3">
+                        <div class="row g-4">
+                          
+                          <!-- Sisi Kiri: Detail Paket & Item -->
+                          <div class="col-12 col-lg-7 d-flex flex-column gap-4">
+                            
+                            <!-- Form Edit Detail Paket -->
+                            <form class="sl-form" t-attf-action="/sadaya-langsung/paket/{{ paket['id'] }}/update" method="post" enctype="multipart/form-data">
+                              <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                              <h4 class="mb-3">Edit Detail Paket</h4>
+                              <div class="row g-2">
+                                <div class="col-12 col-lg-6">
+                                  <label class="sl-field-label">Nama Paket</label>
+                                  <input class="form-control sl-input" type="text" name="name" t-att-value="paket['name']" required="required"/>
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                  <label class="sl-field-label">Unit Pengusul</label>
+                                  <input class="form-control sl-input" type="text" name="unit_pengusul" t-att-value="paket['unit_pengusul'] if paket['unit_pengusul'] != '-' else ''"/>
+                                </div>
+                                <div class="col-12 col-lg-4">
+                                  <label class="sl-field-label">Jenis Pengadaan</label>
+                                  <select class="form-select sl-input" name="jenis_pengadaan">
+                                    <option value="">Pilih jenis</option>
+                                    <t t-foreach="jenis_pengadaan_options" t-as="option">
+                                      <option t-att-value="option['value']" t-att-selected="option['value'] == paket['jenis_pengadaan_code'] and 'selected' or None">
+                                        <t t-esc="option['label']"/>
+                                      </option>
+                                    </t>
+                                  </select>
+                                </div>
+                                <div class="col-12 col-lg-4">
+                                  <label class="sl-field-label">Status Paket</label>
+                                  <select class="form-select sl-input" name="status_paket">
+                                    <t t-foreach="status_paket_options" t-as="status_option">
+                                      <option t-att-value="status_option['value']" t-att-selected="status_option['value'] == paket['status_code'] and 'selected' or None">
+                                        <t t-esc="status_option['label']"/>
+                                      </option>
+                                    </t>
+                                  </select>
+                                </div>
+                                <div class="col-12 col-lg-4">
+                                  <label class="sl-field-label">Vendor Pemenang</label>
+                                  <select class="form-select sl-input" name="vendor_pemenang_id">
+                                    <option value="">Belum dipilih</option>
+                                    <t t-foreach="paket['allowed_vendors']" t-as="vendor_option">
+                                      <option t-att-value="vendor_option['id']" t-att-selected="vendor_option['id'] == paket['vendor_pemenang_id'] and 'selected' or None">
+                                        <t t-esc="vendor_option['name']"/>
+                                      </option>
+                                    </t>
+                                  </select>
+                                </div>
+                                <div class="col-12 col-lg-4">
+                                  <label class="sl-field-label">Nilai HPS</label>
+                                  <input class="form-control sl-input" type="number" step="0.01" name="nilai_hps" t-att-value="paket['nilai_hps_raw']"/>
+                                </div>
+                                <div class="col-12 col-lg-4">
+                                  <label class="sl-field-label">Tanggal</label>
+                                  <input class="form-control sl-input" type="date" name="tanggal" t-att-value="paket['tanggal_raw']"/>
+                                </div>
+                                <div class="col-12 col-lg-4">
+                                  <label class="sl-field-label">Tanggal Mulai</label>
+                                  <input class="form-control sl-input" type="date" name="tanggal_mulai" t-att-value="paket['tanggal_mulai']"/>
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                  <label class="sl-field-label">Tanggal Selesai</label>
+                                  <input class="form-control sl-input" type="date" name="tanggal_selesai" t-att-value="paket['tanggal_selesai']"/>
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                  <label class="sl-field-label">Keterangan</label>
+                                  <input class="form-control sl-input" type="text" name="keterangan" t-att-value="paket['keterangan']"/>
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                  <label class="sl-field-label">Upload Dokumen KAK (PDF)</label>
+                                  <input class="form-control" type="file" name="dokumen_kak" accept="application/pdf" />
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                  <label class="sl-field-label">Upload Dokumen RAB (PDF)</label>
+                                  <input class="form-control" type="file" name="dokumen_rab" accept="application/pdf" />
+                                </div>
+                                <div class="col-12 mt-3">
+                                  <button type="submit" class="btn btn-dark w-100 sl-submit py-2">Update Paket</button>
+                                </div>
+                              </div>
+                            </form>
+
+                            <!-- Daftar Item Paket -->
+                            <div class="sl-subsection">
+                              <h4>Daftar Item Paket</h4>
+                              <form class="sl-form sl-form--inline" t-attf-action="/sadaya-langsung/paket/{{ paket['id'] }}/item/create" method="post">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="row g-2">
+                                  <div class="col-12 col-lg-5">
+                                    <label class="sl-field-label">Nama Item</label>
+                                    <input class="form-control sl-input" type="text" name="name" required="required"/>
+                                  </div>
+                                  <div class="col-12 col-lg-3">
+                                    <label class="sl-field-label">Jumlah</label>
+                                    <input class="form-control sl-input" type="number" step="0.01" name="qty" value="1"/>
+                                  </div>
+                                  <div class="col-12 col-lg-2">
+                                    <label class="sl-field-label">Satuan</label>
+                                    <select class="form-select sl-input" name="satuan">
+                                      <option value="unit">Unit</option>
+                                      <option value="set">Set</option>
+                                      <option value="pcs">Pcs</option>
+                                      <option value="lot">Lot</option>
+                                      <option value="m">Meter</option>
+                                      <option value="jam">Jam/Hari</option>
+                                    </select>
+                                  </div>
+                                  <div class="col-12 col-lg-2">
+                                    <label class="sl-field-label">Harga Satuan</label>
+                                    <input class="form-control sl-input" type="number" step="0.01" name="harga_satuan"/>
+                                  </div>
+                                  <div class="col-12">
+                                    <button type="submit" class="btn btn-primary btn-sm w-100">Tambah Item Baru</button>
+                                  </div>
+                                </div>
+                              </form>
+
+                              <t t-if="paket['item_rows']">
+                                <div class="sl-item-list">
+                                  <t t-foreach="paket['item_rows']" t-as="item">
+                                    <article class="sl-item-row">
+                                      <div>
+                                        <strong><t t-esc="item['name']"/></strong>
+                                        <span><t t-esc="item['qty']"/> <t t-esc="item['satuan']"/></span>
+                                      </div>
+                                      <div>
+                                        <span><t t-esc="item['subtotal']"/></span>
+                                        <form t-attf-action="/sadaya-langsung/paket/{{ paket['id'] }}/item/{{ item['id'] }}/delete" method="post" style="display:inline-block;margin-left:8px;">
+                                          <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                          <button type="submit" class="btn btn-sm btn-outline-danger">Hapus</button>
+                                        </form>
+                                      </div>
+                                    </article>
+                                  </t>
+                                </div>
+                              </t>
                             </div>
                           </div>
-                        </form>
 
-                        <div class="sl-subsection">
-                          <h4>Tambah Penawaran Vendor</h4>
-                          <form class="sl-form sl-form--inline" t-attf-action="/sadaya-langsung/paket/{{ paket['id'] }}/penawaran/create" method="post" enctype="multipart/form-data">
-                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                            <div class="row g-2">
-                              <div class="col-12 col-lg-5">
-                                <label class="sl-field-label">Vendor</label>
-                                <select class="form-select sl-input" name="vendor_id" required="required">
-                                  <option value="">Pilih vendor</option>
-                                  <t t-foreach="vendor_options" t-as="vendor_option">
-                                    <option t-att-value="vendor_option['id']"><t t-esc="vendor_option['name']"/></option>
-                                  </t>
-                                </select>
-                              </div>
-                              <div class="col-12 col-lg-3">
-                                <label class="sl-field-label">Harga Penawaran</label>
-                                <input class="form-control sl-input" type="number" step="0.01" name="harga_penawaran" required="required"/>
-                              </div>
-                              <div class="col-12 col-lg-2">
-                                <label class="sl-field-label">Tanggal</label>
-                                <input class="form-control sl-input" type="date" name="tanggal"/>
-                              </div>
-                              <div class="col-12 col-lg-2">
-                                <label class="sl-field-label">Catatan</label>
-                                <input class="form-control sl-input" type="text" name="catatan"/>
-                              </div>
-                              <div class="col-12 col-lg-3">
-                                <label class="sl-field-label">Upload Dokumen Penawaran</label>
-                                <input class="form-control" type="file" name="dokumen_penawaran" accept="application/pdf" />
-                              </div>
-                              <div class="col-12">
-                                <button type="submit" class="btn btn-primary btn-sm">Simpan Penawaran</button>
+                          <!-- Sisi Kanan: Kelola Vendor & Penawaran -->
+                          <div class="col-12 col-lg-5 d-flex flex-column gap-4">
+                            
+                            <!-- Box Undang Vendor -->
+                            <div class="sl-subsection">
+                              <h4>Undang Vendor Peserta</h4>
+                              <form class="sl-form sl-form--inline" t-attf-action="/sadaya-langsung/paket/{{ paket['id'] }}/penawaran/create" method="post">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="row g-2">
+                                  <div class="col-12">
+                                    <label class="sl-field-label">Pilih Vendor</label>
+                                    <select class="form-select sl-input" name="vendor_id" required="required">
+                                      <option value="">Pilih vendor</option>
+                                      <t t-foreach="vendor_options" t-as="vendor_option">
+                                        <option t-att-value="vendor_option['id']"><t t-esc="vendor_option['name']"/></option>
+                                      </t>
+                                    </select>
+                                  </div>
+                                  <div class="col-12">
+                                    <button type="submit" class="btn btn-primary btn-sm w-100" style="height:38px;">Undang Vendor</button>
+                                  </div>
+                                </div>
+                              </form>
+                            </div>
+
+                            <!-- Box Daftar Penawaran & Evaluasi -->
+                            <div class="sl-subsection" t-if="paket['penawaran_rows']">
+                              <h4>Daftar Penawaran &amp; Evaluasi</h4>
+                              
+                              <!-- Form Evaluasi Tunggal untuk Semua Vendor -->
+                              <form t-attf-id="eval-form-{{ paket['id'] }}" t-attf-action="/sadaya-langsung/paket/{{ paket['id'] }}/evaluate-all" method="post" style="display:none;">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                              </form>
+
+                              <div class="sl-penawaran-list">
+                                <t t-foreach="paket['penawaran_rows']" t-as="row">
+                                  <article class="sl-penawaran-item">
+                                    <div class="sl-penawaran-head">
+                                      <strong><t t-esc="row['vendor']"/></strong>
+                                      <span><t t-esc="row['harga_penawaran']"/></span>
+                                    </div>
+                                    <p class="sl-penawaran-meta">Status: <t t-esc="row['status_penawaran']"/> | Evaluasi: <t t-esc="row['lulus_evaluasi']"/></p>
+                                    
+                                    <!-- Menampilkan Dokumen Pendukung Vendor -->
+                                    <div t-if="row['dokumen_filename'] or row['dokumen_teknis_filename']" class="mb-2" style="font-size:0.85rem;">
+                                      <span class="text-muted">Berkas:</span>
+                                      <t t-if="row['dokumen_filename']">
+                                        <a t-attf-href="/web/content?model=sadaya_langsung.penawaran&amp;id={{ row['id'] }}&amp;field=dokumen_penawaran&amp;filename_field=dokumen_filename&amp;download=true" target="_blank" class="ms-2">
+                                          Penawaran Harga
+                                        </a>
+                                      </t>
+                                      <t t-if="row['dokumen_teknis_filename']">
+                                        <a t-attf-href="/web/content?model=sadaya_langsung.penawaran&amp;id={{ row['id'] }}&amp;field=dokumen_teknis&amp;filename_field=dokumen_teknis_filename&amp;download=true" target="_blank" class="ms-2">
+                                          Kriteria Teknis
+                                        </a>
+                                      </t>
+                                    </div>
+
+                                    <!-- Dropdowns Evaluasi (dihubungkan ke Form Tunggal menggunakan atribut form) -->
+                                    <div class="sl-inline-grid mb-2">
+                                      <select class="form-select form-select-sm sl-input" t-attf-name="evaluasi_administrasi_{{ row['id'] }}" t-attf-form="eval-form-{{ paket['id'] }}">
+                                        <option value="">Administrasi</option>
+                                        <t t-foreach="paket['evaluasi_options']" t-as="eval_option">
+                                          <option t-att-value="eval_option['value']" t-att-selected="eval_option['value'] == row['evaluasi_administrasi'] and 'selected' or None">
+                                            <t t-esc="'Lulus Adm' if eval_option['value'] == 'lulus' else 'Gugur Adm'"/>
+                                          </option>
+                                        </t>
+                                      </select>
+                                      <select class="form-select form-select-sm sl-input" t-attf-name="evaluasi_teknis_{{ row['id'] }}" t-attf-form="eval-form-{{ paket['id'] }}">
+                                        <option value="">Teknis</option>
+                                        <t t-foreach="paket['evaluasi_options']" t-as="eval_option">
+                                          <option t-att-value="eval_option['value']" t-att-selected="eval_option['value'] == row['evaluasi_teknis'] and 'selected' or None">
+                                            <t t-esc="'Lulus Teknis' if eval_option['value'] == 'lulus' else 'Gugur Teknis'"/>
+                                          </option>
+                                        </t>
+                                      </select>
+                                      <select class="form-select form-select-sm sl-input" t-attf-name="evaluasi_harga_{{ row['id'] }}" t-attf-form="eval-form-{{ paket['id'] }}">
+                                        <option value="">Harga</option>
+                                        <t t-foreach="paket['evaluasi_options']" t-as="eval_option">
+                                          <option t-att-value="eval_option['value']" t-att-selected="eval_option['value'] == row['evaluasi_harga'] and 'selected' or None">
+                                            <t t-esc="'Lulus Harga' if eval_option['value'] == 'lulus' else 'Gugur Harga'"/>
+                                          </option>
+                                        </t>
+                                      </select>
+                                    </div>
+
+                                    <!-- Form Tindakan Tambahan (Reset/Pilih Pemenang) -->
+                                    <div class="d-flex gap-1 flex-wrap mt-2">
+                                      <t t-foreach="row['actions']" t-as="p_action">
+                                        <form t-attf-action="/sadaya-langsung/penawaran/{{ row['id'] }}/action" method="post" style="margin:0;">
+                                          <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                          <input type="hidden" name="action" t-att-value="p_action['key']"/>
+                                          <button type="submit" t-att-class="'btn btn-sm py-1 px-2 ' + p_action['class']" style="font-size: 0.75rem;">
+                                            <t t-esc="p_action['label']"/>
+                                          </button>
+                                        </form>
+                                      </t>
+                                    </div>
+                                  </article>
+                                </t>
+                                
+                                <!-- Tombol Simpan Semua Evaluasi -->
+                                <button type="submit" t-attf-form="eval-form-{{ paket['id'] }}" class="btn btn-sm btn-primary w-100 mt-2">
+                                  Simpan Evaluasi Semua Vendor
+                                </button>
                               </div>
                             </div>
-                          </form>
-                        </div>
-
-                        <div class="sl-subsection" t-if="paket['penawaran_rows']">
-                          <h4>Daftar Penawaran</h4>
-                          <div class="sl-penawaran-list">
-                            <t t-foreach="paket['penawaran_rows']" t-as="row">
-                              <article class="sl-penawaran-item">
-                                <div class="sl-penawaran-head">
-                                  <strong><t t-esc="row['vendor']"/></strong>
-                                  <span><t t-esc="row['harga_penawaran']"/></span>
-                                </div>
-                                <p class="sl-penawaran-meta">Status: <t t-esc="row['status_penawaran']"/> | Evaluasi: <t t-esc="row['lulus_evaluasi']"/></p>
-
-
-                                <form class="sl-inline-grid" t-attf-action="/sadaya-langsung/penawaran/{{ row['id'] }}/evaluate" method="post">
-                                  <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                  <select class="form-select sl-input" name="evaluasi_administrasi">
-                                    <option value="">Administrasi</option>
-                                    <t t-foreach="paket['evaluasi_options']" t-as="eval_option">
-                                      <option t-att-value="eval_option['value']" t-att-selected="eval_option['value'] == row['evaluasi_administrasi'] and 'selected' or None">
-                                        <t t-esc="'Lulus Administrasi' if eval_option['value'] == 'lulus' else 'Gugur Administrasi'"/>
-                                      </option>
-                                    </t>
-                                  </select>
-                                  <select class="form-select sl-input" name="evaluasi_teknis">
-                                    <option value="">Teknis</option>
-                                    <t t-foreach="paket['evaluasi_options']" t-as="eval_option">
-                                      <option t-att-value="eval_option['value']" t-att-selected="eval_option['value'] == row['evaluasi_teknis'] and 'selected' or None">
-                                        <t t-esc="'Lulus Teknis' if eval_option['value'] == 'lulus' else 'Gugur Teknis'"/>
-                                      </option>
-                                    </t>
-                                  </select>
-                                  <select class="form-select sl-input" name="evaluasi_harga">
-                                    <option value="">Harga</option>
-                                    <t t-foreach="paket['evaluasi_options']" t-as="eval_option">
-                                      <option t-att-value="eval_option['value']" t-att-selected="eval_option['value'] == row['evaluasi_harga'] and 'selected' or None">
-                                        <t t-esc="'Lulus Harga' if eval_option['value'] == 'lulus' else 'Gugur Harga'"/>
-                                      </option>
-                                    </t>
-                                  </select>
-                                  <button type="submit" class="btn btn-sm btn-outline-primary">Update Evaluasi</button>
-                                </form>
-                              </article>
-                            </t>
                           </div>
                         </div>
                       </div>
-                        <div class="sl-subsection">
-                          <h4>Daftar Item Paket</h4>
-                          <form class="sl-form sl-form--inline" t-attf-action="/sadaya-langsung/paket/{{ paket['id'] }}/item/create" method="post">
+                    </details>
+
+                    <!-- ===== VENDOR: LIHAT DETAIL PAKET & AJUKAN PENAWARAN ===== -->
+                    <t t-if="paket['is_vendor']">
+
+                      <!-- Informasi Paket untuk Vendor (item list) -->
+                      <details class="sl-inline-panel mt-2" t-if="paket['item_rows']">
+                        <summary>Lihat Spesifikasi Barang/Jasa (<t t-esc="len(paket['item_rows'])"/> item)</summary>
+                        <div class="sl-inline-panel__body p-3 bg-light border rounded mt-2">
+                          <h6 style="font-size:0.85rem;font-weight:700;color:#333;margin-bottom:8px;">
+                            Daftar Item yang Diperlukan
+                          </h6>
+                          <div class="table-responsive">
+                            <table class="table table-sm table-bordered" style="font-size:0.8rem;">
+                              <thead class="thead-light">
+                                <tr>
+                                  <th>Item</th>
+                                  <th>Spesifikasi</th>
+                                  <th>Qty</th>
+                                  <th>Satuan</th>
+                                  <th>Est. Harga Satuan</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <t t-foreach="paket['item_rows']" t-as="item">
+                                  <tr>
+                                    <td><strong><t t-esc="item['name']"/></strong></td>
+                                    <td><t t-esc="item['deskripsi'] or '-'"/></td>
+                                    <td><t t-esc="item['qty']"/></td>
+                                    <td><t t-esc="item['satuan'] or '-'"/></td>
+                                    <td>Rp <t t-esc="'{:,.0f}'.format(item['harga_satuan']).replace(',', '.')"/></td>
+                                  </tr>
+                                </t>
+                              </tbody>
+                            </table>
+                          </div>
+                          <p class="mb-0 mt-2" style="font-size:0.78rem;color:#555;">
+                            <strong>Nilai HPS:</strong> <t t-esc="paket['nilai_hps']"/> &#160;|&#160;
+                            <strong>Masa Pengadaan:</strong>
+                            <t t-esc="paket['tanggal_mulai'] or '-'"/> s/d <t t-esc="paket['tanggal_selesai'] or '-'"/>
+                          </p>
+                        </div>
+                      </details>
+
+                      <!-- Penawaran sudah diajukan: tampilkan status -->
+                      <div t-if="paket['my_penawaran'] and paket['my_penawaran']['harga_penawaran_raw'] > 0"
+                           class="mt-3 p-3 border rounded"
+                           style="background:#f0fff4;border-color:#28a745!important;">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                          <h6 style="font-size:0.9rem;font-weight:700;color:#155724;margin:0;">
+                            Penawaran Anda Telah Diajukan
+                          </h6>
+                          <span t-att-class="'badge ' + ('badge-success' if paket['my_penawaran']['status_code'] == 'dipilih' else ('badge-danger' if paket['my_penawaran']['status_code'] == 'ditolak' else 'badge-secondary'))">
+                            <t t-esc="paket['my_penawaran']['status_penawaran']"/>
+                          </span>
+                        </div>
+                        <dl class="row mb-0" style="font-size:0.82rem;">
+                          <dt class="col-5 text-muted">Harga Ditawarkan:</dt>
+                          <dd class="col-7 font-weight-bold text-success">
+                            <t t-esc="paket['my_penawaran']['harga_penawaran']"/>
+                          </dd>
+                          <dt class="col-5 text-muted">Tanggal:</dt>
+                          <dd class="col-7"><t t-esc="paket['my_penawaran']['tanggal']"/></dd>
+                          <dt class="col-5 text-muted">Catatan:</dt>
+                          <dd class="col-7"><t t-esc="paket['my_penawaran']['catatan'] or '-'"/></dd>
+                          <dt class="col-5 text-muted">Dok. Penawaran:</dt>
+                          <dd class="col-7">
+                            <t t-if="paket['my_penawaran']['dokumen_filename']">
+                              <span class="text-primary"><t t-esc="paket['my_penawaran']['dokumen_filename']"/></span>
+                            </t>
+                            <t t-else=""><span class="text-muted">-</span></t>
+                          </dd>
+                          <dt class="col-5 text-muted">Dok. Teknis:</dt>
+                          <dd class="col-7">
+                            <t t-if="paket['my_penawaran']['dokumen_teknis_filename']">
+                              <span class="text-primary"><t t-esc="paket['my_penawaran']['dokumen_teknis_filename']"/></span>
+                            </t>
+                            <t t-else=""><span class="text-muted">-</span></t>
+                          </dd>
+                          <dt class="col-5 text-muted">Hasil Evaluasi:</dt>
+                          <dd class="col-7"><t t-esc="paket['my_penawaran']['lulus_evaluasi']"/></dd>
+                        </dl>
+                      </div>
+                      <!-- Warning: vendor tidak diundang -->
+                      <div t-if="paket['is_vendor'] and not paket['my_penawaran']"
+                           class="mt-3 p-3 border rounded text-warning bg-light"
+                           style="border-color:#ffc107!important; font-size: 0.85rem;">
+                        Akun Vendor Anda belum terdaftar/diundang sebagai peserta untuk paket pengadaan ini oleh Pejabat Pengadaan.
+                      </div>
+
+                      <!-- Form Ajukan Penawaran (hanya saat status pengumuman dan belum pernah bid) -->
+                      <details class="sl-inline-panel mt-3"
+                               t-if="paket['vendor_can_bid']">
+                        <summary style="color:#0066cc;font-weight:700;font-size:0.95rem;cursor:pointer;padding:10px 0;">
+                          Ajukan Penawaran untuk Paket Ini
+                        </summary>
+                        <div class="sl-inline-panel__body mt-2 p-3 border rounded" style="background:#f8f9ff;border-color:#0066cc!important;">
+                          <p style="font-size:0.8rem;color:#555;margin-bottom:12px;">
+                            Pastikan harga yang Anda ajukan sesuai spesifikasi teknis di atas dan tidak melebihi nilai HPS
+                            (<strong><t t-esc="paket['nilai_hps']"/></strong>).
+                          </p>
+                          <form class="sl-form"
+                                t-attf-action="/sadaya-langsung/paket/{{ paket['id'] }}/ajukan-penawaran"
+                                method="post"
+                                enctype="multipart/form-data">
                             <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                             <div class="row g-2">
-                              <div class="col-12 col-lg-5">
-                                <label class="sl-field-label">Nama Item</label>
-                                <input class="form-control sl-input" type="text" name="name" required="required"/>
+
+                              <!-- Harga Penawaran -->
+                              <div class="col-12 col-md-6">
+                                <label class="sl-field-label font-weight-bold" style="font-size:0.8rem;">
+                                  Harga Penawaran (Rp) <span class="text-danger">*</span>
+                                </label>
+                                <input class="form-control sl-input"
+                                       type="number"
+                                       step="1"
+                                       min="1"
+                                       name="harga_penawaran"
+                                       required="required"
+                                       placeholder="Contoh: 45000000"/>
+                                <small class="text-muted" style="font-size:0.75rem;">HPS: <t t-esc="paket['nilai_hps']"/></small>
                               </div>
-                              <div class="col-12 col-lg-3">
-                                <label class="sl-field-label">Jumlah</label>
-                                <input class="form-control sl-input" type="number" step="0.01" name="qty" value="1"/>
+
+                              <!-- Tanggal Penawaran -->
+                              <div class="col-12 col-md-6">
+                                <label class="sl-field-label font-weight-bold" style="font-size:0.8rem;">
+                                  Tanggal Penawaran
+                                </label>
+                                <input class="form-control sl-input"
+                                       type="date"
+                                       name="tanggal"/>
                               </div>
-                              <div class="col-12 col-lg-2">
-                                <label class="sl-field-label">Satuan</label>
-                                <select class="form-select sl-input" name="satuan">
-                                  <option value="unit">Unit</option>
-                                  <option value="set">Set</option>
-                                  <option value="pcs">Pcs</option>
-                                  <option value="lot">Lot</option>
-                                  <option value="m">Meter</option>
-                                  <option value="jam">Jam/Hari</option>
-                                </select>
+
+                              <!-- Upload Dokumen Penawaran -->
+                              <div class="col-12 col-md-6">
+                                <label class="sl-field-label font-weight-bold" style="font-size:0.8rem;">
+                                  Dokumen Penawaran Harga (PDF)
+                                </label>
+                                <input class="form-control"
+                                       type="file"
+                                       name="dokumen_penawaran"
+                                       accept="application/pdf,.pdf"/>
+                                <small class="text-muted" style="font-size:0.75rem;">
+                                  Surat penawaran harga resmi dari perusahaan Anda (berkop surat, ttd &amp; stempel)
+                                </small>
                               </div>
-                              <div class="col-12 col-lg-2">
-                                <label class="sl-field-label">Harga Satuan</label>
-                                <input class="form-control sl-input" type="number" step="0.01" name="harga_satuan"/>
+
+                              <!-- Upload Dokumen Teknis -->
+                              <div class="col-12 col-md-6">
+                                <label class="sl-field-label font-weight-bold" style="font-size:0.8rem;">
+                                  Dokumen Teknis / Spesifikasi Penawaran (PDF)
+                                </label>
+                                <input class="form-control"
+                                       type="file"
+                                       name="dokumen_teknis"
+                                       accept="application/pdf,.pdf"/>
+                                <small class="text-muted" style="font-size:0.75rem;">
+                                  <t t-if="paket['jenis_pengadaan_code'] == 'konstruksi'">
+                                    Metode pelaksanaan, jadwal, daftar personil, dan peralatan.
+                                  </t>
+                                  <t t-elif="paket['jenis_pengadaan_code'] == 'jasa_konsultansi'">
+                                    Pendekatan teknis, metodologi, dan rencana kerja.
+                                  </t>
+                                  <t t-elif="paket['jenis_pengadaan_code'] == 'jasa_lainnya'">
+                                    Deskripsi layanan, jadwal, and personil yang ditugaskan.
+                                  </t>
+                                  <t t-else="">
+                                    Spesifikasi teknis barang, brosur/katalog produk, dan garansi.
+                                  </t>
+                                </small>
                               </div>
+
+                              <!-- Catatan / Keterangan Tambahan -->
                               <div class="col-12">
-                                <button type="submit" class="btn btn-primary btn-sm">Tambah Item</button>
+                                <label class="sl-field-label font-weight-bold" style="font-size:0.8rem;">
+                                  Catatan / Keterangan Tambahan
+                                </label>
+                                <textarea class="form-control sl-input"
+                                          name="catatan"
+                                          rows="3"
+                                          placeholder="Tuliskan keterangan tambahan, keunggulan produk/layanan, masa garansi, atau syarat khusus lainnya..."></textarea>
                               </div>
+
+                              <!-- Submit -->
+                              <div class="col-12">
+                                <div class="d-flex align-items-center" style="gap:12px;">
+                                  <button type="submit"
+                                          class="btn btn-primary font-weight-bold"
+                                          style="min-width:180px;">
+                                    Kirim Penawaran
+                                  </button>
+                                  <small class="text-muted" style="font-size:0.75rem;">
+                                    Penawaran yang sudah terkirim tidak dapat diubah.
+                                  </small>
+                                </div>
+                              </div>
+
                             </div>
                           </form>
-
-                          <t t-if="paket['item_rows']">
-                            <div class="sl-item-list">
-                              <t t-foreach="paket['item_rows']" t-as="item">
-                                <article class="sl-item-row">
-                                  <div>
-                                    <strong><t t-esc="item['name']"/></strong>
-                                    <span><t t-esc="item['qty']"/> <t t-esc="item['satuan']"/></span>
-                                  </div>
-                                  <div>
-                                    <span><t t-esc="item['subtotal']"/></span>
-                                    <form t-attf-action="/sadaya-langsung/paket/{{ paket['id'] }}/item/{{ item['id'] }}/delete" method="post" style="display:inline-block;margin-left:8px;">
-                                      <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                      <button type="submit" class="btn btn-sm btn-outline-danger">Hapus</button>
-                                    </form>
-                                  </div>
-                                </article>
-                              </t>
-                            </div>
-                          </t>
                         </div>
-                    </details>
+                      </details>
+
+                      <!-- Info: paket tidak dalam status pengumuman -->
+                      <div t-if="paket['is_vendor'] and paket['is_vendor_verified'] and not paket['vendor_can_bid'] and not paket['my_penawaran']
+                                 and paket['status_code'] not in ('draft','menunggu_persetujuan','revisi','batal')"
+                           class="mt-2 p-2 text-center"
+                           style="font-size:0.8rem;color:#888;border:1px dashed #ccc;border-radius:6px;">
+                        Masa pengajuan penawaran belum dibuka atau sudah ditutup untuk paket ini.
+                      </div>
+
+                    </t>
+                    <!-- ===== END VENDOR SECTION ===== -->
+
                   </article>
                 </div>
               </t>
@@ -558,7 +808,7 @@
           <div class="container">
             <div class="row g-3">
               <t t-foreach="kontrak_cards" t-as="kontrak">
-                <div class="col-12 col-lg-6">
+                <div class="col-12 col-lg-6 sl-card-col">
                   <article class="sl-card sl-card--detail">
                     <div class="sl-card__top">
                       <div>
@@ -575,54 +825,52 @@
                     </dl>
 
                     <!-- Detail Pengajuan Addendum -->
-                    <div t-if="kontrak['status_code'] in ('addendum_diajukan', 'addendum_disetujui', 'addendum_tte_ppk', 'addendum_kontrak')" class="mt-3 p-3 bg-light border rounded">
-                      <h6 class="text-warning font-weight-bold mb-2">Informasi Addendum Kontrak</h6>
-                      <dl class="row mb-0" style="font-size: 0.85rem;">
-                        <dt class="col-6 text-muted">Justifikasi / Lingkup:</dt>
-                        <dd class="col-6"><t t-esc="kontrak['justifikasi_addendum']"/></dd>
-                        <dt class="col-6 text-muted">Nilai Kontrak Tambahan:</dt>
-                        <dd class="col-6"><t t-esc="kontrak['addendum_nilai_tambah']"/></dd>
-                        <dt class="col-6 text-muted">Perpanjangan Waktu:</dt>
-                        <dd class="col-6"><t t-esc="kontrak['addendum_perpanjangan_hari']"/> Hari</dd>
+                    <div t-if="kontrak['status_code'] in ('addendum_diajukan', 'addendum_disetujui', 'addendum_tte_ppk', 'addendum_kontrak')" class="sl-subsection">
+                      <h4>Informasi Addendum Kontrak</h4>
+                      <dl class="sl-dl">
+                        <div><dt>Justifikasi / Lingkup</dt><dd><t t-esc="kontrak['justifikasi_addendum']"/></dd></div>
+                        <div><dt>Nilai Kontrak Tambahan</dt><dd><t t-esc="kontrak['addendum_nilai_tambah']"/></dd></div>
+                        <div><dt>Perpanjangan Waktu</dt><dd><t t-esc="kontrak['addendum_perpanjangan_hari']"/> Hari</dd></div>
                         <t t-if="kontrak['filename_addendum']">
-                          <dt class="col-6 text-muted">Dokumen Addendum:</dt>
-                          <dd class="col-6">
-                            <span class="text-success"><i class="fa fa-file-pdf-o"></i> <t t-esc="kontrak['filename_addendum']"/></span>
-                          </dd>
+                          <div><dt>Dokumen Addendum</dt><dd><span class="text-success"><t t-esc="kontrak['filename_addendum']"/></span></dd></div>
                         </t>
-                        <dt class="col-6 text-muted">TTE PPK:</dt>
-                        <dd class="col-6">
-                          <span t-att-class="'text-success font-weight-bold' if kontrak['tte_ppk_addendum'] else 'text-danger'"><t t-esc="'Sudah TTE' if kontrak['tte_ppk_addendum'] else 'Belum TTE'"/></span>
-                        </dd>
-                        <dt class="col-6 text-muted">TTE Vendor:</dt>
-                        <dd class="col-6">
-                          <span t-att-class="'text-success font-weight-bold' if kontrak['tte_vendor_addendum'] else 'text-danger'"><t t-esc="'Sudah TTE' if kontrak['tte_vendor_addendum'] else 'Belum TTE'"/></span>
-                        </dd>
+                        <div>
+                          <dt>TTE PPK</dt>
+                          <dd>
+                            <span t-att-class="'text-success' if kontrak['tte_ppk_addendum'] else 'text-danger'"><t t-esc="'Sudah TTE' if kontrak['tte_ppk_addendum'] else 'Belum TTE'"/></span>
+                          </dd>
+                        </div>
+                        <div>
+                          <dt>TTE Vendor</dt>
+                          <dd>
+                            <span t-att-class="'text-success' if kontrak['tte_vendor_addendum'] else 'text-danger'"><t t-esc="'Sudah TTE' if kontrak['tte_vendor_addendum'] else 'Belum TTE'"/></span>
+                          </dd>
+                        </div>
                       </dl>
                     </div>
 
                     <!-- Form Pengajuan Addendum (Khusus Vendor saat Pelaksanaan) -->
                     <details class="sl-inline-panel mt-3" t-if="is_vendor and kontrak['status_code'] == 'pelaksanaan'">
-                      <summary class="text-warning font-weight-bold">Ajukan Addendum Kontrak</summary>
-                      <div class="sl-inline-panel__body bg-light p-3 border rounded mt-2">
-                        <form class="sl-form" t-attf-action="/sadaya-langsung/kontrak/{{ kontrak['id'] }}/ajukan-addendum" method="post">
+                      <summary>Ajukan Addendum Kontrak</summary>
+                      <div class="sl-inline-panel__body">
+                        <form class="sl-form sl-form--inline" t-attf-action="/sadaya-langsung/kontrak/{{ kontrak['id'] }}/ajukan-addendum" method="post">
                           <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                           <div class="mb-2">
-                            <label class="sl-field-label font-weight-bold" style="font-size: 0.8rem;">Justifikasi &amp; Lingkup Pekerjaan Tambahan</label>
+                            <label class="sl-field-label">Justifikasi &amp; Lingkup Pekerjaan Tambahan</label>
                             <textarea class="form-control sl-input form-control-sm" name="justifikasi_addendum" required="required" placeholder="Jelaskan justifikasi dan perubahan lingkup..."></textarea>
                           </div>
                           <div class="row g-2 mb-2">
                             <div class="col-6">
-                              <label class="sl-field-label font-weight-bold" style="font-size: 0.8rem;">Nilai Tambah (Rp)</label>
+                              <label class="sl-field-label">Nilai Tambah (Rp)</label>
                               <input class="form-control sl-input form-control-sm" type="number" step="0.01" name="nilai_tambah" required="required" placeholder="Contoh: 15000000"/>
                             </div>
                             <div class="col-6">
-                              <label class="sl-field-label font-weight-bold" style="font-size: 0.8rem;">Perpanjangan (Hari)</label>
+                              <label class="sl-field-label">Perpanjangan (Hari)</label>
                               <input class="form-control sl-input form-control-sm" type="number" name="perpanjangan_hari" required="required" placeholder="Contoh: 30"/>
                             </div>
                           </div>
                           <div>
-                            <button type="submit" class="btn btn-warning btn-sm w-100 font-weight-bold">Kirim Pengajuan Addendum</button>
+                            <button type="submit" class="btn btn-sm btn-primary w-100">Kirim Pengajuan Addendum</button>
                           </div>
                         </form>
                       </div>

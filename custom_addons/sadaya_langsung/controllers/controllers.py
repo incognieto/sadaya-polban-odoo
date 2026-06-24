@@ -162,6 +162,8 @@ class SadayaLangsungController(http.Controller):
 					"evaluasi_harga": record.evaluasi_harga or "",
 					"lulus_evaluasi": "Lulus" if record.lulus_evaluasi else "Belum",
 					"actions": self._penawaran_actions(record),
+					"dokumen_filename": record.dokumen_filename or "",
+					"dokumen_teknis_filename": record.dokumen_teknis_filename or "",
 				}
 			)
 		return rows
@@ -172,14 +174,74 @@ class SadayaLangsungController(http.Controller):
 			request.env.user.has_group('sadaya_langsung.group_langsung_pp')
 		)
 
+	def _get_my_vendor_partner(self):
+		"""Dapatkan partner vendor dari user yang sedang login.
+		Return: res.partner record atau False
+		"""
+		user = request.env.user
+		# Cek apakah partner user langsung merupakan vendor
+		if user.partner_id.is_sadaya_mitra_vendor:
+			return user.partner_id
+		# Cari berdasarkan email
+		emails = list(filter(None, [user.login, user.email, user.partner_id.email]))
+		if emails:
+			partner = request.env['res.partner'].sudo().search(
+				[('email', 'in', emails), ('is_sadaya_mitra_vendor', '=', True)],
+				limit=1
+			)
+			if partner:
+				return partner
+		return user.partner_id
+
+	def _is_vendor_verified(self, partner):
+		"""Memeriksa apakah partner vendor telah diverifikasi (status_verifikasi == 'approved') di Sadaya Mitra.
+		"""
+		if not partner:
+			return False
+		if partner.sadaya_mitra_penyedia_id:
+			return partner.sadaya_mitra_penyedia_id.status_verifikasi == 'approved'
+		# Fallback ke pencarian manual di penyedia
+		penyedia = request.env['sadaya_mitra.penyedia'].sudo().search([('partner_id', '=', partner.id)], limit=1)
+		if penyedia:
+			return penyedia.status_verifikasi == 'approved'
+		return False
+
 	def _build_paket_cards(self, records):
 		cards = []
 		Paket = request.env["sadaya_langsung.paket"]
 		Penawaran = request.env["sadaya_langsung.penawaran"]
 		is_editor = self._check_edit_permission()
+		is_vendor = self._is_vendor_user()
+		my_vendor_partner = self._get_my_vendor_partner() if is_vendor else None
 		for record in records:
 			status_options = self._selection_options(Paket, "status_paket")
 			penawaran_records = record.penawaran_ids.sorted(lambda p: (p.harga_penawaran, p.id))
+			# List vendor yang diinput/diundang di paket ini
+			allowed_vendors = []
+			for pen in penawaran_records:
+				allowed_vendors.append({
+					"id": pen.vendor_id.id,
+					"name": pen.vendor_id.name,
+					"harga_penawaran_raw": pen.harga_penawaran or 0.0,
+				})
+			# Cek apakah vendor ini sudah mengajukan penawaran di paket ini
+			my_penawaran = None
+			if is_vendor and my_vendor_partner:
+				for pen in penawaran_records:
+					if pen.vendor_id.id == my_vendor_partner.id:
+						my_penawaran = {
+							"id": pen.id,
+							"harga_penawaran": self._format_money(pen.harga_penawaran),
+							"harga_penawaran_raw": pen.harga_penawaran or 0.0,
+							"status_penawaran": self._selection_label(pen, "status_penawaran", pen.status_penawaran),
+							"status_code": pen.status_penawaran,
+							"catatan": pen.catatan or "",
+							"dokumen_filename": pen.dokumen_filename or "",
+							"dokumen_teknis_filename": pen.dokumen_teknis_filename or "",
+							"tanggal": self._format_date(pen.tanggal),
+							"lulus_evaluasi": "Lulus" if pen.lulus_evaluasi else "Belum Dievaluasi",
+						}
+						break
 			cards.append(
 				{
 					"id": record.id,
@@ -220,6 +282,12 @@ class SadayaLangsungController(http.Controller):
 					],
 					"evaluasi_options": self._selection_options(Penawaran, "evaluasi_administrasi"),
 					"actions": self._paket_actions(record) if is_editor else [],
+					"is_vendor": is_vendor,
+					"is_vendor_verified": True,
+					"my_penawaran": my_penawaran,
+					"vendor_can_bid": is_vendor and record.status_paket == "pengumuman" and my_penawaran and my_penawaran["harga_penawaran_raw"] == 0.0,
+					"vendor_partner_id": my_vendor_partner.id if my_vendor_partner else 0,
+					"allowed_vendors": allowed_vendors,
 				}
 			)
 		return cards
@@ -368,6 +436,7 @@ class SadayaLangsungController(http.Controller):
 				"active_page": "paket",
 				"notice_success": kwargs.get("success"),
 				"notice_error": kwargs.get("error"),
+				"is_vendor": is_vendor,
 				"paket_cards": self._build_paket_cards(
 					Paket.search(domain, order="tanggal desc, id desc")
 				),
@@ -463,7 +532,35 @@ class SadayaLangsungController(http.Controller):
 			values["status_paket"] = status_input
 
 		vendor_id = self._safe_int(post.get("vendor_pemenang_id"))
-		values["vendor_pemenang_id"] = vendor_id or False
+		if vendor_id:
+			# Cari penawaran vendor tersebut di paket ini
+			penawaran_pemenang = record.penawaran_ids.filtered(lambda p: p.vendor_id.id == vendor_id)
+			if not penawaran_pemenang:
+				return self._redirect_with_message(
+					"/sadaya-langsung/paket",
+					error="Vendor yang dipilih tidak terdaftar dalam penawaran paket ini."
+				)
+			penawaran_pemenang = penawaran_pemenang[0]
+			if penawaran_pemenang.harga_penawaran <= 0:
+				return self._redirect_with_message(
+					"/sadaya-langsung/paket",
+					error=f"Vendor '{penawaran_pemenang.vendor_id.name}' belum mengisi/mengajukan penawaran harga."
+				)
+			# Panggil action_pilih_pemenang() untuk memproses penetapan pemenang
+			try:
+				penawaran_pemenang.action_pilih_pemenang()
+			except Exception as exc:
+				return self._redirect_with_message("/sadaya-langsung/paket", error=str(exc))
+		else:
+			# Jika dikosongkan (Belum dipilih)
+			values["vendor_pemenang_id"] = False
+			# Reset status penawaran yang tadinya dipilih menjadi diajukan kembali
+			penawaran_pilih = record.penawaran_ids.filtered(lambda p: p.status_penawaran == "dipilih")
+			if penawaran_pilih:
+				penawaran_pilih.write({"status_penawaran": "diajukan"})
+				penawaran_ditolak = record.penawaran_ids.filtered(lambda p: p.status_penawaran == "ditolak")
+				if penawaran_ditolak:
+					penawaran_ditolak.write({"status_penawaran": "diajukan"})
 
 		try:
 			record.write(values)
@@ -551,6 +648,104 @@ class SadayaLangsungController(http.Controller):
 		)
 
 	@http.route(
+		"/sadaya-langsung/paket/<int:paket_id>/ajukan-penawaran",
+		type="http",
+		auth="user",
+		website=True,
+		methods=["POST"],
+	)
+	def vendor_ajukan_penawaran(self, paket_id, **post):
+		"""Endpoint khusus vendor untuk mengajukan penawaran secara mandiri.
+		Vendor ID otomatis diambil dari partner user yang sedang login.
+		"""
+		if not self._is_vendor_user():
+			return self._redirect_with_message(
+				"/sadaya-langsung/paket",
+				error="Hanya Vendor yang dapat mengajukan penawaran melalui halaman ini."
+			)
+
+		paket = request.env["sadaya_langsung.paket"].sudo().browse(paket_id)
+		if not paket.exists():
+			return self._redirect_with_message(
+				"/sadaya-langsung/paket", error="Paket tidak ditemukan."
+			)
+
+		if paket.status_paket != "pengumuman":
+			return self._redirect_with_message(
+				"/sadaya-langsung/paket",
+				error="Penawaran hanya dapat diajukan saat paket dalam status Pengumuman."
+			)
+
+		# Identifikasi vendor partner dari user yang login
+		my_partner = self._get_my_vendor_partner()
+		if not my_partner or not my_partner.is_sadaya_mitra_vendor:
+			return self._redirect_with_message(
+				"/sadaya-langsung/paket",
+				error="Akun Anda tidak terdaftar sebagai Mitra Vendor Sadaya. Hubungi administrator."
+			)
+
+		# Cek apakah vendor sudah diinput/diundang oleh pejabat pengadaan di paket ini
+		existing = request.env["sadaya_langsung.penawaran"].sudo().search([
+			("paket_id", "=", paket_id),
+			("vendor_id", "=", my_partner.id),
+		], limit=1)
+		if not existing:
+			return self._redirect_with_message(
+				"/sadaya-langsung/paket",
+				error="Akun Anda tidak terdaftar/diundang sebagai peserta untuk paket pengadaan ini."
+			)
+
+		if existing.harga_penawaran > 0:
+			return self._redirect_with_message(
+				"/sadaya-langsung/paket",
+				error="Anda sudah mengajukan penawaran untuk paket ini."
+			)
+
+		harga = self._safe_float(post.get("harga_penawaran"))
+		if not harga or harga <= 0:
+			return self._redirect_with_message(
+				"/sadaya-langsung/paket",
+				error="Harga penawaran wajib diisi dan harus lebih dari 0."
+			)
+
+		values = {
+			"harga_penawaran": harga,
+			"tanggal": post.get("tanggal") or fields.Date.today(),
+			"catatan": post.get("catatan") or False,
+		}
+		try:
+			existing.write(values)
+			penawaran = existing
+		except Exception as exc:
+			return self._redirect_with_message("/sadaya-langsung/paket", error=str(exc))
+
+		# Handle file uploads: dokumen_penawaran dan dokumen_teknis
+		if penawaran and request.httprequest.files:
+			write_vals = {}
+			f_penawaran = request.httprequest.files.get("dokumen_penawaran")
+			f_teknis = request.httprequest.files.get("dokumen_teknis")
+			if f_penawaran:
+				data = f_penawaran.read()
+				if data:
+					write_vals["dokumen_penawaran"] = base64.b64encode(data).decode("utf-8")
+					write_vals["dokumen_filename"] = getattr(f_penawaran, "filename", None)
+			if f_teknis:
+				data = f_teknis.read()
+				if data:
+					write_vals["dokumen_teknis"] = base64.b64encode(data).decode("utf-8")
+					write_vals["dokumen_teknis_filename"] = getattr(f_teknis, "filename", None)
+			if write_vals:
+				try:
+					penawaran.sudo().write(write_vals)
+				except Exception:
+					pass
+
+		return self._redirect_with_message(
+			"/sadaya-langsung/paket",
+			success=f"Penawaran berhasil diajukan untuk paket '{paket.name}'. Tim pengadaan akan mengevaluasi penawaran Anda."
+		)
+
+	@http.route(
 		"/sadaya-langsung/penawaran/<int:penawaran_id>/evaluate",
 		type="http",
 		auth="user",
@@ -582,6 +777,52 @@ class SadayaLangsungController(http.Controller):
 
 		return self._redirect_with_message(
 			"/sadaya-langsung/paket", success="Evaluasi penawaran diperbarui"
+		)
+
+	@http.route(
+		"/sadaya-langsung/paket/<int:paket_id>/evaluate-all",
+		type="http",
+		auth="user",
+		website=True,
+		methods=["POST"],
+	)
+	def evaluate_all_penawaran(self, paket_id, **post):
+		if not request.env.user.has_group('sadaya_langsung.group_langsung_pp'):
+			return self._redirect_with_message("/sadaya-langsung/paket", error="Anda tidak memiliki hak akses untuk melakukan evaluasi.")
+		paket = request.env["sadaya_langsung.paket"].sudo().browse(paket_id)
+		if not paket.exists():
+			return self._redirect_with_message(
+				"/sadaya-langsung/paket", error="Paket tidak ditemukan"
+			)
+
+		Penawaran = request.env["sadaya_langsung.penawaran"].sudo()
+		eval_options = self._selection_options(Penawaran, "evaluasi_administrasi")
+
+		for penawaran in paket.penawaran_ids:
+			adm_key = f"evaluasi_administrasi_{penawaran.id}"
+			tek_key = f"evaluasi_teknis_{penawaran.id}"
+			hrg_key = f"evaluasi_harga_{penawaran.id}"
+
+			adm_val = post.get(adm_key)
+			tek_val = post.get(tek_key)
+			hrg_val = post.get(hrg_key)
+
+			values = {}
+			if adm_val is not None:
+				values["evaluasi_administrasi"] = self._safe_selection(adm_val, eval_options)
+			if tek_val is not None:
+				values["evaluasi_teknis"] = self._safe_selection(tek_val, eval_options)
+			if hrg_val is not None:
+				values["evaluasi_harga"] = self._safe_selection(hrg_val, eval_options)
+
+			if values:
+				try:
+					penawaran.write(values)
+				except Exception as exc:
+					return self._redirect_with_message("/sadaya-langsung/paket", error=f"Gagal mengevaluasi {penawaran.vendor_id.name}: {str(exc)}")
+
+		return self._redirect_with_message(
+			"/sadaya-langsung/paket", success="Evaluasi seluruh vendor berhasil diperbarui."
 		)
 
 	@http.route(

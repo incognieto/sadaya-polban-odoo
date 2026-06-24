@@ -455,3 +455,11 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Dynamic full-width expansion when details panel is opened */
+.o_sadaya_frontend .sl-card-col:has(details[open]) {
+  flex: 0 0 100% !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  transition: all 0.3s ease-in-out;
+}

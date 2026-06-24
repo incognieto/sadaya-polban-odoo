@@ -380,7 +380,9 @@ class SadayaLangsungPenawaran(models.Model):
     tanggal = fields.Date(string="Tanggal Penawaran", default=fields.Date.today)
 
     dokumen_penawaran = fields.Binary(string="Dokumen Penawaran")
-    dokumen_filename = fields.Char(string="Nama Dokumen")
+    dokumen_filename = fields.Char(string="Nama Dokumen Penawaran")
+    dokumen_teknis = fields.Binary(string="Dokumen Teknis")
+    dokumen_teknis_filename = fields.Char(string="Nama Dokumen Teknis")
     catatan = fields.Text(string="Catatan / Keterangan")
 
     # === Evaluasi ===
