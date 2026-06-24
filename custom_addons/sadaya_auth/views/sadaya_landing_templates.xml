@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="sadaya_landing" name="Sadaya Landing Page">
+        <t t-call="website.layout">
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+            <t t-set="head">
+                <link rel="stylesheet" t-att-href="'/sadaya_auth/static/src/css/sadaya_main.css?v=1.0.9'"/>
+                <style>
+                    .sadaya-landing-hero {
+                        background: linear-gradient(rgba(3, 20, 36, 0.75), rgba(6, 40, 70, 0.85)), url('/sadaya_auth/static/src/img/polban.jpg');
+                        background-size: cover;
+                        background-position: center;
+                        background-repeat: no-repeat;
+                        min-height: 100vh;
+                        display: flex;
+                        align-items: center;
+                        position: relative;
+                        overflow: hidden;
+                    }
+                    .sadaya-landing-hero::before {
+                        content: '';
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: url('/web/static/img/pattern.svg') repeat;
+                        opacity: 0.05;
+                    }
+                    .btn-sadaya-primary {
+                        background-color: #0d6efd;
+                        color: #ffffff;
+                        border: none;
+                        font-weight: 600;
+                        padding: 0.75rem 2rem;
+                        border-radius: 0.5rem;
+                        transition: all 0.2s ease;
+                    }
+                    .btn-sadaya-primary:hover {
+                        background-color: #0b5ed7;
+                        color: #ffffff;
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+                    }
+                    .btn-sadaya-outline {
+                        background-color: transparent;
+                        color: #ffffff;
+                        border: 2px solid rgba(255, 255, 255, 0.7);
+                        font-weight: 600;
+                        padding: 0.75rem 2rem;
+                        border-radius: 0.5rem;
+                        transition: all 0.2s ease;
+                    }
+                    .btn-sadaya-outline:hover {
+                        background-color: rgba(255, 255, 255, 0.15);
+                        border-color: #ffffff;
+                        color: #ffffff;
+                        transform: translateY(-2px);
+                    }
+                </style>
+            </t>
+
+            <div class="sadaya-landing-hero">
+                <div class="container position-relative z-index-1">
+                    <div class="row justify-content-center align-items-center min-vh-100 py-5 text-center">
+                        <div class="col-lg-8 text-white mb-5 mb-lg-0">
+                            <div class="d-flex justify-content-center align-items-center mb-4">
+                                <img src="/sadaya_auth/static/src/img/banner_sadaya_logo.png" alt="Sadaya Logo" style="height: 90px; object-fit: contain; margin-right: -45px;" />
+                                <div style="width: 2px; height: 60px; background-color: rgba(255,255,255,0.3); margin: 0 32px;"></div>
+                                <img src="/sadaya_auth/static/src/img/logo-polban-80.png" alt="Polban Logo" style="height: 90px; object-fit: contain;" />
+                            </div>
+                            
+                            <h1 class="display-4 fw-bold mb-4" style="line-height: 1.2;">
+                                Platform Pengadaan Barang &amp; Jasa <span class="text-info">Terintegrasi</span>
+                            </h1>
+                            <p class="lead text-white-50 mb-5 mx-auto" style="font-size: 1.15rem; max-width: 600px;">
+                                Sadaya Polban (Sistem Pengadaan dan Pelayanan) memberikan kemudahan, transparansi, dan keamanan dalam proses seleksi tender maupun pengadaan langsung secara digital.
+                            </p>
+                            
+                            <div class="d-flex justify-content-center flex-wrap gap-3">
+                                <a href="/sadaya/login" class="btn btn-sadaya-primary btn-lg px-5">
+                                    Login
+                                </a>
+                                <a href="/sadaya/register" class="btn btn-sadaya-outline btn-lg px-5">
+                                    Daftar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

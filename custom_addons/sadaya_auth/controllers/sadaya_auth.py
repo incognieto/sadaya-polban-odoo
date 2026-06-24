@@ -12,6 +12,16 @@ _logger = logging.getLogger(__name__)
 class SadayaAuthController(http.Controller):
 
     # ══════════════════════════════════════════════════
+    # LANDING PAGE
+    # ══════════════════════════════════════════════════
+
+    @http.route('/', type='http', auth='public', website=True, sitemap=True)
+    def sadaya_landing_page(self, **kwargs):
+        if not request.env.user._is_public():
+            return request.redirect('/sadaya/dashboard')
+        return request.render('sadaya_auth.sadaya_landing', {})
+
+    # ══════════════════════════════════════════════════
     # REGISTER
     # ══════════════════════════════════════════════════
 
@@ -105,8 +115,8 @@ class SadayaAuthController(http.Controller):
             # Commit transaksi database agar user baru ter-persis sebelum login otomatis
             request.env.cr.commit()
 
-            # ── Login otomatis setelah register (dan redirect ke sadaya-mitra) ──────
-            return self._do_login_and_redirect(plain_email, plain_password, '/sadaya-mitra')
+            # ── Login otomatis setelah register (dan redirect ke dashboard) ──────
+            return self._do_login_and_redirect(plain_email, plain_password, '/sadaya/dashboard')
 
         except ValidationError as e:
             request.env.cr.rollback()
@@ -197,9 +207,16 @@ class SadayaAuthController(http.Controller):
         user = request.env.user
         registration = request.env['sadaya.registration'].sudo().search(
             [('user_id', '=', user.id)], limit=1)
+            
+        PenyediaModel = request.env.get('sadaya_mitra.penyedia')
+        penyedia = None
+        if PenyediaModel is not None:
+            penyedia = PenyediaModel.sudo().search([('email', '=', user.login)], limit=1)
+            
         return request.render('sadaya_auth.sadaya_dashboard', {
             'user': user,
             'registration': registration,
+            'penyedia': penyedia,
             'tipe': registration.tipe_pendaftar if registration else 'perorangan',
         })
 
