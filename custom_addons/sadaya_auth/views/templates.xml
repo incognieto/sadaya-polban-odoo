@@ -4,14 +4,34 @@
     <!-- Homepage -->
     <template id="sadaya_homepage" name="Sadaya Homepage">
         <t t-call="website.layout">
-            <div class="container mt-5">
+            <div id="wrap" class="oe_structure oe_empty d-flex flex-column align-items-center justify-content-center" style="min-height: 70vh;">
                 <div class="text-center">
-                    <h1>Sadaya</h1>
-                    <p>Sistem Pengadaan Digital</p>
+                    <h1 class="display-3 fw-bold text-dark mb-4">Selamat datang di Sadaya Polban</h1>
+                    <p class="lead text-muted mb-5">Sistem Pengadaan Barang dan Jasa Digital</p>
+                    <a href="/sadaya/login" class="btn btn-primary btn-lg fw-bold px-5">Login</a>
+                </div>
+            </div>
+        </t>
+    </template>
 
-                    <a href="/sadaya/login" class="btn btn-primary">
-                        Login
-                    </a>
+    <!-- About -->
+    <template id="sadaya_about" name="Sadaya About">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure oe_empty container mt-5 py-5" style="min-height: 70vh;">
+                <h1 class="fw-bold text-dark mb-4 text-center">About Sadaya Polban</h1>
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-body p-4">
+                                <p class="mb-3 text-muted">
+                                    Sadaya Polban merupakan platform digital pengadaan barang dan jasa yang dikembangkan untuk memfasilitasi transaksi dan kemitraan secara transparan, terpercaya, dan akuntabel.
+                                </p>
+                                <p class="mb-0 text-muted">
+                                    Sistem ini mengelola berbagai jenis pengadaan mulai dari Sadaya Rutin, Sadaya Langsung, hingga Sadaya Lelang untuk mendukung kebutuhan operasional secara efektif dan efisien.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </t>
@@ -82,6 +102,14 @@
             </div>
 
         </t>
+    </template>
+    <!-- Global Footer Override -->
+    <template id="sadaya_global_footer" inherit_id="website.layout" name="Sadaya Global Footer">
+        <xpath expr="//footer" position="replace">
+            <footer class="bg-dark text-white text-center py-2 mt-auto">
+                <small>copyright by sadaya polban</small>
+            </footer>
+        </xpath>
     </template>
 
 </odoo>

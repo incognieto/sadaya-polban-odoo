@@ -122,7 +122,7 @@
                 <div class="card shadow-sm border rounded-3 mb-4 bg-white">
                     <div class="card-header bg-light d-flex align-items-center justify-content-between py-3 border-0">
                         <h5 class="card-title mb-0 fw-bold text-dark">Informasi Akun</h5>
-                        <a href="/sadaya/profile" class="btn btn-outline-primary btn-sm fw-bold">
+                        <a href="/sadaya-mitra/profil" class="btn btn-outline-primary btn-sm fw-bold">
                             Lihat Profil
                         </a>
                     </div>
@@ -159,27 +159,27 @@
                 <div class="card-body">
                     <div class="row g-2">
                         <div class="col-6 col-md-3">
-                            <a href="/sadaya/pengadaan" class="btn btn-light w-100 py-3 text-center border text-decoration-none">
-                                <div class="fs-2 mb-2">📋</div>
-                                <span class="fw-bold text-dark small">Pengadaan</span>
+                            <a href="/sadaya-mitra" class="btn btn-light w-100 py-3 text-center border text-decoration-none">
+                                <div class="fs-2 mb-2">🤝</div>
+                                <span class="fw-bold text-dark small">Sadaya Mitra</span>
                             </a>
                         </div>
                         <div class="col-6 col-md-3">
-                            <a href="/sadaya/dokumen" class="btn btn-light w-100 py-3 text-center border text-decoration-none">
-                                <div class="fs-2 mb-2">📁</div>
-                                <span class="fw-bold text-dark small">Dokumen</span>
+                            <a href="/sadaya-rutin/dashboard" class="btn btn-light w-100 py-3 text-center border text-decoration-none">
+                                <div class="fs-2 mb-2">🔁</div>
+                                <span class="fw-bold text-dark small">Sadaya Rutin</span>
                             </a>
                         </div>
                         <div class="col-6 col-md-3">
-                            <a href="/sadaya/profile" class="btn btn-light w-100 py-3 text-center border text-decoration-none">
-                                <div class="fs-2 mb-2">👤</div>
-                                <span class="fw-bold text-dark small">Profil</span>
+                            <a href="/sadaya-langsung" class="btn btn-light w-100 py-3 text-center border text-decoration-none">
+                                <div class="fs-2 mb-2">⚡</div>
+                                <span class="fw-bold text-dark small">Sadaya Langsung</span>
                             </a>
                         </div>
                         <div class="col-6 col-md-3">
-                            <a href="mailto:support@sadaya.id" class="btn btn-light w-100 py-3 text-center border text-decoration-none">
-                                <div class="fs-2 mb-2">💬</div>
-                                <span class="fw-bold text-dark small">Bantuan</span>
+                            <a href="/sadaya-lelang/tender" class="btn btn-light w-100 py-3 text-center border text-decoration-none">
+                                <div class="fs-2 mb-2">⚖️</div>
+                                <span class="fw-bold text-dark small">Sadaya Lelang</span>
                             </a>
                         </div>
                     </div>
