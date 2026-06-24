@@ -55,13 +55,15 @@
           <button name="action_to_delivery" type="object" string="Pengiriman" class="btn-primary" invisible="status != 'spk_process'"/>
           <button name="action_to_inspection" type="object" string="Pemeriksaan" class="btn-primary" invisible="status != 'delivery'"/>
           <button name="action_to_done" type="object" string="Selesaikan" class="btn-success" invisible="status != 'inspection'"/>
-          <button name="action_set_revision" type="object" string="Revisi" class="btn-warning" invisible="status in ('draft', 'done', 'cancelled')"/>
+          <button name="action_set_revision" type="object" string="Revisi Manual" class="btn-secondary" invisible="status in ('draft', 'done', 'cancelled')"/>
           <button name="action_set_addendum" type="object" string="Addendum" class="btn-secondary" invisible="status not in ('spk_process', 'done')"/>
           <button name="action_reset_draft" type="object" string="Kembalikan ke Draft" class="btn-secondary" invisible="status not in ('revision', 'cancelled')"/>
-          <button name="action_cancel" type="object" string="Batalkan" class="btn-danger" invisible="status in ('done', 'cancelled')"/>
+          <button name="action_cancel" type="object" string="Batalkan Manual" class="btn-danger" invisible="status in ('done', 'cancelled')"/>
           <button name="action_print_ba_negotiation" type="object" string="Cetak BA Negosiasi" class="btn-info" invisible="status not in ('negotiation_minutes', 'spk_preparation', 'spk_process', 'delivery', 'inspection', 'done')"/>
         </header>
         <sheet>
+          <field name="vendor_revision_requested" invisible="1"/>
+          <field name="vendor_cancellation_requested" invisible="1"/>
           <div class="oe_title">
             <h1><field name="name" placeholder="Nama paket..."/></h1>
             <div class="text-muted">
@@ -163,8 +165,21 @@
                   <field name="bast_date"/>
                 </group>
               </group>
+              <!-- Notifikasi & Persetujuan Vendor Request -->
+              <div class="alert alert-warning mt-3" role="alert" invisible="not vendor_revision_requested">
+                <strong>[Tanggapan Vendor]: Sanggup Melakukan Revisi!</strong><br/>
+                Vendor telah mengonfirmasi kesanggupan untuk memperbaiki / mengirim ulang barang.<br/>
+                <button name="action_approve_vendor_revision" type="object" string="Setujui Revisi" class="btn btn-warning mt-2"/>
+              </div>
+
+              <div class="alert alert-danger mt-3" role="alert" invisible="not vendor_cancellation_requested">
+                <strong>[Tanggapan Vendor]: Mengajukan Pembatalan!</strong><br/>
+                Vendor menyatakan tidak sanggup memperbaiki pesanan ini dan mengajukan pembatalan.<br/>
+                <button name="action_approve_vendor_cancellation" type="object" string="Setujui Pembatalan" class="btn btn-danger mt-2"/>
+              </div>
+
               <!-- Tombol notifikasi vendor — hanya muncul saat hasil TIDAK SESUAI -->
-              <div class="mt-2" invisible="inspection_status != 'not_ok' or status != 'inspection'">
+              <div class="mt-2" invisible="inspection_status != 'not_ok' or status != 'inspection' or vendor_revision_requested or vendor_cancellation_requested">
                 <button
                   name="action_notify_vendor_rejection"
                   type="object"

@@ -60,6 +60,10 @@ class ProcurementPackage(models.Model):
         tracking=True,
     )
 
+    # Flags untuk request dari portal vendor
+    vendor_revision_requested = fields.Boolean(string="Vendor Request Revisi", default=False)
+    vendor_cancellation_requested = fields.Boolean(string="Vendor Request Batal", default=False)
+
     # Tab 1 - Data Permintaan
     item_name = fields.Char(string="Nama Barang/Jasa")
     item_spec = fields.Text(string="Spesifikasi")
@@ -211,6 +215,8 @@ class ProcurementPackage(models.Model):
             rec.sp_signed_filename = False
             rec.delivery_date = False
             rec.delivery_notes = False
+            rec.vendor_cancellation_requested = False
+            rec.vendor_revision_requested = False
             if not keep_inspection:
                 rec.inspection_status = False
                 rec.inspection_notes = False
@@ -225,7 +231,21 @@ class ProcurementPackage(models.Model):
                 [line for line in [rec.negotiation_history, history_line] if line]
             )
             rec.status = "revision"
+            rec.vendor_revision_requested = False
+            rec.vendor_cancellation_requested = False
             rec._clear_progress_fields()
+
+    def action_approve_vendor_revision(self):
+        """Disetujui oleh internal setelah vendor request revisi"""
+        self._ensure_status(["inspection"])
+        self.message_post(body="Tim Teknis / PP menyetujui permintaan Revisi dari Vendor.")
+        self.action_set_revision()
+
+    def action_approve_vendor_cancellation(self):
+        """Disetujui oleh internal setelah vendor request batal"""
+        self._ensure_status(["inspection"])
+        self.message_post(body="Tim Teknis / PP menyetujui permintaan Pembatalan dari Vendor.")
+        self.action_cancel()
 
     def action_to_negotiation_done(self):
         self._ensure_status(["negotiation_pp"])

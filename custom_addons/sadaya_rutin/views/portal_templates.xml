@@ -257,12 +257,12 @@
                                     </div>
                                     <div class="col-12">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="vendor_stock_confirmed" value="1" id="vendor_stock_confirmed" t-att-checked="package.vendor_stock_confirmed and 'checked' or None"/>
+                                            <input class="form-check-input" type="checkbox" name="vendor_stock_confirmed" value="1" id="vendor_stock_confirmed" t-att-checked="package.vendor_stock_confirmed and 'checked' or None" required="required" onchange="if(this.checked) { this.style.boxShadow=''; this.style.borderColor=''; }"/>
                                             <label class="form-check-label sr-field-label" for="vendor_stock_confirmed" style="cursor:pointer;">Saya mengonfirmasi stok tersedia</label>
                                         </div>
                                     </div>
                                     <div class="col-12 sr-actions">
-                                        <button type="submit" class="btn btn-primary sr-submit">Kirim Penawaran</button>
+                                        <button type="submit" class="btn btn-primary sr-submit" onclick="if(!document.getElementById('vendor_stock_confirmed').checked) { document.getElementById('vendor_stock_confirmed').style.boxShadow='0 0 0 0.25rem rgba(220, 53, 69, 0.5)'; document.getElementById('vendor_stock_confirmed').style.borderColor='#dc3545'; }">Kirim Penawaran</button>
                                         <button type="submit" class="btn btn-outline-danger" style="border-radius:999px; padding:0.8rem 1.25rem;" formaction="/sadaya-rutin/paket/#{package.id}/reject-offer" formnovalidate="formnovalidate">Tolak / Stok Habis</button>
                                     </div>
                                 </div>
@@ -336,6 +336,72 @@
                             <div class="sr-notice alert alert-info">
                                 <strong>Status: Pengiriman</strong><br/>
                                 Menunggu jadwal pengiriman dari vendor atau proses pengiriman sedang berlangsung.
+                            </div>
+                        </t>
+                    </t>
+
+                    <t t-if="package.status == 'inspection'">
+                        <t t-if="package.vendor_id and env.user.partner_id.id in (package.vendor_id.id, package.vendor_id.parent_id.id)">
+                            <t t-if="package.inspection_status == 'not_ok'">
+                                <t t-if="package.vendor_revision_requested">
+                                    <div class="sr-notice alert alert-warning">
+                                        <strong>⏳ Menunggu Persetujuan Tim Teknis (Revisi)</strong><br/>
+                                        Anda telah mengajukan kesanggupan untuk melakukan revisi (pengiriman ulang/perbaikan). Tim Teknis sedang memproses permintaan ini.
+                                    </div>
+                                </t>
+                                <t t-elif="package.vendor_cancellation_requested">
+                                    <div class="sr-notice alert alert-warning">
+                                        <strong>⏳ Menunggu Persetujuan Tim Teknis (Pembatalan)</strong><br/>
+                                        Anda telah mengajukan pembatalan pesanan. Tim Teknis sedang memproses permintaan ini.
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="sr-notice alert alert-danger">
+                                        <strong>⚠️ Pemberitahuan Ketidaksesuaian Barang/Jasa</strong><br/>
+                                        Tim Teknis telah memeriksa barang/jasa dan menyatakan <strong>Tidak Sesuai</strong>.<br/>
+                                        <strong>Catatan:</strong> <t t-esc="package.inspection_notes"/><br/><br/>
+                                        Harap berikan tanggapan Anda di bawah ini:
+                                    </div>
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-md-6">
+                                            <form class="sr-form" t-att-action="'/sadaya-rutin/paket/%s/request-revision' % package.id" method="post">
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                <div class="sr-card p-3 border-warning" style="border: 2px solid #ffc107; height: 100%;">
+                                                    <h5 class="text-warning"><i class="fa fa-refresh me-2"></i>Sanggup Revisi</h5>
+                                                    <p class="small text-muted mb-3">Pilih opsi ini jika Anda sanggup mengirimkan ulang atau memperbaiki barang/jasa agar sesuai spesifikasi.</p>
+                                                    <button type="submit" class="btn btn-warning w-100" onclick="return confirm('Apakah Anda yakin sanggup melakukan Revisi?');">
+                                                        Request Revisi
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <form class="sr-form" t-att-action="'/sadaya-rutin/paket/%s/request-cancellation' % package.id" method="post" id="formCancelRequest">
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                <div class="sr-card p-3 border-danger" style="border: 2px solid #dc3545; height: 100%;">
+                                                    <h5 class="text-danger"><i class="fa fa-times-circle me-2"></i>Tidak Sanggup / Batal</h5>
+                                                    <p class="small text-muted mb-2">Pilih opsi ini jika Anda tidak sanggup memenuhi pesanan.</p>
+                                                    <input type="text" name="cancellation_reason" class="form-control form-control-sm mb-3" placeholder="Alasan tidak sanggup..." required="required"/>
+                                                    <button type="submit" class="btn btn-danger w-100" onclick="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini?');">
+                                                        Request Batal
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <div class="sr-notice alert alert-info">
+                                    <strong>Status: Pemeriksaan</strong><br/>
+                                    Tim Teknis sedang melakukan pemeriksaan terhadap barang/jasa yang Anda kirimkan.
+                                </div>
+                            </t>
+                        </t>
+                        <t t-else="">
+                            <div class="sr-notice alert alert-info">
+                                <strong>Status: Pemeriksaan</strong><br/>
+                                Tim Teknis sedang melakukan pemeriksaan barang/jasa.
                             </div>
                         </t>
                     </t>
