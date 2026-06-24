@@ -234,22 +234,22 @@ For more information about the system modules and features, refer to:
 
 ### 👨‍💻 Deployment of Tasks
 
-| Nama | NIM | Modul |
-| :--- | :--- | :--- |
-| **Farras Ahmad Rasyid** | 231524006 | ![Sadaya Rutin](https://img.shields.io/badge/Sadaya_Rutin-1f77b4?style=flat-square) |
-| **Fitri Salwa** | 231524009 | ![Sadaya Auth](https://img.shields.io/badge/Sadaya_Auth-ff7f0e?style=flat-square) |
-| **Fredy Kurniadi** | 231524010 | ![Sadaya Rutin](https://img.shields.io/badge/Sadaya_Rutin-1f77b4?style=flat-square) |
-| **Jizdan Mulkan Nailan** | 231524011 | ![Sadaya Mitra](https://img.shields.io/badge/Sadaya_Mitra-2ca02c?style=flat-square) |
-| **Muhammad Aslim Salman** | 231524014 | ![Sadaya Rancang](https://img.shields.io/badge/Sadaya_Rancang-d62728?style=flat-square) |
-| **Muhammad Ichsan Rahmat Ramadhan**| 231524015 | ![Sadaya Tawar](https://img.shields.io/badge/Sadaya_Tawar-1f77b4?style=flat-square) |
-| **Muhammad Rafif Genadratama**| 231524016 | ![Sadaya Lelang](https://img.shields.io/badge/Sadaya_Lelang-9467bd?style=flat-square) |
-| **Nadia Rachma Yuninda** | 231524017 | ![Sadaya Auth](https://img.shields.io/badge/Sadaya_Auth-ff7f0e?style=flat-square) |
-| **Nieto Salim Maula** | 231524019 | ![Sadaya Rancang](https://img.shields.io/badge/Sadaya_Rancang-d62728?style=flat-square) |
-| **Nobby Dharma Khaulid** | 231524020 | ![Sadaya Langsung](https://img.shields.io/badge/Sadaya_Langsung-8c564b?style=flat-square) |
-| **Satria Permata Sejati** | 231524026 | ![Sadaya Mitra](https://img.shields.io/badge/Sadaya_Mitra-2ca02c?style=flat-square) |
-| **Thafa Fadillah Ramdani** | 231524027 | ![Sadaya Langsung](https://img.shields.io/badge/Sadaya_Langsung-8c564b?style=flat-square) |
-| **Zaenal Muttakin** | 231524030 | ![Sadaya Langsung](https://img.shields.io/badge/Sadaya_Langsung-8c564b?style=flat-square) |
-| **Zaki Abdillah** | 231524032 | ![Sadaya Lelang](https://img.shields.io/badge/Sadaya_Lelang-9467bd?style=flat-square) |
+| Nama | NIM | Modul | Role |
+| :--- | :--- | :--- | :--- |
+| **Farras Ahmad Rasyid** | 231524006 | ![Sadaya Rutin](https://img.shields.io/badge/Sadaya_Rutin-1f77b4?style=flat-square) | Frontend Developer |
+| **Fitri Salwa** | 231524009 | ![Sadaya Auth](https://img.shields.io/badge/Sadaya_Auth-ff7f0e?style=flat-square) | UI/UX Designer |
+| **Fredy Kurniadi** | 231524010 | ![Sadaya Rutin](https://img.shields.io/badge/Sadaya_Rutin-1f77b4?style=flat-square) | Odoo Developer |
+| **Jizdan Mulkan Nailan** | 231524011 | ![Sadaya Mitra](https://img.shields.io/badge/Sadaya_Mitra-2ca02c?style=flat-square) | Frontend Developer |
+| **Muhammad Aslim Salman** | 231524014 | ![Sadaya Rancang](https://img.shields.io/badge/Sadaya_Rancang-d62728?style=flat-square) | Odoo Developer |
+| **Muhammad Ichsan Rahmat Ramadhan**| 231524015 | ![Sadaya Tawar](https://img.shields.io/badge/Sadaya_Tawar-1f77b4?style=flat-square) | Odoo Developer |
+| **Muhammad Rafif Genadratama**| 231524016 | ![Sadaya Lelang](https://img.shields.io/badge/Sadaya_Lelang-9467bd?style=flat-square) | Business Analyst |
+| **Nadia Rachma Yuninda** | 231524017 | ![Sadaya Auth](https://img.shields.io/badge/Sadaya_Auth-ff7f0e?style=flat-square) | UI/UX Designer |
+| **Nieto Salim Maula** | 231524019 | ![Sadaya Rancang](https://img.shields.io/badge/Sadaya_Rancang-d62728?style=flat-square) | Project Leader |
+| **Nobby Dharma Khaulid** | 231524020 | ![Sadaya Langsung](https://img.shields.io/badge/Sadaya_Langsung-8c564b?style=flat-square) | QA |
+| **Satria Permata Sejati** | 231524026 | ![Sadaya Mitra](https://img.shields.io/badge/Sadaya_Mitra-2ca02c?style=flat-square) | Odoo Developer |
+| **Thafa Fadillah Ramdani** | 231524027 | ![Sadaya Langsung](https://img.shields.io/badge/Sadaya_Langsung-8c564b?style=flat-square) | Tech Lead |
+| **Zaenal Muttakin** | 231524030 | ![Sadaya Langsung](https://img.shields.io/badge/Sadaya_Langsung-8c564b?style=flat-square) | QA |
+| **Zaki Abdillah** | 231524032 | ![Sadaya Lelang](https://img.shields.io/badge/Sadaya_Lelang-9467bd?style=flat-square) | Odoo Developer |
 
 ## 📄 License
 
