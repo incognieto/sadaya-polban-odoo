@@ -257,14 +257,6 @@ class SadayaLangsungController(http.Controller):
 					"tte_vendor_kontrak": record.tte_vendor_kontrak,
 					"tte_ppk_addendum": record.tte_ppk_addendum,
 					"tte_vendor_addendum": record.tte_vendor_addendum,
-					# === Data Pemeriksaan PPHP ===
-					"hasil_pemeriksaan": record.hasil_pemeriksaan or "",
-					"hasil_pemeriksaan_label": self._selection_label(
-						record, "hasil_pemeriksaan", record.hasil_pemeriksaan
-					) if record.hasil_pemeriksaan else "",
-					"catatan_pphp": record.catatan_pphp or "",
-					"tanggal_bast": fields.Date.to_string(record.tanggal_bast) if record.tanggal_bast else "",
-					"filename_bast": record.filename_bast or "",
 					"actions": self._kontrak_actions(record),
 				}
 			)
