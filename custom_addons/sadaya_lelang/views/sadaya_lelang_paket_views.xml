@@ -36,7 +36,7 @@
                     <button name="action_to_pam" string="Adakan PAM" type="object" class="oe_highlight" invisible="status != 'sppbj'" groups="sadaya_lelang.group_lelang_ppk"/>
                     <button name="action_to_kontrak" string="Tanda Tangan Kontrak" type="object" class="oe_highlight" invisible="status != 'pam'" groups="sadaya_lelang.group_lelang_ppk"/>
                     <button name="action_to_pelaksanaan" string="Mulai Pelaksanaan" type="object" class="oe_highlight" invisible="status != 'kontrak'" groups="sadaya_lelang.group_lelang_ppk"/>
-                    <button name="action_to_selesai" string="Selesaikan Tender" type="object" class="oe_highlight" invisible="status != 'pelaksanaan'" groups="sadaya_lelang.group_lelang_ppk,sadaya_lelang.group_lelang_pphp" confirm="Apakah laporan PPHP dan BAST sudah lengkap dan sesuai? Tender akan ditutup."/>
+                    <button name="action_to_selesai" string="Selesaikan Tender" type="object" class="oe_highlight" invisible="status != 'pelaksanaan'" groups="sadaya_lelang.group_lelang_pphp" confirm="Apakah laporan PPHP dan BAST sudah lengkap dan sesuai? Tender akan ditutup."/>
                     <field name="status" widget="statusbar" statusbar_visible="draft,pengumuman,penjelasan,pemasukan_penawaran,eval_administrasi,penetapan_pemenang,masa_sanggah,kontrak,pelaksanaan,selesai"/>
                 </header>
                 <sheet>
