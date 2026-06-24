@@ -37,6 +37,7 @@ class SadayaLangsungKontrak(models.Model):
         ('proses_tte', 'Proses Kontrak (TTE)'),
         ('pelaksanaan', 'Pelaksanaan Pekerjaan'),
         ('addendum_diajukan', 'Addendum Diajukan'),
+        ('addendum_ditolak', 'Addendum Ditolak'),
         ('addendum_disetujui', 'Addendum Disetujui'),
         ('addendum_tte_ppk', 'Addendum TTE PPK'),
         ('pemeriksaan', 'Pemeriksaan PPHP'),
@@ -78,6 +79,17 @@ class SadayaLangsungKontrak(models.Model):
     tte_vendor_kontrak = fields.Boolean(string='TTE Vendor Kontrak', default=False)
     tte_ppk_addendum = fields.Boolean(string='TTE PPK Addendum', default=False)
     tte_vendor_addendum = fields.Boolean(string='TTE Vendor Addendum', default=False)
+    tolak_addendum_alasan = fields.Text(string='Alasan Penolakan Addendum')
+
+    # === Pemeriksaan PPHP ===
+    hasil_pemeriksaan_pphp = fields.Selection([
+        ('lulus', 'Lulus'),
+        ('tidak_lulus', 'Tidak Lulus / Perlu Perbaikan'),
+    ], string='Hasil Pemeriksaan PPHP', tracking=True)
+    catatan_pphp = fields.Text(string='Catatan Pemeriksaan PPHP')
+    tanggal_bast = fields.Date(string='Tanggal BAST')
+    dokumen_bast = fields.Binary(string='Dokumen BAST')
+    filename_bast = fields.Char(string='Filename BAST')
 
     # ------------------------------------------------------------------
     # Auto-fill jenis_pengadaan dari Paket terkait
@@ -125,8 +137,16 @@ class SadayaLangsungKontrak(models.Model):
         import base64
         self.write({
             'status_kontrak': 'addendum_disetujui',
+            'tolak_addendum_alasan': False,
             'dokumen_addendum': base64.b64encode(b"Dokumen Addendum Ke-1").decode('utf-8'),
             'filename_addendum': "Addendum_Ke-1.pdf"
+        })
+
+    def action_tolak_addendum(self, alasan=''):
+        """PPK menolak pengajuan addendum. Status kembali ke pelaksanaan."""
+        self.write({
+            'status_kontrak': 'addendum_ditolak',
+            'tolak_addendum_alasan': alasan or 'Tidak ada alasan diberikan.',
         })
 
     def action_tte_ppk_addendum(self):
@@ -136,18 +156,40 @@ class SadayaLangsungKontrak(models.Model):
         })
 
     def action_tte_vendor_addendum(self):
+        """Vendor menandatangani addendum. Nilai & timeline diperbarui,
+        lalu kontrak kembali ke status Pelaksanaan dengan perubahan yang berlaku."""
         from datetime import timedelta
-        self.write({
-            'tte_vendor_addendum': True,
-            'status_kontrak': 'addendum_kontrak',
-        })
-        # Update nilai kontrak (nilai_hps)
+        # Update nilai kontrak (nilai_hps) dan timeline (tanggal_selesai)
         new_nilai = self.nilai_hps + self.addendum_nilai_tambah
-        # Update timeline (tanggal_selesai)
-        vals = {'nilai_hps': new_nilai}
+        vals = {
+            'tte_vendor_addendum': True,
+            'status_kontrak': 'addendum_kontrak',  # Tandai addendum selesai
+            'nilai_hps': new_nilai,
+        }
         if self.tanggal_selesai:
             t_selesai = fields.Date.to_date(self.tanggal_selesai)
             vals['tanggal_selesai'] = t_selesai + timedelta(days=self.addendum_perpanjangan_hari)
+        self.write(vals)
+
+    def action_submit_pphp(self, hasil, catatan, tanggal_bast, dokumen_bast=None, filename_bast=None):
+        """PPHP menyerahkan hasil pemeriksaan.
+        Jika tidak lulus → langsung revisi ke PPK.
+        Jika lulus → data tersimpan, status tetap pemeriksaan;
+        PPHP harus klik 'Selesai Kontrak/BAST' secara eksplisit untuk finalisasi.
+        """
+        vals = {
+            'hasil_pemeriksaan_pphp': hasil,
+            'catatan_pphp': catatan,
+            'tanggal_bast': tanggal_bast,
+        }
+        if dokumen_bast:
+            vals['dokumen_bast'] = dokumen_bast
+            vals['filename_bast'] = filename_bast
+
+        if hasil == 'tidak_lulus':
+            # Langsung kembalikan ke PPK untuk perbaikan
+            vals['status_kontrak'] = 'revisi'
+        # Jika lulus: status TETAP 'pemeriksaan' agar PPHP bisa review lalu klik Selesai Kontrak/BAST
         self.write(vals)
 
     def action_pemeriksaan(self):
