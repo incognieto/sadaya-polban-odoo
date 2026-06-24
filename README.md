@@ -1,6 +1,16 @@
-# sadaya-polban-odoo (eProcurement System)
+# 🏢 sadaya-polban-odoo (eProcurement System)
 
-## Overview
+<div align="center">
+  <img src="banner_sadaya_logo.png" alt="Sadaya Polban Logo" width="677" height="369" />
+</div>
+
+
+![Odoo](https://img.shields.io/badge/Odoo-19.0-purple?style=for-the-badge&logo=odoo)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue?style=for-the-badge&logo=postgresql)
+![Docker](https://img.shields.io/badge/Docker-Supported-blue?style=for-the-badge&logo=docker)
+![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge)
+
+## 📖 Overview
 
 **Sadaya Polban** (Sistem Andalan PengaDAyan dan LaYAnan Jasa) is a comprehensive E-Procurement Information System developed specifically for Politeknik Negeri Bandung (Polban). The system is designed to digitalize, automate, and integrate the entire procurement cycle for goods and services from beginning to end through a single gateway.
 
@@ -10,19 +20,15 @@ Built on top of the robust **Odoo ERP** infrastructure using **Docker** and **CI
 
 ### Core Modules
 
-The system comprises five interconnected main modules:
+The system comprises the following interconnected custom modules:
 
-1. **SIDAPET** (Vendor Registration System) - The main gateway and database system where all vendors register and manage their company profiles
-2. **Quotation** (Proposal Module) - Initial interaction bridge between Polban admin and vendors for bidding
-3. **Tender** (Open Selection) - Handles large-value procurement packages (above Rp200 Million) with strict workflow management
-4. **Direct Procurement** - Manages procurement packages below the budget threshold with simplified processes
-5. **SIBELA** (Sistem Pembelian Langsung) - Modul transaksi operasional yang cepat dan efisien untuk pembelian langsung
-
-## Sadaya Rutin (E-Purchasing)
-
-Documentation for the standalone Sadaya Rutin module:
-
-- custom_addons/direct_purchase/docs/SADAYA_RUTIN.md
+1. **sadaya_mitra** (Vendor Registration System / SIDAPET) - The main gateway and database system where all vendors register and manage their company profiles
+2. **sadaya_tawar** (Quotation) - Initial interaction bridge between Polban admin and vendors for bidding
+3. **sadaya_lelang** (Tender / Open Selection) - Handles large-value procurement packages (above Rp200 Million) with strict workflow management
+4. **sadaya_langsung** (Direct Procurement) - Manages procurement packages below the budget threshold with simplified processes
+5. **sadaya_rutin** (E-Purchasing) - Modul transaksi operasional yang cepat dan efisien untuk pembelian langsung
+6. **sadaya_rancang** (Planning & Budgeting Module) - Procurement planning and budget management
+7. **sadaya_auth** (Authentication) - Custom authentication and user management specific to Polban users
 
 ## Prerequisites
 
@@ -68,6 +74,13 @@ The project contains the following structure:
 sadaya-polban-odoo/
 ├── docker-compose.yml       # Docker Compose configuration file
 ├── custom_addons/           # Custom Odoo modules and addons
+│   ├── sadaya_auth          # Authentication module
+│   ├── sadaya_langsung      # Direct Procurement module
+│   ├── sadaya_lelang        # Tender module
+│   ├── sadaya_mitra         # Vendor Registration module
+│   ├── sadaya_rancang       # Planning module
+│   ├── sadaya_rutin         # E-Purchasing module
+│   └── sadaya_tawar         # Quotation module
 └── README.md
 ```
 
@@ -212,10 +225,36 @@ This will remove all containers, networks, and volumes, permanently deleting all
 For more information about the system modules and features, refer to:
 - `Deskripsi Sistem.txt` - Detailed system description in Indonesian
 
-## License
+## 👥 Developer Team
+
+**Sadaya Polban Team**  
+![Class](https://img.shields.io/badge/Kelas-3A--D4_Teknik_Informatika-blue?style=flat-square) 
+![Institution](https://img.shields.io/badge/Institusi-Politeknik_Negeri_Bandung-orange?style=flat-square) 
+![Year](https://img.shields.io/badge/Angkatan-2023-success?style=flat-square)
+
+### 👨‍💻 Deployment of Tasks
+
+| Nama | NIM | Modul |
+| :--- | :--- | :--- |
+| **Farras Ahmad Rasyid** | 231524006 | ![Sadaya Rutin](https://img.shields.io/badge/Sadaya_Rutin-1f77b4?style=flat-square) |
+| **Fitri Salwa** | 231524009 | ![Sadaya Auth](https://img.shields.io/badge/Sadaya_Auth-ff7f0e?style=flat-square) |
+| **Fredy Kurniadi** | 231524010 | ![Sadaya Rutin](https://img.shields.io/badge/Sadaya_Rutin-1f77b4?style=flat-square) |
+| **Jizdan Mulkan Nailan** | 231524011 | ![Sadaya Mitra](https://img.shields.io/badge/Sadaya_Mitra-2ca02c?style=flat-square) |
+| **Muhammad Aslim Salman** | 231524014 | ![Sadaya Rancang](https://img.shields.io/badge/Sadaya_Rancang-d62728?style=flat-square) |
+| **Muhammad Ichsan Rahmat Ramadhan**| 231524015 | ![Sadaya Rutin](https://img.shields.io/badge/Sadaya_Rutin-1f77b4?style=flat-square) |
+| **Muhammad Rafif Genadratama**| 231524016 | ![Sadaya Lelang](https://img.shields.io/badge/Sadaya_Lelang-9467bd?style=flat-square) |
+| **Nadia Rachma Yuninda** | 231524017 | ![Sadaya Auth](https://img.shields.io/badge/Sadaya_Auth-ff7f0e?style=flat-square) |
+| **Nieto Salim Maula** | 231524019 | ![Sadaya Rancang](https://img.shields.io/badge/Sadaya_Rancang-d62728?style=flat-square) |
+| **Nobby Dharma Khaulid** | 231524020 | ![Sadaya Langsung](https://img.shields.io/badge/Sadaya_Langsung-8c564b?style=flat-square) |
+| **Satria Permata Sejati** | 231524026 | ![Sadaya Mitra](https://img.shields.io/badge/Sadaya_Mitra-2ca02c?style=flat-square) |
+| **Thafa Fadillah Ramdani** | 231524027 | ![Sadaya Langsung](https://img.shields.io/badge/Sadaya_Langsung-8c564b?style=flat-square) |
+| **Zaenal Muttakin** | 231524030 | ![Sadaya Langsung](https://img.shields.io/badge/Sadaya_Langsung-8c564b?style=flat-square) |
+| **Zaki Abdillah** | 231524032 | ![Sadaya Lelang](https://img.shields.io/badge/Sadaya_Lelang-9467bd?style=flat-square) |
+
+## 📄 License
 
 This project is developed for Politeknik Negeri Bandung (Polban).
 
 ---
 
-**Last Updated**: April 2026
+**Last Updated**: June 2026
