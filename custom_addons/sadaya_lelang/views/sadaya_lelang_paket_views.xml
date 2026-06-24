@@ -80,6 +80,10 @@
                                     <field name="file_kebutuhan"/>
                                     <field name="file_disposisi"/>
                                 </group>
+                                <group string="Fase Penetapan">
+                                    <field name="file_sppbj_name" invisible="1"/>
+                                    <field name="file_sppbj" filename="file_sppbj_name"/>
+                                </group>
                                 <group string="Fase Kontrak &amp; Pelaksanaan">
                                     <field name="file_draft_kontrak_name" invisible="1"/>
                                     <field name="file_draft_kontrak" filename="file_draft_kontrak_name"/>
