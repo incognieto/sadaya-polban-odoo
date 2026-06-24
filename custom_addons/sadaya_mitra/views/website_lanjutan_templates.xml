@@ -1,8 +1,6 @@
 <odoo>
     <template id="sadaya_mitra_lanjutan_landing" name="SadayaMitra Lanjutan Landing">
         <t t-call="website.layout">
-            <t t-set="no_header" t-value="True"/>
-            <t t-set="no_footer" t-value="True"/>
             <t t-set="title">Data Lanjutan Penyedia</t>
             <div id="wrap" class="o_sadaya_frontend sl-app-shell">
                 <header class="sl-app-header">
@@ -93,8 +91,6 @@
 
     <template id="sadaya_mitra_lanjutan_form" name="SadayaMitra Lanjutan Form">
         <t t-call="website.layout">
-            <t t-set="no_header" t-value="True"/>
-            <t t-set="no_footer" t-value="True"/>
             <t t-set="title"><t t-esc="config['title']"/></t>
             <div id="wrap" class="o_sadaya_frontend sl-app-shell">
                 <header class="sl-app-header">
@@ -338,8 +334,6 @@
 
     <template id="sadaya_mitra_status_pendaftaran" name="SadayaMitra Status Pendaftaran">
         <t t-call="website.layout">
-            <t t-set="no_header" t-value="True"/>
-            <t t-set="no_footer" t-value="True"/>
             <t t-set="title">Status Pendaftaran</t>
             <div id="wrap" class="o_sadaya_frontend sl-app-shell">
                 <header class="sl-app-header">

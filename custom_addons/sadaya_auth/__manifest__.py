@@ -33,6 +33,11 @@
         'views/sadaya_dashboard_templates.xml',
         'views/res_users_views.xml',
     ],
+    'assets': {
+        'web.assets_frontend': [
+            'sadaya_auth/static/src/css/sadaya_shared.css',
+        ],
+    },
     'installable': True,
     'application': True,
     'auto_install': False,

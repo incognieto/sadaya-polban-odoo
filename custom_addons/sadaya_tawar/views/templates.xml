@@ -10,6 +10,7 @@
                       <p class="sl-app-eyebrow">Portal Etalase Pengadaan</p>
                       <a href="/sadaya-tawar" class="sl-app-brand">Sadaya Tawar</a>
                     </div>
+                    <nav class="sl-app-nav" aria-label="Navigasi utama"></nav>
                   </div>
                 </header>
 

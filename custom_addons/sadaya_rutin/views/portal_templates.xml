@@ -18,9 +18,6 @@
                             <a href="/sadaya-rutin/paket" t-att-class="'active' if active_menu == 'paket' else ''">Paket</a>
                             <a href="/sadaya-rutin/kontrak" t-att-class="'active' if active_menu == 'kontrak' else ''">Kontrak</a>
                         </nav>
-                        <div class="d-flex align-items-center gap-3">
-                            <span class="sr-app-eyebrow mb-0" style="color: var(--sr-text); font-weight: bold;"><i class="fa fa-user me-1"/> <t t-esc="env.user.name"/></span>
-                        </div>
                     </div>
                 </header>
 

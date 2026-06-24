@@ -1,8 +1,6 @@
 <odoo>
     <template id="sadaya_mitra_penyedia_form" name="SadayaMitra Form Penyedia">
         <t t-call="website.layout">
-            <t t-set="no_header" t-value="True"/>
-            <t t-set="no_footer" t-value="True"/>
             <t t-set="title">Form Pendaftaran Penyedia</t>
             <div id="wrap" class="o_sadaya_frontend sl-app-shell">
                 <header class="sl-app-header">
@@ -244,8 +242,6 @@
 
     <template id="sadaya_mitra_penyedia_success" name="SadayaMitra Form Penyedia Sukses">
         <t t-call="website.layout">
-            <t t-set="no_header" t-value="True"/>
-            <t t-set="no_footer" t-value="True"/>
             <t t-set="title">Pendaftaran Berhasil</t>
             <div id="wrap" class="o_sadaya_frontend sl-app-shell">
                 <header class="sl-app-header">
@@ -292,8 +288,6 @@
 
     <template id="sadaya_mitra_profil" name="SadayaMitra Profil Vendor">
         <t t-call="website.layout">
-            <t t-set="no_header" t-value="True"/>
-            <t t-set="no_footer" t-value="True"/>
             <t t-set="title">Profil Vendor</t>
             <div id="wrap" class="o_sadaya_frontend sl-app-shell">
                 <header class="sl-app-header">
