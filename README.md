@@ -241,7 +241,7 @@ For more information about the system modules and features, refer to:
 | **Fredy Kurniadi** | 231524010 | ![Sadaya Rutin](https://img.shields.io/badge/Sadaya_Rutin-1f77b4?style=flat-square) |
 | **Jizdan Mulkan Nailan** | 231524011 | ![Sadaya Mitra](https://img.shields.io/badge/Sadaya_Mitra-2ca02c?style=flat-square) |
 | **Muhammad Aslim Salman** | 231524014 | ![Sadaya Rancang](https://img.shields.io/badge/Sadaya_Rancang-d62728?style=flat-square) |
-| **Muhammad Ichsan Rahmat Ramadhan**| 231524015 | ![Sadaya Rutin](https://img.shields.io/badge/Sadaya_Rutin-1f77b4?style=flat-square) |
+| **Muhammad Ichsan Rahmat Ramadhan**| 231524015 | ![Sadaya Tawar](https://img.shields.io/badge/Sadaya_Tawar-1f77b4?style=flat-square) |
 | **Muhammad Rafif Genadratama**| 231524016 | ![Sadaya Lelang](https://img.shields.io/badge/Sadaya_Lelang-9467bd?style=flat-square) |
 | **Nadia Rachma Yuninda** | 231524017 | ![Sadaya Auth](https://img.shields.io/badge/Sadaya_Auth-ff7f0e?style=flat-square) |
 | **Nieto Salim Maula** | 231524019 | ![Sadaya Rancang](https://img.shields.io/badge/Sadaya_Rancang-d62728?style=flat-square) |
