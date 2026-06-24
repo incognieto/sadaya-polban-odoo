@@ -576,6 +576,12 @@
                                     <div><dt>HPS</dt><dd><t t-esc="tender.hps" t-options="{'widget': 'monetary', 'display_currency': tender.currency_id}"/></dd></div>
                                     <div><dt>Status</dt><dd><t t-esc="dict(tender._fields['status'].selection).get(tender.status)"/></dd></div>
                                 </dl>
+                                <div t-if="tender.file_dokumen_pemilihan" class="mt-4 pt-3" style="border-top: 1px solid var(--sl-border);">
+                                    <h6 class="mb-2" style="font-weight: 700; color: var(--sl-text);">Dokumen Pemilihan (Buku Panduan Lelang)</h6>
+                                    <a t-attf-href="/web/content/sadaya_lelang.paket/#{tender.id}/file_dokumen_pemilihan?download=true" class="btn btn-outline-primary btn-sm" style="border-radius: 999px;">
+                                        <i class="fa fa-download me-1"></i> Unduh Dokumen
+                                    </a>
+                                </div>
                             </article>
                         </div>
 
