@@ -828,7 +828,7 @@
                         
                         <div class="sl-card" style="padding: 2rem;">
                             <!-- Cari pemenang -->
-                            <t t-set="winning_bid" t-value="request.env['sadaya_lelang.penawaran'].sudo().search([('paket_id', '=', tender.id), ('status', '=', 'pemenang')], limit=1)"/>
+                            <t t-set="winning_bid" t-value="request.env['sadaya_lelang.penawaran'].sudo().search([('paket_id', '=', tender.id), ('status', '=', 'winner')], limit=1)"/>
                             <t t-set="is_me_winner" t-value="winning_bid and winning_bid.vendor_id.id == partner_id"/>
                             
                             <div t-if="winning_bid" class="alert alert-success mb-4" style="border-radius: 12px;">
