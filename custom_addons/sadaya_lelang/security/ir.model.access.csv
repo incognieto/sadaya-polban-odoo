@@ -16,6 +16,10 @@ access_lelang_jadwal_portal,sadaya_lelang.jadwal.portal,model_sadaya_lelang_jadw
 access_lelang_jadwal_public,sadaya_lelang.jadwal.public,model_sadaya_lelang_jadwal,base.group_public,1,0,0,0
 
 access_lelang_dokumen_pokja,sadaya_lelang.dokumen.pokja,model_sadaya_lelang_dokumen,group_lelang_pokja,1,1,1,1
+access_lelang_dokumen_ppk,sadaya_lelang.dokumen.ppk,model_sadaya_lelang_dokumen,group_lelang_ppk,1,0,0,0
+access_lelang_dokumen_pphp,sadaya_lelang.dokumen.pphp,model_sadaya_lelang_dokumen,group_lelang_pphp,1,0,0,0
+access_lelang_dokumen_user,sadaya_lelang.dokumen.user,model_sadaya_lelang_dokumen,group_lelang_user,1,0,0,0
+access_lelang_dokumen_manajemen,sadaya_lelang.dokumen.manajemen,model_sadaya_lelang_dokumen,group_lelang_manajemen,1,0,0,0
 access_lelang_dokumen_portal,sadaya_lelang.dokumen.portal,model_sadaya_lelang_dokumen,base.group_portal,1,0,0,0
 access_lelang_dokumen_public,sadaya_lelang.dokumen.public,model_sadaya_lelang_dokumen,base.group_public,1,0,0,0
 
