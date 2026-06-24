@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api
+from odoo import models, fields, api, exceptions
 
 class SadayaLelangPaket(models.Model):
     _name = 'sadaya_lelang.paket'
@@ -126,6 +126,31 @@ class SadayaLelangPaket(models.Model):
 
     def action_to_selesai(self):
         for rec in self: rec.status = 'selesai'
+
+    def _compute_status_selesai(self):
+        for rec in self:
+            rec.is_selesai = True if rec.status == 'selesai' else False
+
+    def write(self, vals):
+        # 1. POKJA fields protection
+        pokja_fields = ['file_dokumen_pemilihan', 'file_ba_penjelasan', 'file_bahp']
+        if any(f in vals for f in pokja_fields):
+            if not self.env.su and not self.env.user.has_group('sadaya_lelang.group_lelang_pokja'):
+                raise exceptions.UserError('Akses Ditolak: Hanya POKJA yang diizinkan untuk mengedit dokumen pemilihan dan BAHP.')
+                
+        # 2. PPK fields protection
+        ppk_fields = ['file_sppbj', 'file_draft_kontrak']
+        if any(f in vals for f in ppk_fields):
+            if not self.env.su and not self.env.user.has_group('sadaya_lelang.group_lelang_ppk'):
+                raise exceptions.UserError('Akses Ditolak: Hanya PPK yang diizinkan untuk mengedit dokumen SPPBJ dan Draft Kontrak.')
+
+        # 3. PPHP fields protection
+        pphp_fields = ['file_laporan_pphp', 'file_bast']
+        if any(f in vals for f in pphp_fields):
+            if not self.env.su and not self.env.user.has_group('sadaya_lelang.group_lelang_pphp'):
+                raise exceptions.UserError('Akses Ditolak: Hanya PPHP yang diizinkan untuk mengedit dokumen Laporan PPHP dan BAST.')
+
+        return super(SadayaLelangPaket, self).write(vals)
 
     @api.model_create_multi
     def create(self, vals_list):

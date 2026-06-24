@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api
+from odoo import models, fields, api, exceptions
 
 class SadayaLelangPenawaran(models.Model):
     _name = 'sadaya_lelang.penawaran'
@@ -64,3 +64,16 @@ class SadayaLelangPenawaran(models.Model):
             if vals.get('name', 'New') == 'New':
                 vals['name'] = self.env['ir.sequence'].next_by_code('sadaya_lelang.penawaran') or 'New'
         return super(SadayaLelangPenawaran, self).create(vals_list)
+
+    def _compute_access_url(self):
+        if hasattr(self, 'get_portal_url'):
+            return self.get_portal_url()
+        return super(SadayaLelangPenawaran, self)._compute_access_url()
+
+    def write(self, vals):
+        # Proteksi evaluasi hanya untuk POKJA
+        eval_fields = ['eval_administrasi', 'eval_teknis', 'eval_harga', 'status_penawaran', 'alasan_gugur']
+        if any(f in vals for f in eval_fields):
+            if not self.env.su and not self.env.user.has_group('sadaya_lelang.group_lelang_pokja'):
+                raise exceptions.UserError('Akses Ditolak: Hanya POKJA yang diizinkan untuk melakukan evaluasi penawaran dan menetapkan status kelulusan.')
+        return super(SadayaLelangPenawaran, self).write(vals)
