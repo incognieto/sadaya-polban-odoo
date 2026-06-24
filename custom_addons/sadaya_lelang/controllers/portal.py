@@ -137,7 +137,7 @@ class TenderPortal(http.Controller):
             is_vendor = getattr(partner, 'is_vendor_tender', False) or getattr(partner, 'is_sadaya_mitra_vendor', False)
         
         # Check if winner
-        winning_bid = request.env['sadaya_lelang.penawaran'].sudo().search([('paket_id', '=', tender.id), ('status', '=', 'pemenang')], limit=1)
+        winning_bid = request.env['sadaya_lelang.penawaran'].sudo().search([('paket_id', '=', tender.id), ('status', '=', 'winner')], limit=1)
         if not is_vendor or not winning_bid or winning_bid.vendor_id.id != partner.id:
             return request.redirect('/sadaya-lelang/tender/%s' % tender.id)
             
@@ -146,9 +146,16 @@ class TenderPortal(http.Controller):
         
         if file_upload:
             file_content = base64.b64encode(file_upload.read())
+            file_name = file_upload.filename
             if upload_type == 'jaminan':
-                tender.sudo().write({'file_jaminan_pelaksanaan': file_content})
+                tender.sudo().write({
+                    'file_jaminan_pelaksanaan': file_content,
+                    'file_jaminan_pelaksanaan_name': file_name
+                })
             elif upload_type == 'kontrak':
-                tender.sudo().write({'file_kontrak': file_content})
+                tender.sudo().write({
+                    'file_kontrak': file_content,
+                    'file_kontrak_name': file_name
+                })
                 
         return request.redirect('/sadaya-lelang/tender/%s' % tender.id)
