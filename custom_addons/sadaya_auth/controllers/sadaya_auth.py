@@ -164,9 +164,6 @@ class SadayaAuthController(http.Controller):
             })
 
         try:
-            # Jika default redirect adalah dashboard, ubah ke sadaya-mitra
-            if redirect == '/sadaya/dashboard':
-                redirect = '/sadaya-mitra'
             return self._do_login_and_redirect(email, password, redirect)
         except AccessDenied:
             return request.render('sadaya_auth.sadaya_login', {

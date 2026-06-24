@@ -3,6 +3,17 @@
    Digunakan oleh: Langsung, Rancang, Tawar, Mitra
    ============================================================ */
 
+/* ── Override Default Odoo Header ── */
+header form.o_searchbar_form,
+header input[name="search"],
+header a[href="/contactus"],
+header a[href*="contactus"],
+header a[href^="tel:"],
+header .o_header_contact,
+header .js_language_selector {
+    display: none !important;
+}
+
 /* ── Design Tokens ── */
 :root {
     --sl-bg: #edf1f3;
