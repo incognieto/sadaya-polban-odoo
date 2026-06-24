@@ -23,7 +23,7 @@ class TenderPortal(http.Controller):
             'is_vendor': is_vendor
         })
 
-    @http.route('/sadaya-lelang/dashboard', type='http', auth='user', website=True)
+    @http.route('/sadaya-lelang', type='http', auth='user', website=True)
     def my_tenders(self, **kwargs):
         partner = request.env.user.partner_id
         is_vendor = getattr(partner, 'is_vendor_tender', False) or getattr(partner, 'is_sadaya_mitra_vendor', False)

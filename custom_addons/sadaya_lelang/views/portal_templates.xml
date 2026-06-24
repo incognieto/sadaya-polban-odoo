@@ -447,7 +447,7 @@
                                 <a href="/sadaya-lelang/tender" class="sl-app-brand">Sadaya Lelang</a>
                             </div>
                             <nav class="sl-app-nav" aria-label="Navigasi utama">
-                                <a href="/sadaya-lelang/dashboard"
+                                <a href="/sadaya-lelang"
                                    t-att-class="'active' if active_menu == 'dashboard' else ''">Dashboard</a>
                                 <a href="/sadaya-lelang/tender"
                                    t-att-class="'active' if active_menu == 'tender' else ''">Info Lelang</a>
@@ -590,7 +590,7 @@
 
                                     <t t-if="tender.status == 'pemasukan_penawaran'">
                                         <div t-if="has_bid > 0" class="sl-actions" style="flex-direction: column; gap: 0.65rem;">
-                                            <a href="/sadaya-lelang/dashboard" class="btn btn-outline-primary" style="border-radius:999px; width:100%; text-align:center;">Lihat Penawaran Saya</a>
+                                            <a href="/sadaya-lelang" class="btn btn-outline-primary" style="border-radius:999px; width:100%; text-align:center;">Lihat Penawaran Saya</a>
                                             <a t-attf-href="/sadaya-lelang/tender/#{tender.id}/submit_bid" class="btn btn-primary" style="border-radius:999px; width:100%; text-align:center;">Ubah Penawaran</a>
                                         </div>
                                         <div t-else="" class="sl-actions">
@@ -604,7 +604,7 @@
                                             <span t-else="">Masa Pemasukan Penawaran telah berakhir.</span>
                                         </div>
                                         <div t-if="has_bid > 0" class="sl-actions mt-3">
-                                            <a href="/sadaya-lelang/dashboard" class="btn btn-outline-primary" style="border-radius:999px; width:100%; text-align:center;">Lihat Penawaran Saya</a>
+                                            <a href="/sadaya-lelang" class="btn btn-outline-primary" style="border-radius:999px; width:100%; text-align:center;">Lihat Penawaran Saya</a>
                                         </div>
                                     </t>
                                 </div>
